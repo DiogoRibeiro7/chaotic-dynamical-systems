@@ -23,9 +23,8 @@
 #' set.seed(42)
 #' x <- arima.sim(model=list(ar=0.7), n=10000)
 #' thr <- quantile(x, 0.95)
-' -> documentation
-# ensure dependencies
-if (!requireNamespace("assertthat", quietly=TRUE)) {
+# Ensure required packages are installed
+if (!requireNamespace("assertthat", quietly = TRUE)) {
   stop("Package 'assertthat' is required")
 }
 
@@ -61,9 +60,8 @@ cluster_exceedances <- function(indices, run_length) {
   idx <- as.integer(indices)
   idx <- sort(idx)
   clusters <- list()
-  current <- idx[1]
-  clusters[[1]] <- current
-n <- 1L
+  clusters[[1]] <- idx[1]
+  n <- 1L
   for (i in seq(2L, length(idx))) {
     if (idx[i] - idx[i-1] <= run_length) {
       # same cluster

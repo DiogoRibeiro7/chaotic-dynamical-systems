@@ -6,37 +6,37 @@ This document outlines planned modules and scripts to expand the repository into
 
 ## 1. Simulation of Canonical Maps
 
-- **simulate-logistic-map.R**  
-  Generate orbits for the logistic map $x_{n+1} = r\,x_n(1 - x_n)$ with user-specified parameters.  
-- **simulate-henon-map.R**  
+- **simulate-logistic-map.R** ✅
+  Generate orbits for the logistic map $x_{n+1} = r\,x_n(1 - x_n)$ with user-specified parameters.
+- **simulate-henon-map.R** ✅
   Two-dimensional Hénon map simulation with tunable parameters (a, b).
 
 ## 2. Block-Maxima & POT Methods
 
-- **block-maxima.R**  
-  Split a time series into non-overlapping blocks, compute maxima, then fit a Generalized Extreme Value (GEV) distribution via packages like `ismev` or `evd`.  
-- **peaks-over-threshold.R**  
+- **block-maxima.R** ✅
+  Split a time series into non-overlapping blocks, compute maxima, then fit a Generalized Extreme Value (GEV) distribution via packages like `ismev` or `evd`.
+- **peaks-over-threshold.R** ✅
   Implement the Peaks-Over-Threshold approach: fit a Generalized Pareto Distribution (GPD) and provide diagnostic plots (mean residual life, parameter stability).
 
 ## 3. Threshold Diagnostics
 
-- **threshold-selection.R**  
+- **threshold-selection.R** ✅
   Compute and plot:
-  - Mean Residual Life (MRL) plot  
-  - Hill plot  
+  - Mean Residual Life (MRL) plot
+  - Hill plot
   to guide choice of threshold for POT methods.
 
 ## 4. Bootstrap Uncertainty
 
-- **bootstrap-ci.R**  
+- **bootstrap-ci.R** ✅
   Wrap `extremal_index_runs()` and `extremal_index_intervals()` in a block bootstrap or stationary bootstrap to obtain confidence intervals for the extremal index θ.
 
 ## 5. Cluster-Size & Extremal-Cluster Analysis
 
-- **cluster-statistics.R**  
+- **cluster-statistics.R** ✅
   Compute and visualize:
-  - Empirical distribution of cluster sizes  
-  - Run-length histograms  
+  - Empirical distribution of cluster sizes
+  - Run-length histograms
   - Summary statistics (mean, variance) of cluster sizes
 
 ## 6. Mixing-Condition Checks
