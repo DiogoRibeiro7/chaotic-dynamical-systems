@@ -41,7 +41,7 @@ This document outlines planned modules and scripts to expand the repository into
 
 ## 6. Mixing-Condition Checks
 
-- **mixing-diagnostics.R**  
+ - **mixing-diagnostics.R** ✅
   Compute and plot:
   - Auto-correlation decay curves  
   - Empirical mixing coefficients  

@@ -20,6 +20,8 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
     bootstrap.
   - `cluster-statistics.R` analyzes exceedance clusters with summaries and
     histograms.
+  - `mixing-diagnostics.R` computes auto-correlation decay curves and simple
+    mixing coefficient estimates.
 - `roadmap.md` – outlines planned modules including map simulations, block-maxima and peaks-over-threshold analysis, cluster statistics and more.
 
 ## Usage
