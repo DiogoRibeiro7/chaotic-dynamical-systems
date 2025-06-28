@@ -22,6 +22,8 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
     histograms.
   - `mixing-diagnostics.R` computes auto-correlation decay curves and simple
     mixing coefficient estimates.
+- `run-demo-chaos.R` demonstrates the full pipeline and can produce a PDF
+  report when `rmarkdown` is installed.
 - `roadmap.md` – outlines planned modules including map simulations, block-maxima and peaks-over-threshold analysis, cluster statistics and more.
 
 ## Usage

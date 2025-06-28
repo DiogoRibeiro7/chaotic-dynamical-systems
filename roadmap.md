@@ -49,7 +49,7 @@ This document outlines planned modules and scripts to expand the repository into
 
 ## 7. End-to-End Demo Script
 
-- **run-demo-chaos.R**  
+- **run-demo-chaos.R** ✅
   Source simulations, threshold diagnostics, block-maxima, POT, extremal-index estimators, and assemble all figures into a single PDF report (e.g., via `rmarkdown::render`).
 
 ## 8. Documentation & Vignettes
