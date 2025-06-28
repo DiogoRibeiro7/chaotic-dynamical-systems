@@ -13,6 +13,11 @@
 #'   Various depending on the function; see details below.
 #'
 #' @export
+# Source extremal index helpers if needed
+if (!exists("threshold_exceedances", mode = "function")) {
+  source(file.path("extremal-index", "extremal_index.R"))
+}
+
 cluster_sizes <- function(x, threshold, run_length) {
   # Validate input types
   stopifnot(is.numeric(x),

@@ -52,7 +52,7 @@ threshold_exceedances <- function(x, threshold) {
 #' cluster_exceedances(1:10, run_length=2)
 cluster_exceedances <- function(indices, run_length) {
   assertthat::assert_that(is.integer(indices) || is.numeric(indices))
-  assertthat::assert_that(is.count(run_length))
+  assertthat::assert_that(assertthat::is.count(run_length))
   if (length(indices) == 0) {
     return(list(clusters = list(), n_clusters = 0L))
   }
@@ -86,7 +86,7 @@ cluster_exceedances <- function(indices, run_length) {
 extremal_index_runs <- function(x, threshold, run_length) {
   assertthat::assert_that(is.numeric(x), length(x) > 1)
   assertthat::assert_that(is.numeric(threshold), length(threshold) == 1)
-  assertthat::assert_that(is.count(run_length))
+  assertthat::assert_that(assertthat::is.count(run_length))
   ix <- threshold_exceedances(x, threshold)
   ce <- cluster_exceedances(ix, run_length)
   n_exc <- length(ix)

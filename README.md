@@ -10,9 +10,6 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
 - `simulations/` – basic chaotic map simulators.
   - `simulate-logistic-map.R` produces orbits of the logistic map.
   - `simulate-henon-map.R` generates trajectories of the two-dimensional Hénon map.
-- `python/` – Python equivalents of the chaotic map simulators.
-  - `simulate_logistic_map.py` implements the logistic map with a simple loop.
-  - `simulate_henon_map.py` generates (x, y) trajectories for the Hénon map.
 - `analysis/` – extreme-value analysis utilities.
   - `block-maxima.R` computes block maxima and fits a GEV distribution.
   - `peaks-over-threshold.R` fits a Generalized Pareto distribution and provides

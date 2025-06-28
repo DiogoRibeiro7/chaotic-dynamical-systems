@@ -16,6 +16,11 @@
 #' mrl_plot(diag$mrl)
 #' hill_plot(diag$hill)
 #' @export
+# Source MRL helper if the function is not already available
+if (!exists("mean_residual_life", mode = "function")) {
+  source(file.path("analysis", "peaks-over-threshold.R"))
+}
+
 threshold_diagnostics <- function(x, thresholds, k_values) {
   stopifnot(is.numeric(x), is.numeric(thresholds), is.numeric(k_values))
   mrl_df <- mean_residual_life(x, thresholds)

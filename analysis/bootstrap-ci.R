@@ -20,6 +20,11 @@
 #'                                  run_length = 5, block_size = 50, B = 200)
 #' boot$ci
 #' @export
+# Source extremal index helpers if needed
+if (!exists("extremal_index_runs", mode = "function")) {
+  source(file.path("extremal-index", "extremal_index.R"))
+}
+
 bootstrap_extremal_index <- function(x, threshold, estimator = c("runs", "intervals"),
                                      run_length = 5L, block_size = 50L, B = 1000L) {
   estimator <- match.arg(estimator)
