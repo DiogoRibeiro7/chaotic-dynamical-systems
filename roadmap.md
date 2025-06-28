@@ -54,7 +54,7 @@ This document outlines planned modules and scripts to expand the repository into
 
 ## 8. Documentation & Vignettes
 
-- **vignettes/**  
+- **vignettes/** ✅
   R Markdown examples with narratives such as:
   - “Estimating θ for the Logistic Map”  
   - “Comparison of Block Maxima vs POT for the Hénon Map”

@@ -24,6 +24,9 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
     mixing coefficient estimates.
 - `run-demo-chaos.R` demonstrates the full pipeline and can produce a PDF
   report when `rmarkdown` is installed.
+- `vignettes/` contains R Markdown tutorials, including
+  `estimating-theta-logistic.Rmd` and
+  `block-maxima-vs-pot-henon.Rmd`.
 - `roadmap.md` – outlines planned modules including map simulations, block-maxima and peaks-over-threshold analysis, cluster statistics and more.
 
 ## Usage
@@ -48,7 +51,7 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
 - Threshold selection diagnostics
 - Bootstrap confidence intervals for the extremal index
 - Cluster statistics and mixing diagnostics
-- End-to-end demo scripts and vignettes
+- End-to-end demo scripts and vignettes (see files under `vignettes/`)
 
 These items will expand the repository into a comprehensive toolkit for extreme-value analysis.
 

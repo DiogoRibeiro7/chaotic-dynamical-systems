@@ -1,0 +1,35 @@
+---
+title: "Estimating \u03b8 for the Logistic Map"
+output: html_document
+---
+
+This vignette demonstrates how to estimate the extremal index of the logistic map using the utilities in this repository.
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Simulate the Logistic Map
+
+```{r}
+source("../simulations/simulate-logistic-map.R")
+series <- simulate_logistic_map(5000, r = 3.8, x0 = 0.2)
+```
+
+## Estimate the Extremal Index
+
+```{r}
+source("../extremal-index/extremal_index.R")
+threshold <- quantile(series, 0.95)
+theta_runs <- extremal_index_runs(series, threshold, run_length = 5)
+theta_intervals <- extremal_index_intervals(series, threshold)
+print(c(runs = theta_runs, intervals = theta_intervals))
+```
+
+## Visualize Hitting Times
+
+```{r}
+hts <- hitting_times(series, threshold)
+plot_hts(hts)
+```
+
