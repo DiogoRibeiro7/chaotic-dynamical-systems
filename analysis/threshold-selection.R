@@ -16,8 +16,9 @@
 #' mrl_plot(diag$mrl)
 #' hill_plot(diag$hill)
 #' @export
-# Source MRL helper if the function is not already available
-if (!exists("mean_residual_life", mode = "function")) {
+# Source POT utilities if the functions are not already available
+if (!exists("mean_residual_life", mode = "function") ||
+    !exists("mrl_plot", mode = "function")) {
   source(file.path("analysis", "peaks-over-threshold.R"))
 }
 
@@ -72,29 +73,10 @@ hill_plot <- function(hill_df) {
     theme_minimal()
 }
 
-#' Plot Mean Residual Life (MRL)
+#' Mean Residual Life (MRL) Plot
 #'
-#' Creates a Mean Residual Life plot from a data frame produced by
-#' [mean_residual_life()].
-#'
-#' @param mrl_df Data frame with columns `threshold` and `mean_excess`.
-#'
-#' @return ggplot object visualizing the MRL curve.
-#' @examples
-#' df <- mean_residual_life(rexp(1000), seq(0, 2, by = 0.2))
-#' mrl_plot(df)
-#' @export
-mrl_plot <- function(mrl_df) {
-  stopifnot(is.data.frame(mrl_df),
-            all(c("threshold", "mean_excess") %in% names(mrl_df)))
-  library(ggplot2)
-  ggplot(mrl_df, aes(x = threshold, y = mean_excess)) +
-    geom_point() +
-    geom_line() +
-    labs(x = "Threshold", y = "Mean Excess",
-         title = "Mean Residual Life Plot") +
-    theme_minimal()
-}
+#' The helper function `mrl_plot()` is defined in
+#' `analysis/peaks-over-threshold.R` and is sourced above when needed.
 
 if (identical(environment(), globalenv())) {
   set.seed(123)

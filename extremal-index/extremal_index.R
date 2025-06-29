@@ -17,7 +17,7 @@
 #' The intervals estimator uses inter-exceedance gaps (Ferro & Segers, 2003).
 #' Hitting times are measured in units of index distance.
 #'
-#' @author Diogo
+#' @author Diogo Ribeiro
 #' @examples
 #' # Generate synthetic AR(1) process and estimate
 #' set.seed(42)

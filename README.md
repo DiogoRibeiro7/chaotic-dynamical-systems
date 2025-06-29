@@ -1,33 +1,25 @@
 # Chaotic Dynamical Systems
 
-This repository hosts R scripts for analyzing extreme events in chaotic dynamical systems. The goal is to provide tools for estimating the extremal index, studying hitting/return times, and ultimately building a full extreme-value statistics toolbox.
+This repository collects a set of R scripts for exploring extreme events in simple chaotic maps.  It aims to provide small, self contained utilities for estimating the extremal index, analysing exceedance clusters and performing basic block--maxima and peaks--over--threshold (POT) calculations.
 
-## Current Contents
+## Repository Structure
 
-- `extremal-index/` – functions to estimate the extremal index and hitting time statistics, along with a demo script.
-  - `extremal_index.R` defines helper functions such as `threshold_exceedances`, `cluster_exceedances`, `extremal_index_runs`, `extremal_index_intervals`, `hitting_times` and `plot_hts`. Each function is documented with roxygen comments.
-  - `run-extremal-index.R` installs dependencies, generates example AR(1) data and demonstrates the estimators.
-- `simulations/` – basic chaotic map simulators.
-  - `simulate-logistic-map.R` produces orbits of the logistic map.
-  - `simulate-henon-map.R` generates trajectories of the two-dimensional Hénon map.
-- `analysis/` – extreme-value analysis utilities.
-  - `block-maxima.R` computes block maxima and fits a GEV distribution.
-  - `peaks-over-threshold.R` fits a Generalized Pareto distribution and provides
-    mean residual life diagnostics.
-  - `threshold-selection.R` offers mean residual life and Hill plots to help
-    choose a threshold for POT analyses.
-  - `bootstrap-ci.R` estimates extremal index confidence intervals via a block
-    bootstrap.
-  - `cluster-statistics.R` analyzes exceedance clusters with summaries and
-    histograms.
-  - `mixing-diagnostics.R` computes auto-correlation decay curves and simple
-    mixing coefficient estimates.
-- `run-demo-chaos.R` demonstrates the full pipeline and can produce a PDF
-  report when `rmarkdown` is installed.
-- `vignettes/` contains R Markdown tutorials, including
-  `estimating-theta-logistic.Rmd` and
-  `block-maxima-vs-pot-henon.Rmd`.
-- `roadmap.md` – outlines planned modules including map simulations, block-maxima and peaks-over-threshold analysis, cluster statistics and more.
+- **`extremal-index/`** – core helpers for estimating the extremal index and hitting-time statistics.
+  - `extremal_index.R` implements `threshold_exceedances()`, `cluster_exceedances()`, `extremal_index_runs()`, `extremal_index_intervals()`, `hitting_times()` and `plot_hts()`.
+  - `run-extremal-index.R` shows a minimal workflow on simulated AR(1) data.
+- **`simulations/`** – simple chaotic map simulators.
+  - `simulate-logistic-map.R` generates logistic map trajectories.
+  - `simulate-henon-map.R` produces two–dimensional Hénon map orbits.
+- **`analysis/`** – utilities for extreme-value calculations.
+  - `block-maxima.R` extracts block maxima and fits GEV models.
+  - `peaks-over-threshold.R` provides exceedance extraction, GPD fitting and the `mrl_plot()` helper.
+  - `threshold-selection.R` wraps MRL and Hill diagnostics (re-using `mrl_plot()`).
+  - `bootstrap-ci.R` computes bootstrap confidence intervals for the extremal index.
+  - `cluster-statistics.R` summarizes cluster sizes and plots histograms.
+  - `mixing-diagnostics.R` estimates ACF decay and simple mixing coefficients.
+- **`run-demo-chaos.R`** – orchestrates the above tools into a single workflow and optionally renders a short PDF report.
+- **`vignettes/`** – R Markdown tutorials: `estimating-theta-logistic.Rmd` and `block-maxima-vs-pot-henon.Rmd`.
+- **`roadmap.md`** – overview of the development plan (all current items are implemented).
 
 ## Installation
 
@@ -43,11 +35,20 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
 
 ## Usage
 
-Run the demonstration script:
-   ```bash
-   Rscript extremal-index/run-extremal-index.R
-   ```
-   The script prints extremal index estimates and produces a plot comparing empirical hitting time survival with the exponential distribution.
+Most scripts can be run directly with `Rscript`.  For example
+
+```bash
+# simulate a logistic map trajectory
+Rscript simulations/simulate-logistic-map.R
+
+# compute block maxima and fit a GEV model
+Rscript analysis/block-maxima.R
+
+# run the full demo workflow
+Rscript run-demo-chaos.R
+```
+
+The extremal-index demo in `extremal-index/run-extremal-index.R` prints example estimates and plots the empirical hitting-time survival curve.
 
 ## Roadmap Highlights
 
