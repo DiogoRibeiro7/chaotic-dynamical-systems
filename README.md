@@ -2,6 +2,10 @@
 
 This repository collects a set of R scripts for exploring extreme events in simple chaotic maps.  It aims to provide small, self contained utilities for estimating the extremal index, analysing exceedance clusters and performing basic block--maxima and peaks--over--threshold (POT) calculations.
 
+The repository now includes a minimal R package skeleton with `DESCRIPTION`,
+`NAMESPACE` and an `R/` directory so the functions can be installed using
+standard tooling such as **devtools**.
+
 ## Repository Structure
 
 - **`extremal-index/`** – core helpers for estimating the extremal index and hitting-time statistics.
@@ -24,7 +28,19 @@ This repository collects a set of R scripts for exploring extreme events in simp
 ## Installation
 
 1. Install R (>= 4.0).
-2. Install the required packages:
+2. Install devtools if not already available:
+   ```R
+   install.packages("devtools")
+   ```
+3. Install the package and its dependencies from this repository:
+   ```R
+   devtools::install_local(".")
+   ```
+   The package depends on several CRAN libraries such as `assertthat`,
+   `ggplot2`, `evd`, `evir`, `ismev` and `rmarkdown`, which will be pulled in
+   automatically.
+
+Alternatively, you can install the required packages manually:
    ```R
    install.packages(c(
      "assertthat", "ggplot2",  # base utilities and plotting

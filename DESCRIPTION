@@ -1,0 +1,10 @@
+Package: chaoticds
+Type: Package
+Title: Chaotic Dynamical Systems Utilities
+Version: 0.1.0
+Authors@R: c(person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt", role = c("aut", "cre")))
+Description: Collection of utilities for extreme-value analysis of simple chaotic maps. Includes simulation of logistic and Henon maps and tools for block maxima, POT and extremal index estimation.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: assertthat, ggplot2, evd, evir, ismev, rmarkdown
