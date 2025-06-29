@@ -2,7 +2,7 @@
 
 This repository collects a set of R scripts for exploring extreme events in simple chaotic maps.  It aims to provide small, self contained utilities for estimating the extremal index, analysing exceedance clusters and performing basic block--maxima and peaks--over--threshold (POT) calculations.
 
-The repository now includes a minimal R package skeleton with `DESCRIPTION`,
+The repository now includes a minimal R package skeleton named `chaoticds` with `DESCRIPTION`,
 `NAMESPACE` and an `R/` directory so the functions can be installed using
 standard tooling such as **devtools**.
 
@@ -35,7 +35,8 @@ standard tooling such as **devtools**.
 3. Install the package and its dependencies from this repository:
    ```R
    devtools::install_local(".")
-   ```
+   library(chaoticds)
+```
    The package depends on several CRAN libraries such as `assertthat`,
    `ggplot2`, `evd`, `evir`, `ismev` and `rmarkdown`, which will be pulled in
    automatically.
