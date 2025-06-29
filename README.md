@@ -29,14 +29,17 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
   `block-maxima-vs-pot-henon.Rmd`.
 - `roadmap.md` – outlines planned modules including map simulations, block-maxima and peaks-over-threshold analysis, cluster statistics and more.
 
-## Usage
+## Installation
 
-1. Ensure R (\>= 4.0) is installed.
+1. Install R (\>= 4.0).
 2. Install the required packages:
    ```R
    install.packages(c("assertthat", "ggplot2"))
    ```
-3. Run the demonstration script:
+
+## Usage
+
+Run the demonstration script:
    ```bash
    Rscript extremal-index/run-extremal-index.R
    ```
