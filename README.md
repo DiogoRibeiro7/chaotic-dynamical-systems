@@ -31,10 +31,14 @@ This repository hosts R scripts for analyzing extreme events in chaotic dynamica
 
 ## Installation
 
-1. Install R (\>= 4.0).
+1. Install R (>= 4.0).
 2. Install the required packages:
    ```R
-   install.packages(c("assertthat", "ggplot2"))
+   install.packages(c(
+     "assertthat", "ggplot2",  # base utilities and plotting
+     "evd", "evir", "ismev",  # extreme-value distribution fitting
+     "rmarkdown"             # for PDF report generation
+   ))
    ```
 
 ## Usage
