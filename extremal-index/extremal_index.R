@@ -17,15 +17,14 @@
 #' The intervals estimator uses inter-exceedance gaps (Ferro & Segers, 2003).
 #' Hitting times are measured in units of index distance.
 #'
-#' @author Diogo
+#' @author Diogo Ribeiro
 #' @examples
 #' # Generate synthetic AR(1) process and estimate
 #' set.seed(42)
 #' x <- arima.sim(model=list(ar=0.7), n=10000)
 #' thr <- quantile(x, 0.95)
-' -> documentation
-# ensure dependencies
-if (!requireNamespace("assertthat", quietly=TRUE)) {
+# Ensure required packages are installed
+if (!requireNamespace("assertthat", quietly = TRUE)) {
   stop("Package 'assertthat' is required")
 }
 
@@ -53,7 +52,7 @@ threshold_exceedances <- function(x, threshold) {
 #' cluster_exceedances(1:10, run_length=2)
 cluster_exceedances <- function(indices, run_length) {
   assertthat::assert_that(is.integer(indices) || is.numeric(indices))
-  assertthat::assert_that(is.count(run_length))
+  assertthat::assert_that(assertthat::is.count(run_length))
   if (length(indices) == 0) {
     return(list(clusters = list(), n_clusters = 0L))
   }
@@ -61,9 +60,8 @@ cluster_exceedances <- function(indices, run_length) {
   idx <- as.integer(indices)
   idx <- sort(idx)
   clusters <- list()
-  current <- idx[1]
-  clusters[[1]] <- current
-n <- 1L
+  clusters[[1]] <- idx[1]
+  n <- 1L
   for (i in seq(2L, length(idx))) {
     if (idx[i] - idx[i-1] <= run_length) {
       # same cluster
@@ -88,7 +86,7 @@ n <- 1L
 extremal_index_runs <- function(x, threshold, run_length) {
   assertthat::assert_that(is.numeric(x), length(x) > 1)
   assertthat::assert_that(is.numeric(threshold), length(threshold) == 1)
-  assertthat::assert_that(is.count(run_length))
+  assertthat::assert_that(assertthat::is.count(run_length))
   ix <- threshold_exceedances(x, threshold)
   ce <- cluster_exceedances(ix, run_length)
   n_exc <- length(ix)

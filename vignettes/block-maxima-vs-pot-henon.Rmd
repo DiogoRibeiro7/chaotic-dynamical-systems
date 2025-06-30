@@ -1,0 +1,43 @@
+---
+title: "Block Maxima vs POT for the H\u00e9non Map"
+output: html_document
+---
+
+This vignette compares block maxima and peaks-over-threshold approaches on data generated from the H\u00e9non map.
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Generate H\u00e9non Map Data
+
+```{r}
+library(chaoticds)
+orbit <- simulate_henon_map(5000, a = 1.4, b = 0.3)
+series <- orbit$x
+```
+
+## Block Maxima Analysis
+
+```{r}
+library(chaoticds)
+blocks <- block_maxima(series, block_size = 50)
+gev_fit <- tryCatch(fit_gev(blocks), error = function(e) e)
+print(gev_fit)
+```
+
+## Peaks Over Threshold Analysis
+
+```{r}
+library(chaoticds)
+threshold <- quantile(series, 0.95)
+exc <- exceedances(series, threshold)
+print(length(exc))
+```
+
+Both approaches provide complementary views of the tail behaviour. The block
+maxima method models the distribution of maxima in fixed blocks, while the
+POT approach focuses on exceedances over a high threshold. Comparing the two can
+reveal whether a single GEV model adequately describes extremes of the Hénon
+map.
+
