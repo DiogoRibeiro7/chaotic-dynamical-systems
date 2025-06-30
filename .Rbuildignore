@@ -1,0 +1,6 @@
+^analysis/
+^simulations/
+^extremal-index/
+^run-demo-chaos.R
+^vignettes/
+^SCATHING_CRITIQUE.md
