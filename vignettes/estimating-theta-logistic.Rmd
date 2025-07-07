@@ -1,40 +1,169 @@
 ---
-title: "Estimating \u03b8 for the Logistic Map"
-output: html_document
+title: "Estimating the Extremal Index for the Logistic Map"
+author: "chaoticds package"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+vignette: >
+  %\VignetteIndexEntry{Estimating the Extremal Index for the Logistic Map}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-This vignette demonstrates how to estimate the extremal index of the logistic map using the utilities in this repository.
-
-```{r setup, echo=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
 ```
 
-## Simulate the Logistic Map
+## Introduction
 
-```{r}
+The extremal index $\theta$ is a key parameter in extreme value theory that measures the degree of clustering in extreme events. For a stationary sequence, $\theta \in (0, 1]$ where:
+
+- $\theta = 1$ indicates no clustering (extremes occur in isolation)
+- $\theta < 1$ indicates clustering (extremes tend to occur in groups)
+
+This vignette demonstrates how to estimate $\theta$ for the chaotic logistic map using the **chaoticds** package.
+
+## The Logistic Map
+
+The logistic map is defined as: $x_{n+1} = r x_n (1 - x_n)$
+
+For $r = 3.8$, the map exhibits chaotic behavior with interesting extreme value properties.
+
+```{r simulate}
 library(chaoticds)
-series <- simulate_logistic_map(5000, r = 3.8, x0 = 0.2)
+
+# Load the pre-generated dataset
+data(logistic_ts)
+
+# Basic properties
+cat("Time series length:", length(logistic_ts), "\n")
+cat("Range: [", round(min(logistic_ts), 3), ",", round(max(logistic_ts), 3), "]\n")
+cat("Mean:", round(mean(logistic_ts), 3), "\n")
 ```
 
-## Estimate the Extremal Index
-
-```{r}
-library(chaoticds)
-threshold <- quantile(series, 0.95)
-theta_runs <- extremal_index_runs(series, threshold, run_length = 5)
-theta_intervals <- extremal_index_intervals(series, threshold)
-print(c(runs = theta_runs, intervals = theta_intervals))
+```{r plot-series, fig.cap="Logistic map time series (first 1000 observations)"}
+plot(logistic_ts[1:1000], type = "l", 
+     main = "Logistic Map Time Series (r = 3.8)",
+     xlab = "Time", ylab = "Value")
 ```
 
-## Visualize Hitting Times
+## Threshold Selection
 
-```{r}
-hts <- hitting_times(series, threshold)
-plot_hts(hts)
+Choosing an appropriate threshold is crucial for extremal index estimation. We use diagnostic plots to guide our selection.
+
+```{r threshold-selection}
+# Define candidate thresholds
+thresholds <- quantile(logistic_ts, probs = seq(0.85, 0.98, by = 0.01))
+
+# Mean Residual Life plot for threshold selection
+mrl_data <- mean_residual_life(logistic_ts, thresholds)
 ```
 
-The plot compares empirical hitting-time survival to the theoretical exponential
-curve parameterized by the estimated extremal index. When the logistic map is in
-a chaotic regime (e.g., `r = 3.8`) the empirical behaviour typically aligns well
-with the exponential reference, lending credibility to the estimate.
+```{r mrl-plot, fig.cap="Mean Residual Life plot for threshold selection"}
+mrl_plot(mrl_data)
+```
 
+For this analysis, we'll use the 95th percentile as our threshold:
+
+```{r threshold}
+threshold <- quantile(logistic_ts, 0.95)
+cat("Selected threshold:", round(threshold, 4), "\n")
+
+# Number of exceedances
+exc <- exceedances(logistic_ts, threshold)
+cat("Number of exceedances:", length(exc), "\n")
+cat("Exceedance rate:", round(length(exc)/length(logistic_ts), 3), "\n")
+```
+
+## Extremal Index Estimation
+
+### Runs Estimator
+
+The runs estimator counts clusters based on run lengths:
+
+```{r runs-estimator}
+# Try different run lengths
+run_lengths <- 1:8
+theta_runs_vec <- sapply(run_lengths, function(r) {
+  result <- extremal_index_runs(logistic_ts, threshold, run_length = r)
+  if(length(result) == 0) NA else result
+})
+
+# Display results
+results_df <- data.frame(
+  run_length = run_lengths,
+  theta_estimate = theta_runs_vec
+)
+print(results_df)
+```
+
+### Intervals Estimator
+
+The intervals estimator provides an alternative approach:
+
+```{r intervals-estimator}
+theta_intervals <- extremal_index_intervals(logistic_ts, threshold)
+cat("Intervals estimator result:", theta_intervals, "\n")
+```
+
+## Cluster Analysis
+
+Understanding the structure of extreme clusters provides additional insight:
+
+```{r cluster-analysis}
+# Analyze cluster sizes with smaller run length to find clusters
+sizes <- cluster_sizes(logistic_ts, threshold, run_length = 1)
+
+if(length(sizes) > 0) {
+  cat("Cluster statistics:\n")
+  summary_stats <- cluster_summary(sizes)
+  cat("  Number of clusters:", length(sizes), "\n")
+  cat("  Mean cluster size:", round(summary_stats[["mean_size"]], 2), "\n")
+  cat("  Cluster size variance:", round(summary_stats[["var_size"]], 2), "\n")
+  cat("  Max cluster size:", max(sizes), "\n")
+} else {
+  cat("No clusters found\n")
+}
+```
+
+## Hitting Time Analysis
+
+Hitting times provide another perspective on extremal behavior:
+
+```{r hitting-times}
+# Calculate hitting times
+hts <- hitting_times(logistic_ts, threshold)
+
+if(length(hts) > 0) {
+  cat("Hitting time statistics:\n")
+  cat("  Number of hitting times:", length(hts), "\n")
+  cat("  Mean hitting time:", round(mean(hts), 2), "\n")
+  cat("  Median hitting time:", median(hts), "\n")
+  
+  # Plot hitting times if we have a valid theta estimate
+  valid_theta <- theta_runs_vec[!is.na(theta_runs_vec)]
+  if(length(valid_theta) > 0) {
+    plot_hts(hts, valid_theta[1])
+  }
+}
+```
+
+## Conclusions
+
+This analysis demonstrates the estimation of the extremal index for the chaotic logistic map. The logistic map exhibits complex extreme value behavior that can be characterized using the tools in the **chaoticds** package.
+
+## Further Reading
+
+- Leadbetter, M.R., Lindgren, G., & Rootzén, H. (1983). *Extremes and Related Properties of Random Sequences and Processes*
+- Freitas, A.C.M., Freitas, J.M., & Todd, M. (2010). Hitting time statistics and extreme value theory. *Probability Theory and Related Fields*
+- Lucarini, V. et al. (2016). *Extremes and Recurrence in Dynamical Systems*

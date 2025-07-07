@@ -2,10 +2,26 @@ Package: chaoticds
 Type: Package
 Title: Chaotic Dynamical Systems Utilities
 Version: 0.1.0
-Authors@R: c(person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt", role = c("aut", "cre")))
-Description: Collection of utilities for extreme-value analysis of simple chaotic maps. Includes simulation of logistic and Henon maps and tools for block maxima, POT and extremal index estimation.
-License: MIT
+Author: Diogo Ribeiro <dfr@esmad.ipp.pt>
+Maintainer: Diogo Ribeiro <dfr@esmad.ipp.pt>
+Authors@R: c(person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt", role = c("aut", "cre"), comment = c(ORCID = "0009-0001-2022-7072")))
+Description: Collection of utilities for extreme-value analysis of simple chaotic maps. Includes simulation of logistic and Henon maps and tools for block maxima, peaks-over-threshold (POT) and extremal index estimation. Provides functions for threshold diagnostics, bootstrap confidence intervals, cluster analysis, and mixing condition checks.
+License: MIT + file LICENSE
+URL: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems
+BugReports: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues
 Encoding: UTF-8
 LazyData: true
-Imports: assertthat, ggplot2, evd, evir, ismev, rmarkdown
-Suggests: testthat
+Depends: R (>= 4.0.0)
+Imports: 
+    assertthat,
+    ggplot2,
+    evd,
+    rmarkdown
+Suggests: 
+    testthat (>= 3.0.0),
+    knitr,
+    evir,
+    ismev,
+    pkgdown
+VignetteBuilder: knitr
+RoxygenNote: 7.0.0

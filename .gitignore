@@ -47,3 +47,33 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Log files
+*.log
+
+# Package development
+.devtools/
+revdep/
+
+# renv files (if using renv for development)
+renv/
+.Rprofile
+
+# Benchmarking results
+benchmarks/results/
+benchmarks/*.rds
