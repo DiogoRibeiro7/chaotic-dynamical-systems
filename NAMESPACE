@@ -23,3 +23,28 @@ export(extremal_index_intervals)
 export(hitting_times)
 export(plot_hts)
 export(run_demo)
+# New C++ functions
+export(simulate_logistic_map_cpp)
+export(simulate_henon_map_cpp)
+export(threshold_exceedances_cpp)
+export(cluster_exceedances_cpp)
+# Multi-dimensional extremes
+export(multivariate_exceedances)
+export(extremal_dependence)
+export(adaptive_thresholds)
+export(time_varying_thresholds)
+# Interactive visualization
+export(interactive_attractor)
+export(interactive_timeseries)
+export(launch_chaos_dashboard)
+# Bayesian methods
+export(bayesian_gev)
+export(bayesian_gpd)
+export(bayesian_return_levels)
+# Advanced diagnostics
+export(enhanced_gev_diagnostics)
+export(cv_threshold_selection)
+export(enhanced_bootstrap_ei)
+# Import required functions
+importFrom(Rcpp, evalCpp)
+useDynLib(chaoticds, .registration=TRUE)

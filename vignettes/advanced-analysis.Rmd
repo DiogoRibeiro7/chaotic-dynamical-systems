@@ -1,0 +1,379 @@
+---
+title: "Advanced Features in chaoticds: Multi-dimensional Extremes and Interactive Analysis"
+author: "chaoticds package"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+    code_folding: show
+vignette: >
+  %\VignetteIndexEntry{Advanced Features in chaoticds}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 6,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+This vignette demonstrates the advanced features of the `chaoticds` package, including multi-dimensional extreme value analysis, interactive visualizations, Bayesian methods, and enhanced diagnostics. These features make the package suitable for cutting-edge research in extreme value analysis of chaotic dynamical systems.
+
+```{r load-packages}
+library(chaoticds)
+library(ggplot2)
+
+# Set seed for reproducibility
+set.seed(12345)
+```
+
+## Multi-dimensional Extreme Value Analysis
+
+### Coupled Chaotic Systems
+
+Many real-world systems exhibit coupling between components. We can analyze extremes in such systems using multivariate methods.
+
+```{r coupled-logistic}
+# Load coupled logistic map data
+data("coupled_logistic", package = "chaoticds")
+
+# Visualize the coupled system
+plot(coupled_logistic$x1, coupled_logistic$x2, 
+     pch = ".", cex = 0.5,
+     main = "Coupled Logistic Maps", 
+     xlab = "x1", ylab = "x2")
+```
+
+### Multivariate Threshold Exceedances
+
+We can identify exceedances using different methods:
+
+```{r multivariate-exceedances}
+# Set thresholds for both components
+thresholds <- c(quantile(coupled_logistic$x1, 0.95),
+                quantile(coupled_logistic$x2, 0.95))
+
+# Component-wise exceedances
+exc_comp <- multivariate_exceedances(coupled_logistic, thresholds, 
+                                     method = "componentwise")
+cat("Component-wise exceedances:", exc_comp$n_exceedances, "\n")
+
+# Radial exceedances  
+exc_radial <- multivariate_exceedances(coupled_logistic, thresholds, 
+                                       method = "radial")
+cat("Radial exceedances:", exc_radial$n_exceedances, "\n")
+
+# Visualize exceedances
+plot(coupled_logistic$x1, coupled_logistic$x2, 
+     pch = ".", col = "lightgray", cex = 0.5,
+     main = "Multivariate Exceedances")
+points(exc_comp$exceedances[, 1], exc_comp$exceedances[, 2], 
+       col = "red", pch = 16, cex = 0.8)
+abline(v = thresholds[1], h = thresholds[2], col = "blue", lty = 2)
+legend("topleft", c("All points", "Exceedances", "Thresholds"),
+       col = c("lightgray", "red", "blue"), 
+       pch = c(16, 16, NA), lty = c(NA, NA, 2))
+```
+
+### Extremal Dependence
+
+For bivariate data, we can measure extremal dependence:
+
+```{r extremal-dependence}
+# Use bivariate normal data for demonstration
+data("mv_normal", package = "chaoticds")
+
+# Chi statistic
+chi_result <- extremal_dependence(mv_normal, method = "chi", quantile_level = 0.95)
+cat("Chi statistic:", round(chi_result$chi, 3), "\n")
+
+# Chi-bar statistic
+chibar_result <- extremal_dependence(mv_normal, method = "chibar", quantile_level = 0.95)
+cat("Chi-bar statistic:", round(chibar_result$chi_bar, 3), "\n")
+```
+
+### Time-varying Thresholds
+
+For non-stationary systems, we can use adaptive thresholds:
+
+```{r time-varying-thresholds}
+# Load temperature anomalies data (environmental example)
+data("temperature_anomalies", package = "chaoticds")
+
+# Calculate time-varying thresholds
+moving_thresholds <- time_varying_thresholds(temperature_anomalies, 
+                                             window_size = 365,  # 1 year window
+                                             quantile_level = 0.95,
+                                             method = "moving")
+
+# Plot the time series with varying thresholds
+plot(temperature_anomalies, type = "l", col = "gray",
+     main = "Temperature Anomalies with Time-varying Thresholds",
+     ylab = "Temperature Anomaly", xlab = "Time")
+lines(moving_thresholds, col = "red", lwd = 2)
+legend("topleft", c("Temperature", "95% threshold"), 
+       col = c("gray", "red"), lty = 1, lwd = c(1, 2))
+```
+
+## Interactive Visualizations
+
+### Interactive Attractor Plots
+
+```{r interactive-attractor, eval=FALSE}
+# Interactive 2D attractor (Hénon map)
+data("henon_classic", package = "chaoticds")
+
+if (requireNamespace("plotly", quietly = TRUE)) {
+  # Create interactive plot
+  p <- interactive_attractor(henon_classic, title = "Hénon Attractor (Interactive)")
+  p  # This would display the interactive plot
+}
+```
+
+### Interactive Time Series with Extremes
+
+```{r interactive-timeseries, eval=FALSE}
+# Interactive time series plot
+data("logistic_chaotic", package = "chaoticds")
+
+if (requireNamespace("plotly", quietly = TRUE)) {
+  threshold <- quantile(logistic_chaotic, 0.95)
+  
+  p <- interactive_timeseries(logistic_chaotic, 
+                              threshold = threshold,
+                              title = "Logistic Map with Extreme Events")
+  p  # This would display the interactive plot
+}
+```
+
+### Launching the Interactive Dashboard
+
+```{r dashboard, eval=FALSE}
+# Launch interactive dashboard for exploration
+if (requireNamespace("shiny", quietly = TRUE)) {
+  # This would launch a Shiny app
+  launch_chaos_dashboard(launch = FALSE)  # Set to TRUE to actually launch
+}
+```
+
+## Bayesian Extreme Value Analysis
+
+### Bayesian GEV Estimation
+
+```{r bayesian-gev}
+# Generate block maxima
+data("logistic_chaotic", package = "chaoticds")
+block_maxima_data <- block_maxima(logistic_chaotic, block_size = 50)
+
+# Bayesian GEV estimation
+bayesian_result <- bayesian_gev(block_maxima_data, 
+                                n_iter = 1000, 
+                                n_warmup = 500,
+                                method = "metropolis")
+
+# Display results
+print(bayesian_result$summary)
+cat("Acceptance rate:", round(bayesian_result$acceptance_rate, 3), "\n")
+
+# Plot posterior samples
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  samples_df <- as.data.frame(bayesian_result$samples)
+  samples_df$iteration <- 1:nrow(samples_df)
+  
+  # Trace plot for location parameter
+  p1 <- ggplot(samples_df, aes(x = iteration, y = location)) +
+    geom_line() +
+    labs(title = "Posterior Trace: Location Parameter",
+         x = "Iteration", y = "Location") +
+    theme_minimal()
+  
+  print(p1)
+}
+```
+
+### Bayesian Return Level Estimation
+
+```{r bayesian-return-levels}
+# Estimate return levels with uncertainty
+return_periods <- c(10, 50, 100, 500)
+return_levels <- bayesian_return_levels(bayesian_result$samples, 
+                                        return_periods, 
+                                        model = "gev")
+
+print(return_levels)
+
+# Plot return levels with credible intervals
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  p2 <- ggplot(return_levels, aes(x = return_period)) +
+    geom_ribbon(aes(ymin = q025, ymax = q975), alpha = 0.3, fill = "blue") +
+    geom_line(aes(y = mean), color = "blue", size = 1) +
+    geom_point(aes(y = mean), color = "blue", size = 2) +
+    scale_x_log10() +
+    labs(title = "Bayesian Return Level Estimates",
+         x = "Return Period", y = "Return Level",
+         subtitle = "Blue ribbon: 95% credible interval") +
+    theme_minimal()
+  
+  print(p2)
+}
+```
+
+## Enhanced Diagnostics
+
+### Comprehensive Model Diagnostics
+
+```{r enhanced-diagnostics}
+# Fit classical GEV for comparison
+gev_fit <- fit_gev(block_maxima_data)
+
+# Enhanced diagnostics
+diagnostics <- enhanced_gev_diagnostics(block_maxima_data, gev_fit, 
+                                        return_plots = TRUE)
+
+# Display diagnostic statistics
+cat("AIC:", round(diagnostics$diagnostics$aic, 2), "\n")
+cat("BIC:", round(diagnostics$diagnostics$bic, 2), "\n")
+cat("KS test p-value:", round(diagnostics$diagnostics$ks_test$p.value, 4), "\n")
+
+# Display return level estimates
+print(diagnostics$diagnostics$return_levels)
+```
+
+### Cross-validation for Threshold Selection
+
+```{r cv-threshold}
+# Cross-validation for optimal threshold selection
+cv_result <- cv_threshold_selection(logistic_chaotic, 
+                                    thresholds = NULL,  # Use default grid
+                                    k_fold = 5, 
+                                    criterion = "loglik")
+
+cat("Optimal threshold:", round(cv_result$optimal_threshold, 4), "\n")
+
+# Plot CV scores
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  cv_df <- data.frame(
+    threshold = cv_result$thresholds,
+    score = cv_result$mean_scores
+  )
+  
+  p3 <- ggplot(cv_df, aes(x = threshold, y = score)) +
+    geom_line() +
+    geom_point() +
+    geom_vline(xintercept = cv_result$optimal_threshold, 
+               color = "red", linetype = "dashed") +
+    labs(title = "Cross-validation Threshold Selection",
+         x = "Threshold", y = "CV Log-likelihood",
+         subtitle = "Red line: optimal threshold") +
+    theme_minimal()
+  
+  print(p3)
+}
+```
+
+### Enhanced Bootstrap Confidence Intervals
+
+```{r enhanced-bootstrap}
+# Enhanced bootstrap for extremal index
+threshold <- cv_result$optimal_threshold
+bootstrap_ei <- enhanced_bootstrap_ei(logistic_chaotic, 
+                                      threshold,
+                                      method = "runs",
+                                      n_bootstrap = 500,
+                                      confidence_level = 0.95)
+
+cat("Extremal index estimate:", round(bootstrap_ei$estimate, 4), "\n")
+cat("Basic CI:", round(bootstrap_ei$ci_basic, 4), "\n")
+cat("BCa CI:", round(bootstrap_ei$ci_bca, 4), "\n")
+
+# Plot bootstrap distribution
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  bootstrap_df <- data.frame(estimate = bootstrap_ei$bootstrap_estimates)
+  
+  p4 <- ggplot(bootstrap_df, aes(x = estimate)) +
+    geom_histogram(bins = 30, alpha = 0.7, fill = "lightblue") +
+    geom_vline(xintercept = bootstrap_ei$estimate, color = "red", size = 1) +
+    geom_vline(xintercept = bootstrap_ei$ci_bca, color = "blue", 
+               linetype = "dashed", size = 1) +
+    labs(title = "Bootstrap Distribution of Extremal Index",
+         x = "Extremal Index", y = "Frequency",
+         subtitle = "Red: estimate, Blue: 95% BCa CI") +
+    theme_minimal()
+  
+  print(p4)
+}
+```
+
+## Performance Comparison
+
+### C++ vs R Implementation Speed
+
+```{r performance-comparison, eval=FALSE}
+# Compare C++ and R implementations
+if (requireNamespace("Rcpp", quietly = TRUE)) {
+  n_large <- 50000
+  
+  # Benchmark simulations
+  time_r <- system.time({
+    sim_r <- simulate_logistic_map(n_large, 3.8, 0.2)
+  })
+  
+  time_cpp <- system.time({
+    sim_cpp <- simulate_logistic_map_cpp(n_large, 3.8, 0.2)
+  })
+  
+  cat("R implementation time:", time_r[3], "seconds\n")
+  cat("C++ implementation time:", time_cpp[3], "seconds\n")
+  cat("Speedup factor:", round(time_r[3] / time_cpp[3], 2), "x\n")
+  
+  # Verify identical results
+  cat("Results identical:", all.equal(sim_r, sim_cpp), "\n")
+}
+```
+
+## Practical Recommendations
+
+### When to Use Different Methods
+
+1. **Multi-dimensional Analysis**: Use when analyzing coupled systems or multiple variables
+2. **Interactive Visualizations**: For exploratory data analysis and presentations
+3. **Bayesian Methods**: When uncertainty quantification is crucial or prior information is available
+4. **Enhanced Diagnostics**: For rigorous model validation and threshold selection
+5. **C++ Implementations**: For large-scale simulations or real-time applications
+
+### Best Practices
+
+- Start with exploratory interactive plots to understand your data
+- Use cross-validation for objective threshold selection
+- Compare classical and Bayesian approaches for robustness
+- Always validate models with comprehensive diagnostics
+- Consider computational efficiency for large datasets
+
+## Conclusion
+
+The advanced features in `chaoticds` provide a comprehensive toolkit for modern extreme value analysis in chaotic systems. These methods enable:
+
+- **Rigorous analysis** of complex, multi-dimensional systems
+- **Interactive exploration** of data and results
+- **Uncertainty quantification** through Bayesian methods
+- **Robust model validation** with enhanced diagnostics
+- **Computational efficiency** through optimized implementations
+
+These capabilities make the package suitable for both research and practical applications in extreme value analysis of chaotic dynamical systems.
+
+## Further Reading
+
+- Coles, S. (2001). An Introduction to Statistical Modeling of Extreme Values. Springer.
+- de Haan, L. and Ferreira, A. (2006). Extreme Value Theory: An Introduction. Springer.
+- Ferro, C.A.T. and Segers, J. (2003). Inference for clusters of extreme values. JRSS-B, 65, 545-556.
+- Süveges, M. (2007). Likelihood estimation of the extremal index. Extremes, 10, 41-55.

@@ -16,12 +16,30 @@ Imports:
     assertthat,
     ggplot2,
     evd,
-    rmarkdown
+    rmarkdown,
+    parallel,
+    stats,
+    graphics,
+    grDevices
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
     evir,
     ismev,
-    pkgdown
+    pkgdown,
+    Rcpp (>= 1.0.0),
+    RcppArmadillo,
+    plotly,
+    shiny,
+    shinydashboard,
+    DT,
+    foreach,
+    doParallel,
+    VineCopula,
+    copula,
+    rstan,
+    covr,
+    lintr,
+    renv
 VignetteBuilder: knitr
 RoxygenNote: 7.0.0
