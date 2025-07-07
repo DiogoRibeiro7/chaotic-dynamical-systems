@@ -2,22 +2,52 @@ name: R-CMD-check
 
 on:
   push:
-    branches: [ main, work ]
+    branches: [ main, work, develop ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   R-CMD-check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
+    
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'devel'}
+          - {os: windows-latest, r: 'release'}
+          - {os: macOS-latest, r: 'release'}
+    
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
+      - uses: r-lib/actions/setup-pandoc@v2
+      
       - uses: r-lib/actions/setup-r@v2
-      - name: Install dependencies
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+          
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+          
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          
+      - name: Test coverage
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
         run: |
-          install.packages('remotes')
-          remotes::install_deps('.', dependencies = TRUE)
-      - name: Check
-        run: |
-          R CMD check --no-manual --as-cran
-      - name: Test package
-        run: |
-          Rscript -e 'testthat::test_dir("tests/testthat")'
+          install.packages("covr")
+          covr::codecov(quiet = FALSE)
+        shell: Rscript {0}
