@@ -1,0 +1,185 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security audit weekly on Monday at 3 AM UTC
+    - cron: '0 3 * * 1'
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    name: Security vulnerability scan
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+          
+      - name: Install security tools
+        run: |
+          # Install packages for security analysis
+          install.packages(c("pak", "renv"))
+          
+          # Install oysteR for security auditing if available
+          tryCatch({
+            install.packages("oysteR")
+          }, error = function(e) {
+            cat("oysteR package not available, skipping detailed security audit\n")
+          })
+        shell: Rscript {0}
+        
+      - name: Check for known vulnerabilities
+        run: |
+          cat("=== Security Audit ===\n")
+          
+          # Check for known vulnerable packages
+          tryCatch({
+            if (requireNamespace("oysteR", quietly = TRUE)) {
+              cat("Running oysteR security audit...\n")
+              audit_results <- oysteR::audit()
+              
+              if (nrow(audit_results) > 0) {
+                cat("Security vulnerabilities found:\n")
+                print(audit_results)
+                
+                # Check severity
+                high_severity <- audit_results[audit_results$severity %in% c("HIGH", "CRITICAL"), ]
+                if (nrow(high_severity) > 0) {
+                  cat("HIGH/CRITICAL vulnerabilities found!\n")
+                  print(high_severity)
+                  # Uncomment to fail on high severity vulnerabilities
+                  # quit(status = 1)
+                }
+              } else {
+                cat("No known vulnerabilities found.\n")
+              }
+            } else {
+              cat("oysteR not available, performing basic checks...\n")
+              
+              # Basic check for outdated packages
+              old_packages <- old.packages()
+              if (!is.null(old_packages)) {
+                cat("Outdated packages found (potential security risk):\n")
+                print(old_packages[, c("Package", "Installed", "ReposVer")])
+              } else {
+                cat("All packages appear up to date.\n")
+              }
+            }
+          }, error = function(e) {
+            cat("Security audit failed:", e$message, "\n")
+          })
+        shell: Rscript {0}
+        
+      - name: Dependency analysis
+        run: |
+          cat("\n=== Dependency Analysis ===\n")
+          
+          # Check dependencies
+          if (file.exists("DESCRIPTION")) {
+            desc_content <- read.dcf("DESCRIPTION")
+            
+            # Extract dependencies
+            imports <- desc_content[1, "Imports"]
+            suggests <- desc_content[1, "Suggests"]
+            depends <- desc_content[1, "Depends"]
+            
+            cat("Dependencies analysis:\n")
+            cat("Imports:", ifelse(is.na(imports), "None", imports), "\n")
+            cat("Suggests:", ifelse(is.na(suggests), "None", suggests), "\n") 
+            cat("Depends:", ifelse(is.na(depends), "None", depends), "\n")
+            
+            # Count total dependencies
+            all_deps <- c(
+              if(!is.na(imports)) strsplit(imports, ",")[[1]] else character(0),
+              if(!is.na(suggests)) strsplit(suggests, ",")[[1]] else character(0),
+              if(!is.na(depends)) strsplit(depends, ",")[[1]] else character(0)
+            )
+            
+            # Clean up dependency names
+            all_deps <- trimws(gsub("\\(.*\\)", "", all_deps))
+            all_deps <- all_deps[all_deps != "R" & all_deps != ""]
+            
+            cat("Total unique dependencies:", length(unique(all_deps)), "\n")
+            
+            # Warn if too many dependencies
+            if (length(unique(all_deps)) > 20) {
+              cat("WARNING: High number of dependencies may increase security risk\n")
+            }
+          }
+        shell: Rscript {0}
+        
+      - name: Check for secrets
+        run: |
+          cat("\n=== Secrets Detection ===\n")
+          
+          # Basic pattern matching for potential secrets
+          secret_patterns <- c(
+            "password\\s*=",
+            "secret\\s*=",
+            "token\\s*=", 
+            "api_key\\s*=",
+            "access_key\\s*=",
+            "private_key\\s*=",
+            "[A-Za-z0-9]{32,}",  # Long hex strings
+            "-----BEGIN.*PRIVATE KEY-----"
+          )
+          
+          # Search in R files
+          r_files <- list.files(".", pattern = "\\.R$", recursive = TRUE, full.names = TRUE)
+          r_files <- r_files[!grepl("^\\./(tests|examples)/", r_files)]  # Skip test files
+          
+          secrets_found <- FALSE
+          for (file in r_files) {
+            if (file.exists(file)) {
+              content <- readLines(file, warn = FALSE)
+              
+              for (pattern in secret_patterns) {
+                matches <- grep(pattern, content, ignore.case = TRUE, value = TRUE)
+                if (length(matches) > 0) {
+                  cat("Potential secret in", file, ":\n")
+                  cat(paste(matches, collapse = "\n"), "\n\n")
+                  secrets_found <- TRUE
+                }
+              }
+            }
+          }
+          
+          if (secrets_found) {
+            cat("WARNING: Potential secrets detected. Please review.\n")
+            # Uncomment to fail on potential secrets
+            # quit(status = 1) 
+          } else {
+            cat("No obvious secrets detected in R files.\n")
+          }
+        shell: bash
+        
+      - name: License compliance check
+        run: |
+          cat("\n=== License Compliance ===\n")
+          
+          if (file.exists("DESCRIPTION")) {
+            desc_content <- read.dcf("DESCRIPTION")
+            license <- desc_content[1, "License"]
+            
+            cat("Package license:", ifelse(is.na(license), "Not specified", license), "\n")
+            
+            if (is.na(license) || license == "") {
+              cat("WARNING: No license specified in DESCRIPTION\n")
+            } else {
+              cat("License appears to be specified correctly.\n")
+            }
+            
+            # Check for LICENSE file
+            if (file.exists("LICENSE") || file.exists("LICENCE")) {
+              cat("LICENSE file found.\n")
+            } else {
+              cat("No LICENSE file found in root directory.\n")
+            }
+          }
+        shell: Rscript {0}

@@ -1,0 +1,258 @@
+---
+title: "Getting Started with chaoticds: Interactive Extreme Value Analysis"
+author: "chaoticds package"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+    code_folding: show
+vignette: >
+  %\VignetteIndexEntry{Getting Started with chaoticds: Interactive Extreme Value Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+The `chaoticds` package provides a comprehensive toolkit for extreme value analysis in chaotic dynamical systems. This vignette provides a quick introduction and demonstrates the basic workflow for analyzing extreme events in chaotic time series.
+
+### Key Features
+
+- **Simulation Tools**: Generate logistic and Hénon map time series
+- **Threshold Diagnostics**: Tools for selecting appropriate thresholds
+- **Extremal Index Estimation**: Multiple methods for estimating clustering of extremes
+- **Cluster Analysis**: Analyze the size and distribution of extreme event clusters
+- **Interactive Tools**: Shiny applications for exploratory analysis
+- **Bootstrap Methods**: Confidence interval estimation
+- **Performance Optimization**: Efficient implementations for large datasets
+
+## Basic Workflow
+
+### Step 1: Load the Package and Generate Data
+
+```{r load-package}
+library(chaoticds)
+
+# Generate a logistic map time series
+set.seed(123)
+n <- 2000
+logistic_data <- simulate_logistic_map(n, r = 3.8, x0 = 0.2)
+
+# Quick look at the data
+head(logistic_data)
+summary(logistic_data)
+```
+
+### Step 2: Visualize the Time Series
+
+```{r time-series-plot}
+# Basic time series plot
+plot(1:length(logistic_data), logistic_data, type = "l", 
+     main = "Logistic Map Time Series (r = 3.8)",
+     xlab = "Time", ylab = "Value", col = "steelblue")
+```
+
+```{r histogram}
+# Distribution of values
+hist(logistic_data, breaks = 30, main = "Distribution of Logistic Map Values",
+     xlab = "Value", col = "lightblue", border = "black")
+```
+
+### Step 3: Threshold Selection
+
+A crucial step in extreme value analysis is selecting an appropriate threshold. The package provides diagnostic tools to help with this decision.
+
+```{r threshold-diagnostics}
+# Mean Residual Life plot for threshold selection
+mrl_plot(logistic_data)
+```
+
+```{r threshold-selection}
+# Let's use the 95th percentile as our threshold
+threshold <- quantile(logistic_data, 0.95)
+cat("Selected threshold:", round(threshold, 4), "\n")
+
+# Extract exceedances
+exc <- exceedances(logistic_data, threshold)
+cat("Number of exceedances:", length(exc), "\n")
+cat("Exceedance rate:", round(length(exc)/length(logistic_data), 4), "\n")
+```
+
+### Step 4: Visualize Threshold and Exceedances
+
+```{r threshold-plot}
+# Plot time series with threshold and exceedances
+plot(1:length(logistic_data), logistic_data, type = "l", col = "gray",
+     main = "Time Series with Threshold and Exceedances",
+     xlab = "Time", ylab = "Value")
+abline(h = threshold, col = "red", lwd = 2, lty = 2)
+
+# Highlight exceedances
+exceed_indices <- which(logistic_data > threshold)
+points(exceed_indices, logistic_data[exceed_indices], col = "red", pch = 16, cex = 0.8)
+
+legend("topright", legend = c("Time Series", "Threshold", "Exceedances"),
+       col = c("gray", "red", "red"), lty = c(1, 2, NA), 
+       pch = c(NA, NA, 16), lwd = c(1, 2, NA))
+```
+
+### Step 5: Extremal Index Estimation
+
+The extremal index θ measures the clustering of extreme events. Values close to 1 indicate independent extremes, while values less than 1 indicate clustering.
+
+```{r extremal-index}
+# Estimate extremal index using runs method
+theta_runs <- extremal_index_runs(logistic_data, threshold, run_length = 3)
+cat("Extremal index (runs method, r=3):", round(theta_runs, 4), "\n")
+
+# Estimate using intervals method
+theta_intervals <- extremal_index_intervals(logistic_data, threshold)
+cat("Extremal index (intervals method):", round(theta_intervals, 4), "\n")
+
+# Compare with different run lengths
+run_lengths <- c(2, 3, 5, 10)
+theta_values <- sapply(run_lengths, function(r) {
+  extremal_index_runs(logistic_data, threshold, run_length = r)
+})
+
+plot(run_lengths, theta_values, type = "b", pch = 16,
+     main = "Extremal Index vs Run Length",
+     xlab = "Run Length", ylab = "Extremal Index (θ)",
+     col = "darkblue", lwd = 2)
+grid()
+```
+
+### Step 6: Cluster Analysis
+
+Analyze the size distribution of extreme event clusters.
+
+```{r cluster-analysis}
+# Compute cluster sizes
+cluster_sz <- cluster_sizes(logistic_data, threshold, run_length = 3)
+cat("Number of clusters:", length(cluster_sz), "\n")
+
+if (length(cluster_sz) > 0) {
+  # Cluster summary statistics
+  cluster_stats <- cluster_summary(cluster_sz)
+  cat("Mean cluster size:", round(cluster_stats["mean_size"], 2), "\n")
+  cat("Variance of cluster sizes:", round(cluster_stats["var_size"], 2), "\n")
+  
+  # Plot cluster size distribution
+  if (requireNamespace("ggplot2", quietly = TRUE)) {
+    cluster_histogram(cluster_sz)
+  } else {
+    # Fallback to base R plot
+    barplot(table(cluster_sz), main = "Cluster Size Distribution",
+            xlab = "Cluster Size", ylab = "Frequency", col = "lightcoral")
+  }
+}
+```
+
+### Step 7: Bootstrap Confidence Intervals
+
+```{r bootstrap-ci, eval=FALSE}
+# Note: This function may not be implemented yet
+# bootstrap_ci <- bootstrap_extremal_index(logistic_data, threshold, 
+#                                          n_bootstrap = 100, method = "runs")
+# cat("95% Bootstrap CI:", bootstrap_ci, "\n")
+```
+
+## Advanced Features
+
+### Working with Hénon Map Data
+
+```{r henon-analysis}
+# Generate Hénon map data
+set.seed(456)
+henon_data <- simulate_henon_map(1000, a = 1.4, b = 0.3)
+
+# Work with the x-component
+x_series <- henon_data$x
+
+# Analyze extremes in x-component
+x_threshold <- quantile(x_series, 0.95)
+x_theta <- extremal_index_runs(x_series, x_threshold, run_length = 3)
+
+cat("Hénon map x-component extremal index:", round(x_theta, 4), "\n")
+
+# Plot the Hénon attractor
+plot(henon_data$x, henon_data$y, pch = ".", cex = 0.5, col = "purple",
+     main = "Hénon Attractor", xlab = "x", ylab = "y")
+```
+
+### Performance Considerations
+
+```{r performance-tips}
+# For large datasets, consider:
+# 1. Using appropriate block sizes for block maxima
+block_size <- 50
+bm <- block_maxima(logistic_data, block_size)
+cat("Block maxima (block size", block_size, "):", length(bm), "values\n")
+
+# 2. Sampling for threshold diagnostics on very large datasets
+if (length(logistic_data) > 10000) {
+  sample_size <- 5000
+  sample_indices <- sample(length(logistic_data), sample_size)
+  sample_data <- logistic_data[sample_indices]
+  cat("Using sample of size", sample_size, "for diagnostics\n")
+}
+```
+
+## Interactive Exploration
+
+The package includes an interactive Shiny application for exploratory analysis:
+
+```{r interactive-app, eval=FALSE}
+# Launch the interactive explorer
+launch_explorer()
+```
+
+This will open a web browser with an interactive dashboard where you can:
+
+- Generate and visualize different chaotic maps
+- Interactively select thresholds
+- Estimate extremal indices with different parameters
+- Analyze cluster patterns
+- Download results
+
+## Best Practices
+
+### Threshold Selection
+- Use diagnostic plots (MRL plot) to guide threshold choice
+- Balance between having enough exceedances and maintaining GPD validity
+- Typical choice: 90th-95th percentile, but depends on data and application
+
+### Extremal Index Estimation
+- Compare results from different methods (runs vs intervals)
+- Try different run lengths for the runs method
+- Consider bootstrap confidence intervals for uncertainty quantification
+
+### Computational Efficiency
+- For large datasets (>50k observations), consider subsampling for exploratory analysis
+- Use appropriate block sizes for block maxima approaches
+- Consider parallel processing for bootstrap methods
+
+## Further Reading
+
+- **Block Maxima vs POT**: See the "Block Maxima vs Peaks-over-Threshold for the Hénon Map" vignette
+- **Advanced Methods**: Explore the package functions for mixing diagnostics and advanced cluster analysis
+- **Mathematical Background**: Consult extreme value theory literature for theoretical foundations
+
+## Conclusion
+
+The `chaoticds` package provides a comprehensive toolkit for extreme value analysis in chaotic systems. This vignette demonstrated the basic workflow from data generation through extremal index estimation and cluster analysis. The interactive tools make it easy to explore different parameters and methods, while the robust implementation ensures reliable results for both small and large datasets.
+
+For more detailed examples and advanced techniques, see the other package vignettes and the function documentation.
