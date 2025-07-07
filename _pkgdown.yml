@@ -1,0 +1,103 @@
+url: https://diogoribeiro7.github.io/chaotic-dynamical-systems/
+template:
+  bootstrap: 5
+
+home:
+  title: "Chaotic Dynamical Systems"
+  description: >
+    R package for extreme value analysis of chaotic dynamical systems.
+    Provides tools for simulation, extreme value modeling, and statistical analysis.
+
+reference:
+- title: "Simulation Functions"
+  desc: "Functions for generating chaotic time series"
+  contents:
+  - simulate_logistic_map
+  - simulate_henon_map
+
+- title: "Extreme Value Analysis"
+  desc: "Core extreme value theory functions"
+  contents:
+  - block_maxima
+  - exceedances
+  - fit_gev
+  - fit_gpd
+
+- title: "Threshold Diagnostics"
+  desc: "Tools for threshold selection and validation"
+  contents:
+  - mean_residual_life
+  - mrl_plot
+  - hill_estimates
+  - hill_plot
+  - threshold_diagnostics
+
+- title: "Extremal Index Estimation"
+  desc: "Functions for estimating the extremal index"
+  contents:
+  - extremal_index_runs
+  - extremal_index_intervals
+  - threshold_exceedances
+  - cluster_exceedances
+  - hitting_times
+  - plot_hts
+
+- title: "Cluster Analysis"
+  desc: "Tools for analyzing extreme event clustering"
+  contents:
+  - cluster_sizes
+  - cluster_summary
+  - cluster_histogram
+
+- title: "Statistical Diagnostics"
+  desc: "Functions for assessing mixing and dependence"
+  contents:
+  - acf_decay
+  - mixing_coefficients
+  - d_check
+
+- title: "Bootstrap Methods"
+  desc: "Uncertainty quantification for extremal index"
+  contents:
+  - bootstrap_extremal_index
+
+- title: "Comprehensive Analysis"
+  desc: "High-level analysis functions"
+  contents:
+  - run_demo
+
+- title: "Example Datasets"
+  desc: "Built-in datasets for demonstrations"
+  contents:
+  - logistic_ts
+  - henon_ts
+  - ar1_ts
+
+articles:
+- title: "Vignettes"
+  navbar: ~
+  contents:
+  - estimating-theta-logistic
+  - block-maxima-vs-pot-henon
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    articles:
+      text: "Vignettes"
+      menu:
+      - text: "Extremal Index for Logistic Map"
+        href: articles/estimating-theta-logistic.html
+      - text: "Block Maxima vs POT for Hénon Map"
+        href: articles/block-maxima-vs-pot-henon.html
+
+news:
+  releases:
+  - text: "Version 0.1.0"
+    href: news/index.html
+
+authors:
+  Diogo Ribeiro:
+    href: "https://orcid.org/0009-0001-2022-7072"
