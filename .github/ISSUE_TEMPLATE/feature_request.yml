@@ -1,0 +1,103 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for the package
+title: "[Feature]: "
+labels: ["enhancement", "feature-request"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new feature! Please provide as much detail as possible.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of what the problem is.
+      placeholder: I'm always frustrated when...
+    validations:
+      required: false
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: A clear and concise description of any alternative solutions or features you've considered.
+    validations:
+      required: false
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Describe the specific use case or application where this feature would be helpful.
+      placeholder: |
+        For example:
+        - Analyzing extreme events in financial time series
+        - Studying climate extremes in temperature data
+        - Investigating rare events in physical systems
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation ideas
+      description: If you have ideas about how this could be implemented, please share them here.
+      placeholder: |
+        For example:
+        - New function names and signatures
+        - Required dependencies
+        - Algorithm references
+    validations:
+      required: false
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature category
+      description: What category does this feature fall into?
+      options:
+        - Simulation functions
+        - Extreme value analysis
+        - Threshold diagnostics
+        - Extremal index estimation
+        - Cluster analysis
+        - Statistical diagnostics
+        - Bootstrap methods
+        - Visualization
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would be helpful
+        - High - Critical for my work
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context, references, or links about the feature request here.
+      placeholder: |
+        For example:
+        - Links to relevant papers or documentation
+        - Screenshots or mockups
+        - Related packages or implementations

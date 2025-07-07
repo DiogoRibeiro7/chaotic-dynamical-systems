@@ -1,0 +1,79 @@
+name: Documentation Issue
+description: Report problems or suggest improvements to documentation
+title: "[Docs]: "
+labels: ["documentation"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation! Please provide as much detail as possible.
+
+  - type: dropdown
+    id: location
+    attributes:
+      label: Location of the issue
+      description: Where in the documentation is the issue?
+      options:
+        - Function documentation
+        - Vignette
+        - README
+        - Package website
+        - NEWS.md
+        - CONTRIBUTING.md
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: specific-location
+    attributes:
+      label: Specific location
+      description: Please specify the exact location (e.g., function name, vignette title, section)
+      placeholder: e.g., simulate_logistic_map() function, "Extremal Index for Logistic Map" vignette
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: issue-type
+    attributes:
+      label: Type of documentation issue
+      description: What type of issue is this? (select all that apply)
+      options:
+        - label: Typo or grammatical error
+        - label: Unclear explanation
+        - label: Missing information
+        - label: Incorrect information
+        - label: Missing example
+        - label: Example doesn't work
+        - label: Broken link
+        - label: Formatting issue
+        - label: Missing cross-references
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear description of the documentation issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-text
+    attributes:
+      label: Current text
+      description: If applicable, paste the current problematic text here.
+      render: markdown
+
+  - type: textarea
+    id: suggested-improvement
+    attributes:
+      label: Suggested improvement
+      description: If you have suggestions for how to improve the documentation, please share them here.
+      render: markdown
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context, screenshots, or references about the documentation issue here.
