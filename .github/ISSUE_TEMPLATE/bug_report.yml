@@ -1,0 +1,98 @@
+name: Bug Report
+description: Report a bug to help us improve the package
+title: "[Bug]: "
+labels: ["bug", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: Tell us what happened!
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Please provide detailed steps to reproduce the behavior
+      placeholder: |
+        1. Load the package with '...'
+        2. Run function '....'
+        3. With parameters '....'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reprex
+    attributes:
+      label: Minimal reproducible example
+      description: Please provide a minimal reproducible example
+      render: r
+      placeholder: |
+        library(chaoticds)
+        # Your code here
+    validations:
+      required: true
+
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message
+      description: If applicable, paste the complete error message
+      render: shell
+      placeholder: Error message here
+
+  - type: textarea
+    id: session-info
+    attributes:
+      label: Session info
+      description: Please paste the output of `sessionInfo()`
+      render: r
+      placeholder: sessionInfo()
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other (please specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: r-version
+    attributes:
+      label: R Version
+      description: What version of R are you using?
+      placeholder: e.g., R 4.3.2
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.

@@ -1,0 +1,109 @@
+name: Question
+description: Ask a question about the package usage or methodology
+title: "[Question]: "
+labels: ["question", "help-wanted"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your question! Please provide as much context as possible to help us give you the best answer.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Question category
+      description: What category does your question fall into?
+      options:
+        - Package installation and setup
+        - Function usage and syntax
+        - Mathematical theory and methodology
+        - Data preparation and analysis workflow
+        - Interpretation of results
+        - Performance and computational issues
+        - Comparison with other packages or methods
+        - General extreme value analysis
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Please ask your question as clearly as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and background
+      description: |
+        Provide any relevant context about your research, data, or application.
+        This helps us give more targeted advice.
+      placeholder: |
+        For example:
+        - What type of data are you working with?
+        - What is your research goal?
+        - What have you tried so far?
+    validations:
+      required: false
+
+  - type: textarea
+    id: code-attempted
+    attributes:
+      label: Code you've tried (if applicable)
+      description: If you've attempted to write code, please share it here.
+      render: r
+      placeholder: |
+        library(chaoticds)
+        # Your code here
+
+  - type: textarea
+    id: expected-outcome
+    attributes:
+      label: What you're trying to achieve
+      description: Describe what you're hoping to accomplish or what output you expect.
+    validations:
+      required: false
+
+  - type: textarea
+    id: specific-functions
+    attributes:
+      label: Specific functions of interest
+      description: |
+        If your question relates to specific functions, please list them.
+        This helps us provide more focused examples.
+      placeholder: |
+        For example:
+        - simulate_logistic_map()
+        - extremal_index_runs()
+        - threshold_diagnostics()
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission checklist
+      description: Please confirm you have done the following
+      options:
+        - label: I have searched existing issues to see if my question has been asked before
+          required: true
+        - label: I have read the package documentation and vignettes
+          required: true
+        - label: I have provided a clear and specific question
+          required: true
+
+  - type: textarea
+    id: session-info
+    attributes:
+      label: Session info (if relevant)
+      description: If your question relates to technical issues, please provide session info
+      render: r
+      placeholder: sessionInfo()
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional information
+      description: Any other information that might be helpful for answering your question.

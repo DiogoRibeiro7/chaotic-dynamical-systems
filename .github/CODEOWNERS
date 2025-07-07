@@ -1,0 +1,33 @@
+# Global owners - these users will be requested for review when anyone opens a pull request
+* @DiogoRibeiro7
+
+# Core package code
+/R/ @DiogoRibeiro7
+/tests/ @DiogoRibeiro7
+/man/ @DiogoRibeiro7
+/vignettes/ @DiogoRibeiro7
+
+# Package infrastructure
+/DESCRIPTION @DiogoRibeiro7
+/NAMESPACE @DiogoRibeiro7
+/_pkgdown.yml @DiogoRibeiro7
+
+# Documentation
+/README.md @DiogoRibeiro7
+/NEWS.md @DiogoRibeiro7
+/CODE_OF_CONDUCT.md @DiogoRibeiro7
+/CONTRIBUTING.md @DiogoRibeiro7
+
+# CI/CD and GitHub configuration
+/.github/ @DiogoRibeiro7
+
+# Analysis scripts and benchmarks
+/analysis/ @DiogoRibeiro7
+/benchmarks/ @DiogoRibeiro7
+/simulations/ @DiogoRibeiro7
+/extremal-index/ @DiogoRibeiro7
+
+# Data and examples
+/data/ @DiogoRibeiro7
+/data-raw/ @DiogoRibeiro7
+/inst/ @DiogoRibeiro7
