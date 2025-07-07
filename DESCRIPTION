@@ -16,7 +16,9 @@ Imports:
     assertthat,
     ggplot2,
     evd,
-    rmarkdown
+    rmarkdown,
+    Rcpp
+LinkingTo: Rcpp
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
