@@ -45,6 +45,13 @@ export(bayesian_return_levels)
 export(enhanced_gev_diagnostics)
 export(cv_threshold_selection)
 export(enhanced_bootstrap_ei)
+# Parallel processing
+export(parallel_bootstrap_ei)
+export(parallel_simulation)
+export(parallel_cv_threshold)
+export(progress_bar)
+export(parallel_available)
+export(optimal_cores)
 # Import required functions
 importFrom(Rcpp, evalCpp)
 useDynLib(chaoticds, .registration=TRUE)
