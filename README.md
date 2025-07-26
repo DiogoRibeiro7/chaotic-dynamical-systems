@@ -53,6 +53,10 @@ so the package can be checked and installed normally.
    automatically. Versions are pinned in `renv.lock` so running
    `renv::restore()` ensures a reproducible environment.
 
+If you also plan to use the Python utilities, run `./setup-all.sh` after cloning
+the repository. This script calls `renv::restore()` and `poetry install` in one
+step so both toolchains are ready for testing.
+
 Alternatively, you can install the required packages manually:
    ```R
    install.packages(c(
@@ -86,6 +90,47 @@ bm <- block_maxima(series, 50)
 ```
 
 The extremal-index demo in `extremal-index/run-extremal-index.R` prints example estimates and plots the empirical hitting-time survival curve.
+
+## Recurrence Plots
+
+Recurrence plots visualize when a system revisits similar states in reconstructed phase space. They can expose:
+- periodicity through diagonal lines
+- regime switching in square blocks
+- chaotic and unpredictable behavior as scattered points
+Use `recurrence_analysis()` to compute summary measures such as recurrence rate and determinism.
+An example script `analysis/recurrence-plots.R` demonstrates how to generate a
+recurrence plot for the built-in `logistic_ts` dataset and extract basic
+recurrence statistics.
+
+## Example Datasets
+
+Three small datasets ship with the package:
+
+- `logistic_ts` – 5,000 observations from the chaotic logistic map
+- `henon_ts` – 3,000 rows giving a two-dimensional Hénon map trajectory
+- `ar1_ts` – 4,000 values from a stationary AR(1) process
+
+Load them with `data(logistic_ts)` (or `henon_ts`, `ar1_ts`) to try the
+analysis examples immediately.
+
+## Python Interface
+
+For users who prefer Python, a minimal module is provided under
+`chaoticds/` with the same recurrence utilities. Dependencies are managed
+with [Poetry](https://python-poetry.org/) via `pyproject.toml`.
+Install the package in an isolated environment with:
+
+```bash
+poetry install
+```
+
+Then you can import the functions just like in R:
+
+```python
+from chaoticds import recurrence_analysis
+props = recurrence_analysis([0.1, 0.5, 0.2, 0.9])
+```
+
 ## Testing and Continuous Integration
 
 All unit tests live under `tests/` and use the **testthat** framework. After installing the package, run them with:

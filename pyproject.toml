@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "chaoticds"
+version = "0.1.0"
+description = "Python utilities complementing the chaoticds R package"
+authors = ["Diogo Ribeiro <dfr@esmad.ipp.pt>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.25"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
+[tool.poetry.packages]
+include = ["chaoticds"]
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
