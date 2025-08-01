@@ -3,11 +3,6 @@ name: Performance Benchmarks
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    # Run benchmarks weekly on Sunday at midnight UTC
-    - cron: '0 0 * * 0'
 
 jobs:
   benchmark:
