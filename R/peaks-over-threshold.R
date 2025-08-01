@@ -68,6 +68,7 @@ mean_residual_life <- function(x, thresholds) {
 #'
 #' @return ggplot object visualizing the MRL curve. Requires the **ggplot2**
 #'   package.
+#' @importFrom ggplot2 ggplot aes geom_point geom_line labs theme_minimal
 #' @examples
 #' df <- mean_residual_life(rnorm(1000), seq(0, 2, 0.2))
 #' mrl_plot(df)

@@ -15,6 +15,7 @@
 #' @return A list containing simulation output, fitted models and diagnostics.
 #'   The function is primarily for demonstration and should not be relied on for
 #'   rigorous analysis.
+#' @importFrom stats quantile
 #' @export
 run_demo <- function(n = 2000L,
                      r = 3.8,

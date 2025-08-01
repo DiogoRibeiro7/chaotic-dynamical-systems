@@ -107,6 +107,8 @@ hitting_times <- function(x, threshold) {
 #' @param theta Numeric extremal index estimate (rate parameter).
 #'
 #' @return ggplot object. Requires the **ggplot2** package.
+#' @importFrom ggplot2 ggplot aes geom_step geom_line labs theme_minimal
+#' @importFrom stats ecdf
 #' @export
 plot_hts <- function(times, theta) {
   assertthat::assert_that(is.numeric(times))
