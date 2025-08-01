@@ -12,10 +12,11 @@ BugReports: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 4.0.0)
-Imports: 
+Imports:
     assertthat,
     ggplot2,
     evd,
+    checkmate,
     rmarkdown,
     Rcpp
 LinkingTo: Rcpp
