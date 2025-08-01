@@ -153,11 +153,11 @@ jobs:
           if (secrets_found) {
             cat("WARNING: Potential secrets detected. Please review.\n")
             # Uncomment to fail on potential secrets
-            # quit(status = 1) 
+            # quit(status = 1)
           } else {
             cat("No obvious secrets detected in R files.\n")
           }
-        shell: bash
+        shell: Rscript {0}
         
       - name: License compliance check
         run: |
