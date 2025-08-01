@@ -2,8 +2,8 @@ context('Utility functions')
 
 test_that('parameter validation works correctly', {
   # Test parameter validation for simulation functions
-  expect_error(simulate_logistic_map(-5, r = 3.8, x0 = 0.2), "n > 0")
-  expect_error(simulate_logistic_map("invalid", r = 3.8, x0 = 0.2), "is.numeric\\(n\\)")
+  expect_error(simulate_logistic_map(-5, r = 3.8, x0 = 0.2), "positive integer")
+  expect_error(simulate_logistic_map("invalid", r = 3.8, x0 = 0.2), "positive integer")
   
   # Test parameter validation for extremal index functions
   expect_error(extremal_index_runs(numeric(0), 0.5, run_length = 3), "length\\(x\\)")
@@ -50,7 +50,7 @@ test_that('statistical helper functions work', {
 
 test_that('error handling provides informative messages', {
   # Test that error messages are helpful
-  expect_error(simulate_logistic_map("invalid"), "numeric")
+  expect_error(simulate_logistic_map("invalid"), "positive integer")
   expect_error(simulate_henon_map(100, a = "invalid"), "numeric")
   
   # Test threshold-related errors
@@ -133,4 +133,31 @@ test_that('memory management in utility functions', {
   
   # If we get here without memory issues, the test passes
   expect_true(TRUE)
+})
+
+test_that('Lyapunov exponent estimator works', {
+  set.seed(123)
+  series <- simulate_logistic_map(500, r = 3.8, x0 = 0.2)
+  lyap <- estimate_lyapunov_exponent(series)
+  expect_true(is.numeric(lyap))
+  expect_length(lyap, 1)
+})
+
+test_that('with_logging writes errors to file', {
+  logf <- tempfile()
+  expect_error(with_logging(stop('boom'), logf, msg = 'fail'))
+  lines <- readLines(logf)
+  expect_true(any(grepl('INFO: fail', lines)))
+  expect_true(any(grepl('ERROR', lines)))
+})
+
+test_that('with_logging records warnings', {
+  logf <- tempfile()
+  with_logging({
+    warning('uh oh')
+    1 + 1
+  }, logf, msg = 'warn')
+  lines <- readLines(logf)
+  expect_true(any(grepl('INFO: warn', lines)))
+  expect_true(any(grepl('WARNING', lines)))
 })

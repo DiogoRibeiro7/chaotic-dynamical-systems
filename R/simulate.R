@@ -14,7 +14,15 @@
 #' series <- simulate_logistic_map(100, 3.8, 0.2)
 #' @export
 simulate_logistic_map <- function(n, r, x0) {
-  stopifnot(is.numeric(n), n > 0, is.numeric(r), is.numeric(x0))
+  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
+    stop("n must be a positive integer")
+  }
+  if (!is.numeric(r) || length(r) != 1) {
+    stop("r must be numeric")
+  }
+  if (!is.numeric(x0) || length(x0) != 1) {
+    stop("x0 must be numeric")
+  }
   x <- numeric(n)
   x[1] <- x0
   for (i in 1:(n - 1)) {
@@ -41,9 +49,18 @@ simulate_logistic_map <- function(n, r, x0) {
 #' orbit <- simulate_henon_map(100, 1.4, 0.3)
 #' @export
 simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
-  stopifnot(is.numeric(n), n > 0,
-            is.numeric(a), is.numeric(b),
-            is.numeric(x0), is.numeric(y0))
+  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
+    stop("n must be a positive integer")
+  }
+  if (!is.numeric(a) || length(a) != 1) {
+    stop("a must be numeric")
+  }
+  if (!is.numeric(b) || length(b) != 1) {
+    stop("b must be numeric")
+  }
+  if (!is.numeric(x0) || length(x0) != 1 || !is.numeric(y0) || length(y0) != 1) {
+    stop("x0 and y0 must be numeric")
+  }
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
@@ -51,6 +68,164 @@ simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
   for (i in 1:(n - 1)) {
     x[i + 1] <- 1 - a * x[i]^2 + y[i]
     y[i + 1] <- b * x[i]
+  }
+  data.frame(x = x, y = y)
+}
+
+#' Logistic map bifurcation diagram
+#'
+#' Generate data for the classic logistic map bifurcation diagram by
+#' iterating the map for a sequence of parameter values.
+#'
+#' @param r_seq Numeric vector of \eqn{r} parameters to evaluate.
+#' @param n_iter Integer. Number of iterations for each parameter.
+#' @param discard Integer. Number of initial iterations to discard as
+#'   transient. Must be less than \code{n_iter}.
+#' @param x0 Numeric. Initial value for the orbit.
+#'
+#' @return Data frame with columns `r` and `x` containing orbit values after
+#'   the transient period for each parameter in `r_seq`.
+#'
+#' @examples
+#' r_vals <- seq(2.5, 4, length.out = 200)
+#' bifdat <- logistic_bifurcation(r_vals, n_iter = 200, discard = 100)
+#' plot(bifdat$r, bifdat$x, pch = '.', cex = 0.5)
+#' @export
+logistic_bifurcation <- function(r_seq, n_iter = 200, discard = 100, x0 = 0.2) {
+  if (!is.numeric(r_seq) || length(r_seq) == 0) {
+    stop("r_seq must be a numeric vector")
+  }
+  if (!is.numeric(n_iter) || length(n_iter) != 1 || n_iter <= discard) {
+    stop("n_iter must be a single numeric value larger than discard")
+  }
+  if (!is.numeric(discard) || length(discard) != 1 || discard < 0) {
+    stop("discard must be a non-negative number")
+  }
+  if (!is.numeric(x0) || length(x0) != 1) {
+    stop("x0 must be numeric")
+  }
+
+  r_out <- numeric(0)
+  x_out <- numeric(0)
+
+  for (r in r_seq) {
+    x <- x0
+    for (i in seq_len(n_iter)) {
+      x <- r * x * (1 - x)
+      if (i > discard) {
+        r_out <- c(r_out, r)
+        x_out <- c(x_out, x)
+      }
+    }
+  }
+
+  data.frame(r = r_out, x = x_out)
+}
+#' Simulate the tent map
+#'
+#' Generates a time series from the tent map:
+#'   x[n+1] = r * x[n]             if x[n] < 0.5
+#'             r * (1 - x[n])      otherwise
+#'
+#' @param n Integer. Number of iterations to generate.
+#' @param r Numeric. Slope parameter (0 < r <= 2). Defaults to 2.
+#' @param x0 Numeric. Initial value in (0, 1). Defaults to 0.1.
+#'
+#' @return Numeric vector containing the orbit of length n.
+#' @examples
+#' series <- simulate_tent_map(100, r = 2, x0 = 0.1)
+#' @export
+simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
+  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
+    stop("n must be a positive integer")
+  }
+  if (!is.numeric(r) || length(r) != 1 || r <= 0 || r > 2) {
+    stop("r must be numeric in (0, 2]")
+  }
+  if (!is.numeric(x0) || length(x0) != 1 || x0 <= 0 || x0 >= 1) {
+    stop("x0 must be in (0, 1)")
+  }
+  x <- numeric(n)
+  x[1] <- x0
+  for (i in 1:(n - 1)) {
+    if (x[i] < 0.5) {
+      x[i + 1] <- r * x[i]
+    } else {
+      x[i + 1] <- r * (1 - x[i])
+    }
+  }
+  x
+}
+
+#' Simulate the Lozi map
+#'
+#' Generates an orbit for the two-dimensional Lozi map:
+#'   x[n+1] = 1 - a * abs(x[n]) + b * y[n]
+#'   y[n+1] = x[n]
+#'
+#' @param n Integer. Number of iterations to generate.
+#' @param a Numeric. Parameter controlling the nonlinearity. Defaults to 1.7.
+#' @param b Numeric. Parameter controlling the contraction. Defaults to 0.5.
+#' @param x0 Numeric. Initial x value. Defaults to 0.
+#' @param y0 Numeric. Initial y value. Defaults to 0.
+#'
+#' @return Data frame with columns `x` and `y` of length `n`.
+#' @examples
+#' orbit <- simulate_lozi_map(100)
+#' @export
+simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
+  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
+    stop("n must be a positive integer")
+  }
+  if (!is.numeric(a) || length(a) != 1) {
+    stop("a must be numeric")
+  }
+  if (!is.numeric(b) || length(b) != 1) {
+    stop("b must be numeric")
+  }
+  if (!is.numeric(x0) || length(x0) != 1 || !is.numeric(y0) || length(y0) != 1) {
+    stop("x0 and y0 must be numeric")
+  }
+  x <- numeric(n)
+  y <- numeric(n)
+  x[1] <- x0
+  y[1] <- y0
+  for (i in 1:(n - 1)) {
+    x[i + 1] <- 1 - a * abs(x[i]) + b * y[i]
+    y[i + 1] <- x[i]
+  }
+  data.frame(x = x, y = y)
+}
+#' Simulate the Arnold cat map
+#'
+#' Generates an orbit for the two-dimensional Arnold cat map:
+#'   x[n+1] = (x[n] + y[n]) mod 1
+#'   y[n+1] = (x[n] + 2 * y[n]) mod 1
+#'
+#' @param n Integer. Number of iterations to generate.
+#' @param x0 Numeric. Initial x value. Defaults to 0.1.
+#' @param y0 Numeric. Initial y value. Defaults to 0.1.
+#'
+#' @return Data frame with columns `x` and `y` of length `n`.
+#' @examples
+#' orbit <- simulate_cat_map(100)
+#' @export
+simulate_cat_map <- function(n, x0 = 0.1, y0 = 0.1) {
+  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
+    stop("n must be a positive integer")
+  }
+  if (!is.numeric(x0) || length(x0) != 1 || !is.numeric(y0) || length(y0) != 1) {
+    stop("x0 and y0 must be numeric")
+  }
+  x <- numeric(n)
+  y <- numeric(n)
+  x[1] <- x0 %% 1
+  y[1] <- y0 %% 1
+  for (i in 1:(n - 1)) {
+    x_new <- (x[i] + y[i]) %% 1
+    y_new <- (x[i] + 2 * y[i]) %% 1
+    x[i + 1] <- x_new
+    y[i + 1] <- y_new
   }
   data.frame(x = x, y = y)
 }

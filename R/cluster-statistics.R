@@ -39,6 +39,7 @@ cluster_summary <- function(sizes) {
 #' @param sizes Integer vector of cluster sizes.
 #'
 #' @return A ggplot object showing the distribution.
+#' @importFrom ggplot2 ggplot aes geom_col labs theme_minimal
 #' @export
 cluster_histogram <- function(sizes) {
   stopifnot(is.numeric(sizes))

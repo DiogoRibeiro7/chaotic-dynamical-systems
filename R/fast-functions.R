@@ -156,6 +156,7 @@ benchmark_implementations <- function(sizes = c(1000, 5000, 10000, 50000), n_rep
 #'
 #' @param save_results Logical, whether to save results to file
 #' @return List with performance analysis results
+#' @importFrom utils object.size write.csv
 #' @export
 performance_analysis <- function(save_results = FALSE) {
   cat("=== Performance Analysis Report ===\n\n")

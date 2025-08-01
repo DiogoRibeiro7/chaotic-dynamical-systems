@@ -47,12 +47,29 @@ This document outlines planned modules and scripts to expand the repository into
   - Empirical mixing coefficients  
   - Tests for Leadbetter’s $D(u_n)$ conditions
 
-## 7. End-to-End Demo Script
+## 7. Advanced Analysis Utilities ✅
+
+- **advanced-extremes.R** implements:
+  - `extremal_index_bivariate`
+  - `adaptive_threshold_selection`
+  - `fit_nonstationary_gev`
+  - `tail_dependence_coefficient`
+  - `spectral_analysis_extremes`
+  - `calculate_return_levels`
+  - `validate_extreme_model`
+  - `goodness_of_fit_test`
+  - `estimate_correlation_dimension`
+  - `block_bootstrap`
+
+These functions allow multivariate and non-stationary modelling as well as
+basic goodness-of-fit diagnostics.
+
+## 8. End-to-End Demo Script
 
 - **run-demo-chaos.R** ✅
   Source simulations, threshold diagnostics, block-maxima, POT, extremal-index estimators, and assemble all figures into a single PDF report (e.g., via `rmarkdown::render`).
 
-## 8. Documentation & Vignettes
+## 9. Documentation & Vignettes
 
 - **vignettes/** ✅
   R Markdown examples with narratives such as:

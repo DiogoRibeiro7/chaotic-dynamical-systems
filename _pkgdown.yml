@@ -14,6 +14,10 @@ reference:
   contents:
   - simulate_logistic_map
   - simulate_henon_map
+  - simulate_tent_map
+  - simulate_lozi_map
+  - simulate_cat_map
+  - logistic_bifurcation
 
 - title: "Extreme Value Analysis"
   desc: "Core extreme value theory functions"
@@ -55,11 +59,34 @@ reference:
   - acf_decay
   - mixing_coefficients
   - d_check
+  - estimate_lyapunov_exponent
+  - estimate_correlation_dimension
 
 - title: "Bootstrap Methods"
   desc: "Uncertainty quantification for extremal index"
   contents:
   - bootstrap_extremal_index
+  - block_bootstrap
+
+- title: "Advanced Analysis"
+  desc: "Higher-level modelling utilities"
+  contents:
+  - extremal_index_bivariate
+  - adaptive_threshold_selection
+  - fit_nonstationary_gev
+  - tail_dependence_coefficient
+  - spectral_analysis_extremes
+  - calculate_return_levels
+  - validate_extreme_model
+  - goodness_of_fit_test
+
+- title: "Utility Functions"
+  desc: "General helpers for scripts and examples"
+  contents:
+  - clean_extreme_data
+  - empirical_quantile
+  - compute_autocorrelation
+  - with_logging
 
 - title: "Comprehensive Analysis"
   desc: "High-level analysis functions"
@@ -79,6 +106,8 @@ articles:
   contents:
   - estimating-theta-logistic
   - block-maxima-vs-pot-henon
+  - getting-started-interactive
+  - performance-optimization
 
 navbar:
   structure:

@@ -6,6 +6,7 @@
 #' @param ... Additional arguments passed to \code{shiny::runApp()}
 #'
 #' @return Launches the Shiny application
+#' @importFrom utils install.packages
 #' @export
 #'
 #' @examples

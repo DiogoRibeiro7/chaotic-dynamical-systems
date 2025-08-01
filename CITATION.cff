@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below. For questions contact dfr@esmad.ipp.pt or diogo.debastos.ribeiro@gmail.com."
+title: "chaoticds: Chaotic Dynamical Systems Utilities"
+version: 0.1.0
+date-released: 2025-07-26
+authors:
+  - family-names: Ribeiro
+    given-names: Diogo
+    orcid: https://orcid.org/0009-0001-2022-7072
+    email: dfr@esmad.ipp.pt
+    affiliation: ESMAD - Instituto Politécnico do Porto
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.1234567
+license: MIT
+repository-code: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems

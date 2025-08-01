@@ -17,6 +17,10 @@ so the package can be checked and installed normally.
 - **`simulations/`** – simple chaotic map simulators.
   - `simulate-logistic-map.R` generates logistic map trajectories.
   - `simulate-henon-map.R` produces two–dimensional Hénon map orbits.
+  - `simulate-tent-map.R` generates tent map trajectories.
+  - `simulate-lozi-map.R` produces Lozi map orbits.
+  - `simulate-cat-map.R` simulates the Arnold cat map.
+  - `logistic-bifurcation.R` creates bifurcation diagram data for the logistic map.
 - **`analysis/`** – utilities for extreme-value calculations.
   - `block-maxima.R` extracts block maxima and fits GEV models.
   - `peaks-over-threshold.R` provides exceedance extraction, GPD fitting and the `mrl_plot()` helper.
@@ -24,47 +28,38 @@ so the package can be checked and installed normally.
   - `bootstrap-ci.R` computes bootstrap confidence intervals for the extremal index.
     - `cluster-statistics.R` summarizes cluster sizes and plots histograms.
     - `mixing-diagnostics.R` estimates ACF decay and simple mixing coefficients.
+    - `utils.R` provides helpers like `clean_extreme_data()`, `compute_autocorrelation()`
+      and `with_logging()` for error logging. `with_logging()` accepts an
+      optional `msg` argument so you can annotate log files when running
+      scripts. The repository also includes `estimate_correlation_dimension()`
+      which estimates the fractal dimension of a series using a
+      Grassberger–Procaccia approach.
   - **`run-demo-chaos.R`** – small wrapper calling `run_demo()` from the package to run an end-to-end example and optionally render a PDF report.
 - **`vignettes/`** – R Markdown tutorials: `estimating-theta-logistic.Rmd` and `block-maxima-vs-pot-henon.Rmd`.
 - **`roadmap.md`** – overview of the development plan (all current items are implemented).
 
 ## Installation
 
-1. Install R (>= 4.0).
-2. Install the **renv** package to manage reproducible environments:
-   ```R
-   install.packages("renv")
-   ```
-3. Restore the pinned package versions using the provided lockfile:
-   ```R
-   renv::restore()
-   ```
-4. Install **devtools** if not already available:
-   ```R
-   install.packages("devtools")
-   ```
-5. Install the package and its dependencies from this repository:
-   ```R
-   devtools::install_local(".")
-   library(chaoticds)
+Run the setup script to install all dependencies and initialise `renv`:
+
+```bash
+./setup.sh --minimal  # omit heavy optional packages
 ```
-   The package depends on several CRAN libraries such as `assertthat`,
-   `ggplot2`, `evd`, `evir`, `ismev` and `rmarkdown`, which will be pulled in
-   automatically. Versions are pinned in `renv.lock` so running
-   `renv::restore()` ensures a reproducible environment.
 
-If you also plan to use the Python utilities, run `./setup-all.sh` after cloning
-the repository. This script calls `renv::restore()` and `poetry install` in one
-step so both toolchains are ready for testing.
+The script logs all output to `setup.log`, which you can inspect if
+something goes wrong during installation.
 
-Alternatively, you can install the required packages manually:
-   ```R
-   install.packages(c(
-     "assertthat", "ggplot2",  # base utilities and plotting
-     "evd", "evir", "ismev",  # extreme-value distribution fitting
-     "rmarkdown"             # for PDF report generation
-   ))
-   ```
+This will install the required R packages, create the basic directory
+structure and set up testing infrastructure.  You can also restore the
+environment manually and install the package from source:
+
+```R
+install.packages("renv")
+renv::restore()
+devtools::install_local(".")
+```
+
+For the optional Python utilities, execute `./setup-all.sh`.
 
 ## Usage
 
@@ -87,6 +82,13 @@ You can also load the package in an interactive R session:
 library(chaoticds)
 series <- simulate_logistic_map(1000, 3.8, 0.2)
 bm <- block_maxima(series, 50)
+# bifurcation diagram data
+r_vals <- seq(2.5, 4, length.out = 200)
+bif <- logistic_bifurcation(r_vals, n_iter = 200, discard = 100)
+plot(bif$r, bif$x, pch = '.', cex = 0.5)
+# estimate correlation dimension
+cd <- estimate_correlation_dimension(series)
+cd$dimension
 ```
 
 The extremal-index demo in `extremal-index/run-extremal-index.R` prints example estimates and plots the empirical hitting-time survival curve.
@@ -133,7 +135,7 @@ props = recurrence_analysis([0.1, 0.5, 0.2, 0.9])
 
 ## Testing and Continuous Integration
 
-All unit tests live under `tests/` and use the **testthat** framework. After installing the package, run them with:
+All unit tests live under `tests/` and use the **testthat** framework. After installing the package, you can run them (if `devtools` is available) with:
 
 ```R
 devtools::test()
@@ -151,9 +153,19 @@ A GitHub Actions workflow automatically installs dependencies, performs `R CMD c
 - Threshold selection diagnostics
 - Bootstrap confidence intervals for the extremal index
 - Cluster statistics and mixing diagnostics
+- Advanced utilities: bivariate extremal index, adaptive thresholds,
+  non-stationary GEV fitting, tail dependence, spectral analysis of extremes,
+  return level estimation and model validation
 - End-to-end demo scripts and vignettes (see files under `vignettes/`)
 
 These items will expand the repository into a comprehensive toolkit for extreme-value analysis.
+
+## Citation
+
+If you use this software, please cite it as described in
+[CITATION.cff](CITATION.cff).  An R-readable citation entry is also
+provided in [inst/CITATION](inst/CITATION) and can be obtained with
+`citation("chaoticds")`.
 
 ## License
 

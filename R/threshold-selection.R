@@ -54,6 +54,7 @@ hill_estimates <- function(x, k_values) {
 #'
 #' @return ggplot object visualizing the Hill plot. Requires the **ggplot2**
 #'   package.
+#' @importFrom ggplot2 ggplot aes geom_line geom_point labs theme_minimal
 #' @examples
 #' df <- hill_estimates(rexp(1000), 1:50)
 #' hill_plot(df)

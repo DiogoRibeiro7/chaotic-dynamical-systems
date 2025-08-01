@@ -11,6 +11,7 @@
 #' @examples
 #' rp <- recurrence_plot(rnorm(100))
 #' image(rp)
+#' @importFrom stats dist sd
 #' @export
 recurrence_plot <- function(x, embed = 2L, delay = 1L, eps = NULL) {
   stopifnot(is.numeric(x), is.numeric(embed), embed >= 1,

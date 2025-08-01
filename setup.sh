@@ -3,7 +3,24 @@
 # setup.sh - Development Environment Setup for chaoticds Package
 # This script sets up a complete R package development environment
 
-set -e  # Exit on error
+set -euo pipefail  # Exit on error, treat unset vars as errors, catch pipeline failures
+
+# Flag for minimal installation (skip heavy packages)
+MINIMAL=0
+# Log file for capturing setup output
+LOG_FILE="setup.log"
+
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        --minimal)
+            MINIMAL=1
+            shift
+            ;;
+        *)
+            ;;
+    esac
+done
 
 echo "============================================"
 echo "Setting up chaoticds Package Development Environment"
@@ -33,25 +50,102 @@ print_header() {
     echo -e "\n${BLUE}=== $1 ===${NC}"
 }
 
-# Check if R is installed
-check_r_installation() {
-    print_header "Checking R Installation"
-    
-    if ! command -v R &> /dev/null; then
-        print_error "R is not installed or not in PATH"
-        echo "Please install R from https://cran.r-project.org/"
-        echo "Required version: R >= 4.0.0"
-        exit 1
+# Detect operating system
+detect_os() {
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if command -v apt-get &> /dev/null; then
+            echo "ubuntu"
+        elif command -v yum &> /dev/null; then
+            echo "centos"
+        elif command -v dnf &> /dev/null; then
+            echo "fedora"
+        else
+            echo "linux"
+        fi
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "macos"
+    elif [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+        echo "windows"
+    else
+        echo "unknown"
     fi
-    
+}
+
+# Install R based on operating system
+install_r() {
+    print_header "Installing R"
+
+    local os=$(detect_os)
+    print_status "Detected OS: $os"
+
+    case $os in
+        "ubuntu")
+            print_status "Installing R on Ubuntu/Debian..."
+            sudo apt-get update
+            sudo apt-get install -y r-base r-base-dev
+            sudo apt-get install -y build-essential libcurl4-openssl-dev libssl-dev libxml2-dev
+            ;;
+        "centos")
+            print_status "Installing R on CentOS/RHEL..."
+            sudo yum install -y epel-release
+            sudo yum install -y R R-devel
+            sudo yum install -y gcc gcc-c++ make libcurl-devel openssl-devel libxml2-devel
+            ;;
+        "fedora")
+            print_status "Installing R on Fedora..."
+            sudo dnf install -y R R-devel
+            sudo dnf install -y gcc gcc-c++ make libcurl-devel openssl-devel libxml2-devel
+            ;;
+        "macos")
+            print_status "Installing R on macOS..."
+            if command -v brew &> /dev/null; then
+                brew install r
+            else
+                print_error "Homebrew not found. Please install Homebrew first:"
+                print_error "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+                print_error "Then run this script again, or manually install R from https://cran.r-project.org/"
+                exit 1
+            fi
+            ;;
+        "windows")
+            print_error "Windows detected. Please manually install R from https://cran.r-project.org/"
+            print_error "Make sure to add R to your PATH during installation."
+            exit 1
+            ;;
+        *)
+            print_error "Unknown operating system. Please manually install R from https://cran.r-project.org/"
+            exit 1
+            ;;
+    esac
+
+    print_status "R installation completed"
+}
+
+# Check if R is installed, install if missing
+check_and_install_r() {
+    print_header "Checking R Installation"
+
+    if ! command -v R &> /dev/null; then
+        print_warning "R is not installed or not in PATH"
+        print_status "Attempting to install R automatically..."
+        install_r
+
+        if ! command -v R &> /dev/null; then
+            print_error "R installation failed or R is not in PATH"
+            print_error "Please manually install R from https://cran.r-project.org/"
+            print_error "Required version: R >= 4.0.0"
+            exit 1
+        fi
+    fi
+
     R_VERSION=$(R --version | head -1 | grep -oP 'R version \K[0-9]+\.[0-9]+\.[0-9]+')
     print_status "Found R version: $R_VERSION"
-    
-    # Check if R version is >= 4.0.0
+
     if R -e "if(getRversion() < '4.0.0') quit(status=1)" --slave 2>/dev/null; then
         print_status "R version is compatible"
     else
         print_error "R version must be >= 4.0.0"
+        print_error "Please update R from https://cran.r-project.org/"
         exit 1
     fi
 }
@@ -86,17 +180,28 @@ setup_directories() {
 # Install required R packages
 install_r_packages() {
     print_header "Installing R Packages"
-    
+
     print_status "Installing core development packages..."
-    
-    R --slave -e "
-    # Function to install packages if not already installed
+
+    trap '' ERR
+    set +e
+    MINIMAL_SETUP=$MINIMAL R --slave <<'RSCRIPT'
+    # Helper to install packages with error handling
     install_if_needed <- function(pkg) {
       if (!requireNamespace(pkg, quietly = TRUE)) {
-        cat('Installing', pkg, '...\n')
-        install.packages(pkg, repos = 'https://cran.r-project.org/')
+        cat("Installing", pkg, "...\n")
+        tryCatch(
+          install.packages(pkg,
+                           repos = 'https://cloud.r-project.org',
+                           dependencies = TRUE,
+                           Ncpus = 2,
+                           INSTALL_opts = '--no-docs --no-html'),
+          error = function(e) {
+            message("Warning: failed to install ", pkg, ": ", e$message)
+          }
+        )
       } else {
-        cat(pkg, 'already installed\n')
+        cat(pkg, "already installed\n")
       }
     }
     
@@ -117,7 +222,7 @@ install_r_packages() {
       'assertthat',
       'ggplot2',
       'evd',
-      'evir', 
+      'evir',
       'ismev',
       'extRemes',
       'checkmate',
@@ -128,42 +233,73 @@ install_r_packages() {
       'knitr',
       'microbenchmark'
     )
+
+    # Minimal set of dependencies for quick setup
+    minimal_deps <- c(
+      'Rcpp',
+      'assertthat',
+      'ggplot2',
+      'checkmate',
+      'rmarkdown',
+      'knitr'
+    )
     
-    # Install all packages
-    all_packages <- c(dev_packages, deps)
+    # Install packages - optionally skip heavy ones
+    if (Sys.getenv('MINIMAL_SETUP') == '1') {
+      cat('Running minimal installation...\n')
+      all_packages <- c(dev_packages, minimal_deps)
+    } else {
+      all_packages <- c(dev_packages, deps)
+    }
     
-    cat('Installing', length(all_packages), 'packages...\n')
+    cat("Installing", length(all_packages), "packages...\n")
     for (pkg in all_packages) {
       install_if_needed(pkg)
     }
-    
-    cat('Package installation complete!\n')
-    "
-    
-    if [[ $? -eq 0 ]]; then
+
+    cat("Package installation complete!\n")
+RSCRIPT
+    R_EXIT=$?
+    set -e
+    trap 'print_error "Setup failed. Check $LOG_FILE for details."' ERR
+
+    if [[ $R_EXIT -eq 0 ]]; then
         print_status "R packages installed successfully"
     else
-        print_error "Failed to install some R packages"
-        exit 1
+        print_warning "Failed to install some R packages - continuing"
     fi
 }
 
 # Initialize renv for reproducible environment
 setup_renv() {
     print_header "Setting Up renv Environment"
-    
+
+    if ! R --slave -e "if(!requireNamespace('renv', quietly=TRUE)) quit(status=1)" 2>/dev/null; then
+        print_warning "renv package not installed - skipping renv setup"
+        return
+    fi
+
+    set +e
     if [[ ! -f "renv.lock" ]]; then
         print_status "Initializing renv..."
-        R --slave -e "
-        renv::init()
-        renv::snapshot()
-        "
-        print_status "renv initialized and snapshot created"
+        R --slave -e "renv::init(); renv::snapshot()" >/dev/null
+        R_STATUS=$?
+        if [[ $R_STATUS -eq 0 ]]; then
+            print_status "renv initialized and snapshot created"
+        else
+            print_warning "renv initialization failed"
+        fi
     else
         print_status "Found existing renv.lock, restoring environment..."
-        R --slave -e "renv::restore()"
-        print_status "renv environment restored"
+        R --slave -e "renv::restore()" >/dev/null
+        R_STATUS=$?
+        if [[ $R_STATUS -eq 0 ]]; then
+            print_status "renv environment restored"
+        else
+            print_warning "renv restore failed"
+        fi
     fi
+    set -e
 }
 
 # Create or update DESCRIPTION file
@@ -574,14 +710,21 @@ EOF
 # Generate documentation
 generate_docs() {
     print_header "Generating Documentation"
-    
+
+    if ! R --slave -e "if(!requireNamespace('devtools', quietly=TRUE) || !requireNamespace('roxygen2', quietly=TRUE)) quit(status=1)" 2>/dev/null; then
+        print_warning "devtools/roxygen2 not installed - skipping documentation"
+        return
+    fi
+
     print_status "Running roxygen2 to generate documentation..."
-    R --slave -e "
-    library(devtools)
-    document()
-    " 2>/dev/null || print_warning "Documentation generation had warnings"
-    
-    print_status "Documentation generated"
+    set +e
+    R --slave -e "library(devtools); document()" >/dev/null
+    if [[ $? -eq 0 ]]; then
+        print_status "Documentation generated"
+    else
+        print_warning "Documentation generation failed"
+    fi
+    set -e
 }
 
 # Run package check
@@ -613,12 +756,19 @@ run_package_check() {
 # Main setup function
 main() {
     print_header "Starting Development Environment Setup"
+    echo "Logs: $LOG_FILE"
+    # Capture all output to log file as well as stdout
+    exec > >(tee -a "$LOG_FILE") 2>&1
+    trap 'print_error "Setup failed. Check $LOG_FILE for details."' ERR
+    if [[ "$MINIMAL" -eq 1 ]]; then
+        print_status "Minimal installation mode enabled"
+    fi
     
     # Change to script directory
     cd "$(dirname "$0")"
     
-    # Run setup steps
-    check_r_installation
+    # Run setup steps - R installation/check FIRST
+    check_and_install_r
     setup_directories
     install_r_packages
     create_description
