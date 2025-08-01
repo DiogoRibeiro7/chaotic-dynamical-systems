@@ -60,6 +60,7 @@ reference:
   - mixing_coefficients
   - d_check
   - estimate_lyapunov_exponent
+  - estimate_correlation_dimension
 
 - title: "Bootstrap Methods"
   desc: "Uncertainty quantification for extremal index"

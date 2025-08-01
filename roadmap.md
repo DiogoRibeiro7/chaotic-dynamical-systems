@@ -58,6 +58,7 @@ This document outlines planned modules and scripts to expand the repository into
   - `calculate_return_levels`
   - `validate_extreme_model`
   - `goodness_of_fit_test`
+  - `estimate_correlation_dimension`
   - `block_bootstrap`
 
 These functions allow multivariate and non-stationary modelling as well as

@@ -50,3 +50,4 @@ The functions provide tools for simulating chaotic maps, estimating extremal ind
 \alias{compute_autocorrelation}
 \alias{with_logging}
 
+\alias{estimate_correlation_dimension}

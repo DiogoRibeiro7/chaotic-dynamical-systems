@@ -31,7 +31,9 @@ so the package can be checked and installed normally.
     - `utils.R` provides helpers like `clean_extreme_data()`, `compute_autocorrelation()`
       and `with_logging()` for error logging. `with_logging()` accepts an
       optional `msg` argument so you can annotate log files when running
-      scripts.
+      scripts. The repository also includes `estimate_correlation_dimension()`
+      which estimates the fractal dimension of a series using a
+      Grassberger–Procaccia approach.
   - **`run-demo-chaos.R`** – small wrapper calling `run_demo()` from the package to run an end-to-end example and optionally render a PDF report.
 - **`vignettes/`** – R Markdown tutorials: `estimating-theta-logistic.Rmd` and `block-maxima-vs-pot-henon.Rmd`.
 - **`roadmap.md`** – overview of the development plan (all current items are implemented).
@@ -84,6 +86,9 @@ bm <- block_maxima(series, 50)
 r_vals <- seq(2.5, 4, length.out = 200)
 bif <- logistic_bifurcation(r_vals, n_iter = 200, discard = 100)
 plot(bif$r, bif$x, pch = '.', cex = 0.5)
+# estimate correlation dimension
+cd <- estimate_correlation_dimension(series)
+cd$dimension
 ```
 
 The extremal-index demo in `extremal-index/run-extremal-index.R` prints example estimates and plots the empirical hitting-time survival curve.
