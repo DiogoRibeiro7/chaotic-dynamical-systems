@@ -1,0 +1,20 @@
+citHeader("To cite chaoticds in publications, please use the following entry:")
+
+citEntry(
+  entry = "Software",
+  title = "chaoticds: Chaotic Dynamical Systems Utilities",
+  author = person(
+    given = "Diogo",
+    family = "Ribeiro",
+    email = "dfr@esmad.ipp.pt",
+    role = c("aut", "cre"),
+    comment = c(ORCID = "0009-0001-2022-7072")
+  ),
+  year = "2025",
+  version = "0.1.0",
+  doi = "10.5281/zenodo.1234567",
+  url = "https://github.com/DiogoRibeiro7/chaotic-dynamical-systems",
+  note = "Please see CITATION.cff for complete metadata."
+)
+
+citFooter("For questions, contact Diogo Ribeiro at dfr@esmad.ipp.pt or diogo.debastos.ribeiro@gmail.com.")

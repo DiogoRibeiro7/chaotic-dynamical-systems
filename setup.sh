@@ -3,7 +3,27 @@
 # setup.sh - Development Environment Setup for chaoticds Package
 # This script sets up a complete R package development environment
 
-set -e  # Exit on error
+set -euo pipefail  # Exit on error, treat unset vars as errors, catch pipeline failures
+
+# trap any error to provide a helpful message
+trap 'print_error "Setup failed. Check $LOG_FILE for details."' ERR
+
+# Flag for minimal installation (skip heavy packages)
+MINIMAL=0
+# Log file for capturing setup output
+LOG_FILE="setup.log"
+
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        --minimal)
+            MINIMAL=1
+            shift
+            ;;
+        *)
+            ;;
+    esac
+done
 
 echo "============================================"
 echo "Setting up chaoticds Package Development Environment"
@@ -86,17 +106,28 @@ setup_directories() {
 # Install required R packages
 install_r_packages() {
     print_header "Installing R Packages"
-    
+
     print_status "Installing core development packages..."
-    
-    R --slave -e "
-    # Function to install packages if not already installed
+
+    trap '' ERR
+    set +e
+    MINIMAL_SETUP=$MINIMAL R --slave <<'RSCRIPT'
+    # Helper to install packages with error handling
     install_if_needed <- function(pkg) {
       if (!requireNamespace(pkg, quietly = TRUE)) {
-        cat('Installing', pkg, '...\n')
-        install.packages(pkg, repos = 'https://cran.r-project.org/')
+        cat("Installing", pkg, "...\n")
+        tryCatch(
+          install.packages(pkg,
+                           repos = 'https://cloud.r-project.org',
+                           dependencies = TRUE,
+                           Ncpus = 2,
+                           INSTALL_opts = '--no-docs --no-html'),
+          error = function(e) {
+            message("Warning: failed to install ", pkg, ": ", e$message)
+          }
+        )
       } else {
-        cat(pkg, 'already installed\n')
+        cat(pkg, "already installed\n")
       }
     }
     
@@ -117,7 +148,7 @@ install_r_packages() {
       'assertthat',
       'ggplot2',
       'evd',
-      'evir', 
+      'evir',
       'ismev',
       'extRemes',
       'checkmate',
@@ -128,42 +159,73 @@ install_r_packages() {
       'knitr',
       'microbenchmark'
     )
+
+    # Minimal set of dependencies for quick setup
+    minimal_deps <- c(
+      'Rcpp',
+      'assertthat',
+      'ggplot2',
+      'checkmate',
+      'rmarkdown',
+      'knitr'
+    )
     
-    # Install all packages
-    all_packages <- c(dev_packages, deps)
+    # Install packages - optionally skip heavy ones
+    if (Sys.getenv('MINIMAL_SETUP') == '1') {
+      cat('Running minimal installation...\n')
+      all_packages <- c(dev_packages, minimal_deps)
+    } else {
+      all_packages <- c(dev_packages, deps)
+    }
     
-    cat('Installing', length(all_packages), 'packages...\n')
+    cat("Installing", length(all_packages), "packages...\n")
     for (pkg in all_packages) {
       install_if_needed(pkg)
     }
-    
-    cat('Package installation complete!\n')
-    "
-    
-    if [[ $? -eq 0 ]]; then
+
+    cat("Package installation complete!\n")
+RSCRIPT
+    R_EXIT=$?
+    set -e
+    trap 'print_error "Setup failed. Check $LOG_FILE for details."' ERR
+
+    if [[ $R_EXIT -eq 0 ]]; then
         print_status "R packages installed successfully"
     else
-        print_error "Failed to install some R packages"
-        exit 1
+        print_warning "Failed to install some R packages - continuing"
     fi
 }
 
 # Initialize renv for reproducible environment
 setup_renv() {
     print_header "Setting Up renv Environment"
-    
+
+    if ! R --slave -e "if(!requireNamespace('renv', quietly=TRUE)) quit(status=1)" 2>/dev/null; then
+        print_warning "renv package not installed - skipping renv setup"
+        return
+    fi
+
+    set +e
     if [[ ! -f "renv.lock" ]]; then
         print_status "Initializing renv..."
-        R --slave -e "
-        renv::init()
-        renv::snapshot()
-        "
-        print_status "renv initialized and snapshot created"
+        R --slave -e "renv::init(); renv::snapshot()" >/dev/null
+        R_STATUS=$?
+        if [[ $R_STATUS -eq 0 ]]; then
+            print_status "renv initialized and snapshot created"
+        else
+            print_warning "renv initialization failed"
+        fi
     else
         print_status "Found existing renv.lock, restoring environment..."
-        R --slave -e "renv::restore()"
-        print_status "renv environment restored"
+        R --slave -e "renv::restore()" >/dev/null
+        R_STATUS=$?
+        if [[ $R_STATUS -eq 0 ]]; then
+            print_status "renv environment restored"
+        else
+            print_warning "renv restore failed"
+        fi
     fi
+    set -e
 }
 
 # Create or update DESCRIPTION file
@@ -574,14 +636,21 @@ EOF
 # Generate documentation
 generate_docs() {
     print_header "Generating Documentation"
-    
+
+    if ! R --slave -e "if(!requireNamespace('devtools', quietly=TRUE) || !requireNamespace('roxygen2', quietly=TRUE)) quit(status=1)" 2>/dev/null; then
+        print_warning "devtools/roxygen2 not installed - skipping documentation"
+        return
+    fi
+
     print_status "Running roxygen2 to generate documentation..."
-    R --slave -e "
-    library(devtools)
-    document()
-    " 2>/dev/null || print_warning "Documentation generation had warnings"
-    
-    print_status "Documentation generated"
+    set +e
+    R --slave -e "library(devtools); document()" >/dev/null
+    if [[ $? -eq 0 ]]; then
+        print_status "Documentation generated"
+    else
+        print_warning "Documentation generation failed"
+    fi
+    set -e
 }
 
 # Run package check
@@ -613,6 +682,12 @@ run_package_check() {
 # Main setup function
 main() {
     print_header "Starting Development Environment Setup"
+    echo "Logs: $LOG_FILE"
+    # Capture all output to log file as well as stdout
+    exec > >(tee -a "$LOG_FILE") 2>&1
+    if [[ "$MINIMAL" -eq 1 ]]; then
+        print_status "Minimal installation mode enabled"
+    fi
     
     # Change to script directory
     cd "$(dirname "$0")"

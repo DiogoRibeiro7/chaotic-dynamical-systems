@@ -134,3 +134,30 @@ test_that('memory management in utility functions', {
   # If we get here without memory issues, the test passes
   expect_true(TRUE)
 })
+
+test_that('Lyapunov exponent estimator works', {
+  set.seed(123)
+  series <- simulate_logistic_map(500, r = 3.8, x0 = 0.2)
+  lyap <- estimate_lyapunov_exponent(series)
+  expect_true(is.numeric(lyap))
+  expect_length(lyap, 1)
+})
+
+test_that('with_logging writes errors to file', {
+  logf <- tempfile()
+  expect_error(with_logging(stop('boom'), logf, msg = 'fail'))
+  lines <- readLines(logf)
+  expect_true(any(grepl('INFO: fail', lines)))
+  expect_true(any(grepl('ERROR', lines)))
+})
+
+test_that('with_logging records warnings', {
+  logf <- tempfile()
+  with_logging({
+    warning('uh oh')
+    1 + 1
+  }, logf, msg = 'warn')
+  lines <- readLines(logf)
+  expect_true(any(grepl('INFO: warn', lines)))
+  expect_true(any(grepl('WARNING', lines)))
+})

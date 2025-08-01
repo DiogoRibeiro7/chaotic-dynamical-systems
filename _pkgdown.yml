@@ -14,6 +14,10 @@ reference:
   contents:
   - simulate_logistic_map
   - simulate_henon_map
+  - simulate_tent_map
+  - simulate_lozi_map
+  - simulate_cat_map
+  - logistic_bifurcation
 
 - title: "Extreme Value Analysis"
   desc: "Core extreme value theory functions"
@@ -55,11 +59,20 @@ reference:
   - acf_decay
   - mixing_coefficients
   - d_check
+  - estimate_lyapunov_exponent
 
 - title: "Bootstrap Methods"
   desc: "Uncertainty quantification for extremal index"
   contents:
   - bootstrap_extremal_index
+
+- title: "Utility Functions"
+  desc: "General helpers for scripts and examples"
+  contents:
+  - clean_extreme_data
+  - empirical_quantile
+  - compute_autocorrelation
+  - with_logging
 
 - title: "Comprehensive Analysis"
   desc: "High-level analysis functions"
