@@ -148,6 +148,9 @@ A GitHub Actions workflow automatically installs dependencies, performs `R CMD c
 - Threshold selection diagnostics
 - Bootstrap confidence intervals for the extremal index
 - Cluster statistics and mixing diagnostics
+- Advanced utilities: bivariate extremal index, adaptive thresholds,
+  non-stationary GEV fitting, tail dependence, spectral analysis of extremes,
+  return level estimation and model validation
 - End-to-end demo scripts and vignettes (see files under `vignettes/`)
 
 These items will expand the repository into a comprehensive toolkit for extreme-value analysis.

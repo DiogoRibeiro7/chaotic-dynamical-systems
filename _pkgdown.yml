@@ -65,6 +65,19 @@ reference:
   desc: "Uncertainty quantification for extremal index"
   contents:
   - bootstrap_extremal_index
+  - block_bootstrap
+
+- title: "Advanced Analysis"
+  desc: "Higher-level modelling utilities"
+  contents:
+  - extremal_index_bivariate
+  - adaptive_threshold_selection
+  - fit_nonstationary_gev
+  - tail_dependence_coefficient
+  - spectral_analysis_extremes
+  - calculate_return_levels
+  - validate_extreme_model
+  - goodness_of_fit_test
 
 - title: "Utility Functions"
   desc: "General helpers for scripts and examples"

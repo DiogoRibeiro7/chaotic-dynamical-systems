@@ -9,6 +9,8 @@
 #' @param run_length Integer run parameter for the runs estimator.
 #' @param block_size Integer block length for resampling.
 #' @param B Integer number of bootstrap replicates.
+#' @param parallel Logical. If TRUE use parallel processing via
+#'   [parallel::mclapply()].
 #'
 #' @return A list with elements `theta_hat`, the point estimate; `replicates`,
 #'   the bootstrap sample of extremal index estimates; and `ci`, the 95%
@@ -23,7 +25,8 @@
 #' boot$ci
 #' @export
 bootstrap_extremal_index <- function(x, threshold, estimator = c("runs", "intervals"),
-                                     run_length = 5L, block_size = 50L, B = 1000L) {
+                                     run_length = 5L, block_size = 50L, B = 1000L,
+                                     parallel = FALSE) {
   estimator <- match.arg(estimator)
   stopifnot(is.numeric(x), length(x) > 1,
             is.numeric(threshold), length(threshold) == 1,
@@ -44,7 +47,14 @@ bootstrap_extremal_index <- function(x, threshold, estimator = c("runs", "interv
     function(z) extremal_index_intervals(z, threshold)
   }
   theta_hat <- est_fun(x)
-  boots <- replicate(B, est_fun(resample_series()))
+  if (parallel) {
+    cores <- max(1L, parallel::detectCores() - 1L)
+    boots <- unlist(parallel::mclapply(seq_len(B), function(i) {
+      est_fun(resample_series())
+    }, mc.cores = cores))
+  } else {
+    boots <- replicate(B, est_fun(resample_series()))
+  }
   ci <- quantile(boots, c(0.025, 0.975), na.rm = TRUE)
   list(theta_hat = theta_hat,
        replicates = boots,
