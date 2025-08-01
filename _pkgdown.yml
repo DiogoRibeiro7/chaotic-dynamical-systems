@@ -105,6 +105,8 @@ articles:
   contents:
   - estimating-theta-logistic
   - block-maxima-vs-pot-henon
+  - getting-started-interactive
+  - performance-optimization
 
 navbar:
   structure:

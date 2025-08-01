@@ -1,7 +1,7 @@
 citHeader("To cite chaoticds in publications, please use the following entry:")
 
 citEntry(
-  entry = "Software",
+  entry = "Manual",
   title = "chaoticds: Chaotic Dynamical Systems Utilities",
   author = person(
     given = "Diogo",
