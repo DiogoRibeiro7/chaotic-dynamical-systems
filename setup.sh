@@ -5,9 +5,6 @@
 
 set -euo pipefail  # Exit on error, treat unset vars as errors, catch pipeline failures
 
-# trap any error to provide a helpful message
-trap 'print_error "Setup failed. Check $LOG_FILE for details."' ERR
-
 # Flag for minimal installation (skip heavy packages)
 MINIMAL=0
 # Log file for capturing setup output
@@ -685,6 +682,7 @@ main() {
     echo "Logs: $LOG_FILE"
     # Capture all output to log file as well as stdout
     exec > >(tee -a "$LOG_FILE") 2>&1
+    trap 'print_error "Setup failed. Check $LOG_FILE for details."' ERR
     if [[ "$MINIMAL" -eq 1 ]]; then
         print_status "Minimal installation mode enabled"
     fi

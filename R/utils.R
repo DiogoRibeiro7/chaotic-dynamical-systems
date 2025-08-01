@@ -84,24 +84,28 @@ compute_autocorrelation <- function(x, max_lag = 10) {
 #' readLines(tmp)
 #' @export
 with_logging <- function(expr, log_file = "chaoticds.log", msg = NULL) {
+  safe_log <- function(text) {
+    tryCatch(
+      cat(text, file = log_file, append = TRUE),
+      error = function(e) message("Logging failed: ", e$message)
+    )
+  }
+
   tryCatch(
     withCallingHandlers(
       {
         if (!is.null(msg)) {
-          cat(sprintf("%s INFO: %s\n", Sys.time(), msg),
-              file = log_file, append = TRUE)
+          safe_log(sprintf("%s INFO: %s\n", Sys.time(), msg))
         }
         eval(substitute(expr), parent.frame())
       },
       warning = function(w) {
-        msg <- paste(Sys.time(), "WARNING:", conditionMessage(w))
-        cat(msg, "\n", file = log_file, append = TRUE)
+        safe_log(paste0(Sys.time(), " WARNING: ", conditionMessage(w), "\n"))
         invokeRestart("muffleWarning")
       }
     ),
     error = function(e) {
-      msg <- paste(Sys.time(), "ERROR:", conditionMessage(e))
-      cat(msg, "\n", file = log_file, append = TRUE)
+      safe_log(paste0(Sys.time(), " ERROR: ", conditionMessage(e), "\n"))
       stop(e)
     }
   )
