@@ -27,11 +27,18 @@ NULL
 #' @export
 extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
-  checkmate::assert_data_frame(df, types = "numeric", min.cols = 2)
+  if (!checkmate::test_data_frame(df, types = "numeric", min.cols = 2)) {
+    stop("`df` must be a data frame with at least two numeric columns.", call. = FALSE)
+  }
   p <- ncol(df)
   if (length(thresholds) == 1) thresholds <- rep(thresholds, p)
-  checkmate::assert_numeric(thresholds, any.missing = FALSE, len = p)
-  checkmate::assert_count(run_length)
+  if (!checkmate::test_numeric(thresholds, any.missing = FALSE, len = p)) {
+    stop(paste0("`thresholds` must be a numeric vector of length ", p,
+                " with no missing values."), call. = FALSE)
+  }
+  if (!checkmate::test_count(run_length)) {
+    stop("`run_length` must be a positive integer.", call. = FALSE)
+  }
 
   exceed_mat <- mapply(function(col, thr) col > thr & !is.na(col), df, thresholds)
   exceed_any <- apply(exceed_mat, 1, any)
@@ -61,10 +68,17 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
 #' @export
 extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
-  checkmate::assert_data_frame(df, types = "numeric", min.cols = 2)
+  if (!checkmate::test_data_frame(df, types = "numeric", min.cols = 2)) {
+    stop("`df` must have at least two numeric columns.", call. = FALSE)
+  }
   if (length(thresholds) == 1) thresholds <- rep(thresholds, 2)
-  checkmate::assert_numeric(thresholds, any.missing = FALSE, len = 2)
-  checkmate::assert_count(run_length)
+  if (!checkmate::test_numeric(thresholds, any.missing = FALSE, len = 2)) {
+    stop("`thresholds` must be a numeric vector of length 2 with no missing values.",
+         call. = FALSE)
+  }
+  if (!checkmate::test_count(run_length)) {
+    stop("`run_length` must be a positive integer.", call. = FALSE)
+  }
   extremal_index_multivariate(df[, 1:2], thresholds, run_length)
 }
 
