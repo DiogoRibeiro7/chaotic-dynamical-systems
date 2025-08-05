@@ -72,7 +72,6 @@ reference:
   desc: "Higher-level modelling utilities"
   contents:
   - extremal_index_multivariate
-  - extremal_index_bivariate
   - adaptive_threshold_selection
   - fit_nonstationary_gev
   - tail_dependence_coefficient
