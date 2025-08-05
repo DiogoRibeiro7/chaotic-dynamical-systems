@@ -1,0 +1,53 @@
+---
+title: "Multivariate Extreme Value Analysis"
+author: "Diogo Ribeiro"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+vignette: >
+  %\VignetteIndexEntry{Multivariate Extreme Value Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+This vignette demonstrates the multivariate tools of **chaoticds** using
+simulated logistic and H\'enon maps.
+
+```{r}
+library(chaoticds)
+set.seed(123)
+logistic <- simulate_logistic_map(2000, r = 3.8, x0 = 0.1)
+henon <- simulate_henon_map(2000)
+series <- data.frame(logistic = logistic,
+                     henon_x = henon$x,
+                     henon_y = henon$y)
+thresholds <- apply(series, 2, quantile, probs = 0.95)
+extremal_index_multivariate(series, thresholds, run_length = 3)
+```
+
+```{r fig.height=4}
+plot_exceedance_clusters(series[,1:2], thresholds[1:2])
+```
+
+```{r}
+tail_dependence_heatmap(series)
+```
+
+Multivariate analysis helps understand simultaneous extreme behaviour in
+chaotic systems.
