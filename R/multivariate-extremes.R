@@ -27,18 +27,28 @@ NULL
 #' @export
 extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
-  if (!checkmate::test_data_frame(df, types = "numeric", min.cols = 2)) {
-    stop("`df` must be a data frame with at least two numeric columns.", call. = FALSE)
-  }
+  checkmate::assert_data_frame(
+    df,
+    types = "numeric",
+    min.cols = 2,
+    .var.name = "df",
+    info = "Provide a data frame with at least two numeric columns"
+  )
   p <- ncol(df)
   if (length(thresholds) == 1) thresholds <- rep(thresholds, p)
-  if (!checkmate::test_numeric(thresholds, any.missing = FALSE, len = p)) {
-    stop(paste0("`thresholds` must be a numeric vector of length ", p,
-                " with no missing values."), call. = FALSE)
-  }
-  if (!checkmate::test_count(run_length)) {
-    stop("`run_length` must be a positive integer.", call. = FALSE)
-  }
+  checkmate::assert_numeric(
+    thresholds,
+    any.missing = FALSE,
+    len = p,
+    .var.name = "thresholds",
+    info = sprintf("Supply a numeric vector of length %d with no missing values", p)
+  )
+  checkmate::assert_count(
+    run_length,
+    positive = TRUE,
+    .var.name = "run_length",
+    info = "`run_length` must be a positive integer"
+  )
 
   exceed_mat <- mapply(function(col, thr) col > thr & !is.na(col), df, thresholds)
   exceed_any <- apply(exceed_mat, 1, any)
@@ -68,17 +78,27 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
 #' @export
 extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
-  if (!checkmate::test_data_frame(df, types = "numeric", min.cols = 2)) {
-    stop("`df` must have at least two numeric columns.", call. = FALSE)
-  }
+  checkmate::assert_data_frame(
+    df,
+    types = "numeric",
+    min.cols = 2,
+    .var.name = "df",
+    info = "Provide a data frame with at least two numeric columns"
+  )
   if (length(thresholds) == 1) thresholds <- rep(thresholds, 2)
-  if (!checkmate::test_numeric(thresholds, any.missing = FALSE, len = 2)) {
-    stop("`thresholds` must be a numeric vector of length 2 with no missing values.",
-         call. = FALSE)
-  }
-  if (!checkmate::test_count(run_length)) {
-    stop("`run_length` must be a positive integer.", call. = FALSE)
-  }
+  checkmate::assert_numeric(
+    thresholds,
+    any.missing = FALSE,
+    len = 2,
+    .var.name = "thresholds",
+    info = "Supply two numeric thresholds with no missing values"
+  )
+  checkmate::assert_count(
+    run_length,
+    positive = TRUE,
+    .var.name = "run_length",
+    info = "`run_length` must be a positive integer"
+  )
   extremal_index_multivariate(df[, 1:2], thresholds, run_length)
 }
 
@@ -102,11 +122,15 @@ extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
 #' tail_dependence_asymmetric(x, y, tx, ty)
 #' @export
 tail_dependence_asymmetric <- function(x, y, ux, uy, lower = FALSE) {
-  checkmate::assert_numeric(x)
-  checkmate::assert_numeric(y, len = length(x))
-  checkmate::assert_number(ux, finite = TRUE)
-  checkmate::assert_number(uy, finite = TRUE)
-  checkmate::assert_flag(lower)
+  checkmate::assert_numeric(x, .var.name = "x",
+                           info = "`x` must be a numeric vector")
+  checkmate::assert_numeric(y, len = length(x), .var.name = "y",
+                           info = "`y` must be numeric and match the length of `x`")
+  checkmate::assert_number(ux, finite = TRUE, .var.name = "ux",
+                           info = "Provide a finite numeric threshold for `x`")
+  checkmate::assert_number(uy, finite = TRUE, .var.name = "uy",
+                           info = "Provide a finite numeric threshold for `y`")
+  checkmate::assert_flag(lower, .var.name = "lower")
   cc <- stats::complete.cases(x, y)
   x <- x[cc]
   y <- y[cc]
@@ -163,10 +187,27 @@ lower_tail_dependence <- function(x, y, ux, uy) {
 #' @export
 plot_exceedance_clusters <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
-  checkmate::assert_data_frame(df, types = "numeric", min.cols = 2)
+  checkmate::assert_data_frame(
+    df,
+    types = "numeric",
+    min.cols = 2,
+    .var.name = "df",
+    info = "Provide a data frame with at least two numeric columns"
+  )
   if (length(thresholds) == 1) thresholds <- rep(thresholds, 2)
-  checkmate::assert_numeric(thresholds, any.missing = FALSE, len = 2)
-  checkmate::assert_count(run_length)
+  checkmate::assert_numeric(
+    thresholds,
+    any.missing = FALSE,
+    len = 2,
+    .var.name = "thresholds",
+    info = "Supply two numeric thresholds with no missing values"
+  )
+  checkmate::assert_count(
+    run_length,
+    positive = TRUE,
+    .var.name = "run_length",
+    info = "`run_length` must be a positive integer"
+  )
   exc_any <- which(df[[1]] > thresholds[1] | df[[2]] > thresholds[2])
   ce <- cluster_exceedances(exc_any, run_length)
   cluster_id <- rep(NA_integer_, nrow(df))
@@ -202,8 +243,20 @@ plot_exceedance_clusters <- function(df, thresholds, run_length = 3L) {
 #' @export
 tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
   df <- as.data.frame(df)
-  checkmate::assert_data_frame(df, types = "numeric", min.cols = 2)
-  checkmate::assert_number(quantile_level, lower = 0, upper = 1)
+  checkmate::assert_data_frame(
+    df,
+    types = "numeric",
+    min.cols = 2,
+    .var.name = "df",
+    info = "Provide a data frame with at least two numeric columns"
+  )
+  checkmate::assert_number(
+    quantile_level,
+    lower = 0,
+    upper = 1,
+    .var.name = "quantile_level",
+    info = "`quantile_level` must be between 0 and 1"
+  )
   p <- ncol(df)
   combs <- utils::combn(p, 2)
   vals <- apply(combs, 2, function(idx) {
