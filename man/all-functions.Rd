@@ -52,3 +52,17 @@ The functions provide tools for simulating chaotic maps, estimating extremal ind
 
 \alias{block_bootstrap}
 \alias{estimate_correlation_dimension}
+\alias{adaptive_threshold_selection}
+\alias{fit_nonstationary_gev}
+\alias{tail_dependence_coefficient}
+\alias{spectral_analysis_extremes}
+\alias{calculate_return_levels}
+\alias{validate_extreme_model}
+\alias{goodness_of_fit_test}
+\alias{extremal_index_bivariate}
+\alias{extremal_index_multivariate}
+\alias{tail_dependence_asymmetric}
+\alias{upper_tail_dependence}
+\alias{lower_tail_dependence}
+\alias{plot_exceedance_clusters}
+\alias{tail_dependence_heatmap}

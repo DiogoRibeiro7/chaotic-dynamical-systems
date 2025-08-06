@@ -6,32 +6,6 @@
 #' @name advanced_extremes
 NULL
 
-#' Bivariate extremal index (simple average approach)
-#'
-#' Estimates an overall extremal index for two time series by
-#' averaging the univariate runs estimators of each component.
-#'
-#' @param df Data frame with at least two numeric columns.
-#' @param thresholds Numeric vector of length two giving thresholds for each column.
-#' @param run_length Integer run parameter for the runs method.
-#'
-#' @return Numeric extremal index between 0 and 1.
-#' @examples
-#' df <- data.frame(x = rnorm(1000), y = rnorm(1000))
-#' extremal_index_bivariate(df, c(0.9, 0.9))
-#' @export
-extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
-  if (!is.data.frame(df) || ncol(df) < 2) {
-    stop("df must be a data frame with at least two columns")
-  }
-  if (!is.numeric(thresholds) || length(thresholds) != 2) {
-    stop("thresholds must be a numeric vector of length two")
-  }
-  tx <- extremal_index_runs(df[[1]], thresholds[1], run_length)
-  ty <- extremal_index_runs(df[[2]], thresholds[2], run_length)
-  mean(c(tx, ty), na.rm = TRUE)
-}
-
 #' Adaptive threshold selection
 #'
 #' Computes a rolling high quantile over a sliding window to allow
@@ -48,16 +22,14 @@ extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
 #' thr <- adaptive_threshold_selection(x, 50)
 #' @export
 adaptive_threshold_selection <- function(x, window_size = 100L, prob = 0.95) {
-  if (!is.numeric(x) || length(x) < window_size) {
-    stop("x must be numeric with length >= window_size")
-  }
-  if (!is.numeric(window_size) || length(window_size) != 1 || window_size <= 0) {
-    stop("window_size must be a positive integer")
-  }
-  roll <- vapply(seq_len(length(x) - window_size + 1), function(i) {
-    quantile(x[i:(i + window_size - 1)], prob, type = 8, na.rm = TRUE)
+  checkmate::assert_numeric(x)
+  checkmate::assert_count(window_size)
+  checkmate::assert_number(prob, lower = 0, upper = 1)
+  checkmate::assert_true(length(x) >= window_size,
+                         msg = "x must have length >= window_size")
+  vapply(seq_len(length(x) - window_size + 1), function(i) {
+    stats::quantile(x[i:(i + window_size - 1)], prob, type = 8, na.rm = TRUE)
   }, numeric(1))
-  roll
 }
 
 #' Fit a simple non-stationary GEV model
@@ -76,7 +48,8 @@ adaptive_threshold_selection <- function(x, window_size = 100L, prob = 0.95) {
 #' fit_nonstationary_gev(x)
 #' @export
 fit_nonstationary_gev <- function(x, trend = TRUE) {
-  stopifnot(is.numeric(x), length(x) > 1)
+  checkmate::assert_numeric(x, min.len = 2)
+  checkmate::assert_flag(trend)
   time <- seq_along(x)
   if (requireNamespace("ismev", quietly = TRUE)) {
     locform <- if (trend) ~ time else ~ 1
@@ -119,9 +92,11 @@ fit_nonstationary_gev <- function(x, trend = TRUE) {
 #' tail_dependence_coefficient(x, y)
 #' @export
 tail_dependence_coefficient <- function(x, y, quantile_level = 0.9) {
-  stopifnot(is.numeric(x), is.numeric(y), length(x) == length(y))
-  qx <- quantile(x, quantile_level, type = 8, na.rm = TRUE)
-  qy <- quantile(y, quantile_level, type = 8, na.rm = TRUE)
+  checkmate::assert_numeric(x)
+  checkmate::assert_numeric(y, len = length(x))
+  checkmate::assert_number(quantile_level, lower = 0, upper = 1)
+  qx <- stats::quantile(x, quantile_level, type = 8, na.rm = TRUE)
+  qy <- stats::quantile(y, quantile_level, type = 8, na.rm = TRUE)
   mean(x > qx & y > qy) / (1 - quantile_level)
 }
 
@@ -140,7 +115,8 @@ tail_dependence_coefficient <- function(x, y, quantile_level = 0.9) {
 #' spectral_analysis_extremes(x, threshold = 2)
 #' @export
 spectral_analysis_extremes <- function(x, threshold) {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1)
+  checkmate::assert_numeric(x)
+  checkmate::assert_number(threshold)
   ind <- as.numeric(x > threshold)
   stats::spectrum(ind, plot = FALSE)
 }
@@ -160,9 +136,11 @@ spectral_analysis_extremes <- function(x, threshold) {
 #' rl <- calculate_return_levels(x, 2, c(10, 100))
 #' @export
 calculate_return_levels <- function(x, threshold, return_periods) {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1)
+  checkmate::assert_numeric(x)
+  checkmate::assert_number(threshold)
+  checkmate::assert_numeric(return_periods, any.missing = FALSE)
   exc <- x[x > threshold] - threshold
-  if (length(exc) < 1) stop("No exceedances above threshold")
+  checkmate::assert_true(length(exc) >= 1, msg = "No exceedances above threshold")
   # simple GPD fit via method of moments
   scale <- mean(exc)
   shape <- -scale^2 / (var(exc) - scale^2)
@@ -184,9 +162,11 @@ calculate_return_levels <- function(x, threshold, return_periods) {
 #' @return List containing QQ plot data.
 #' @export
 validate_extreme_model <- function(x, threshold, method = "qq") {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1)
+  checkmate::assert_numeric(x)
+  checkmate::assert_number(threshold)
+  checkmate::assert_choice(method, choices = "qq")
   exc <- x[x > threshold] - threshold
-  if (length(exc) < 1) stop("No exceedances above threshold")
+  checkmate::assert_true(length(exc) >= 1, msg = "No exceedances above threshold")
   exc <- sort(exc)
   p <- ppoints(length(exc))
   q <- quantile(exc, p, type = 8)
@@ -205,9 +185,10 @@ validate_extreme_model <- function(x, threshold, method = "qq") {
 #' @return List with KS statistic and p-value.
 #' @export
 goodness_of_fit_test <- function(x, threshold) {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1)
+  checkmate::assert_numeric(x)
+  checkmate::assert_number(threshold)
   exc <- x[x > threshold] - threshold
-  if (length(exc) < 1) stop("No exceedances above threshold")
+  checkmate::assert_true(length(exc) >= 1, msg = "No exceedances above threshold")
   scale <- mean(exc)
   shape <- -scale^2 / (var(exc) - scale^2)
   pgpd <- function(z) 1 - (1 + shape * z / scale)^(-1/shape)
@@ -227,8 +208,10 @@ goodness_of_fit_test <- function(x, threshold) {
 #' block_bootstrap(1:100, block_length = 10)
 #' @export
 block_bootstrap <- function(x, block_length) {
-  stopifnot(is.numeric(x), length(x) > block_length,
-            is.numeric(block_length), block_length > 0)
+  checkmate::assert_numeric(x)
+  checkmate::assert_count(block_length)
+  checkmate::assert_true(length(x) > block_length,
+                         msg = "block_length must be < length of x")
   n <- length(x)
   starts <- sample(seq_len(n - block_length + 1), n, replace = TRUE)
   idx <- unlist(lapply(starts, function(s) s:(s + block_length - 1)))
