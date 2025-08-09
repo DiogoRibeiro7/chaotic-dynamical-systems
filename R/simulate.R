@@ -14,15 +14,9 @@
 #' series <- simulate_logistic_map(100, 3.8, 0.2)
 #' @export
 simulate_logistic_map <- function(n, r, x0) {
-  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
-    stop("n must be a positive integer")
-  }
-  if (!is.numeric(r) || length(r) != 1) {
-    stop("r must be numeric")
-  }
-  if (!is.numeric(x0) || length(x0) != 1) {
-    stop("x0 must be numeric")
-  }
+  checkmate::assert_count(n)
+  checkmate::assert_number(r)
+  checkmate::assert_number(x0)
   x <- numeric(n)
   x[1] <- x0
   for (i in 1:(n - 1)) {
@@ -49,18 +43,11 @@ simulate_logistic_map <- function(n, r, x0) {
 #' orbit <- simulate_henon_map(100, 1.4, 0.3)
 #' @export
 simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
-  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
-    stop("n must be a positive integer")
-  }
-  if (!is.numeric(a) || length(a) != 1) {
-    stop("a must be numeric")
-  }
-  if (!is.numeric(b) || length(b) != 1) {
-    stop("b must be numeric")
-  }
-  if (!is.numeric(x0) || length(x0) != 1 || !is.numeric(y0) || length(y0) != 1) {
-    stop("x0 and y0 must be numeric")
-  }
+  checkmate::assert_count(n)
+  checkmate::assert_number(a)
+  checkmate::assert_number(b)
+  checkmate::assert_number(x0)
+  checkmate::assert_number(y0)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
@@ -92,29 +79,25 @@ simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
 #' plot(bifdat$r, bifdat$x, pch = '.', cex = 0.5)
 #' @export
 logistic_bifurcation <- function(r_seq, n_iter = 200, discard = 100, x0 = 0.2) {
-  if (!is.numeric(r_seq) || length(r_seq) == 0) {
-    stop("r_seq must be a numeric vector")
-  }
-  if (!is.numeric(n_iter) || length(n_iter) != 1 || n_iter <= discard) {
-    stop("n_iter must be a single numeric value larger than discard")
-  }
-  if (!is.numeric(discard) || length(discard) != 1 || discard < 0) {
-    stop("discard must be a non-negative number")
-  }
-  if (!is.numeric(x0) || length(x0) != 1) {
-    stop("x0 must be numeric")
-  }
+  checkmate::assert_numeric(r_seq, any.missing = FALSE, min.len = 1)
+  checkmate::assert_int(discard, lower = 0)
+  checkmate::assert_int(n_iter, lower = discard + 1)
+  checkmate::assert_number(x0)
 
-  r_out <- numeric(0)
-  x_out <- numeric(0)
+  keep <- n_iter - discard
+  total <- length(r_seq) * keep
+  r_out <- numeric(total)
+  x_out <- numeric(total)
+  idx <- 1L
 
   for (r in r_seq) {
     x <- x0
     for (i in seq_len(n_iter)) {
       x <- r * x * (1 - x)
       if (i > discard) {
-        r_out <- c(r_out, r)
-        x_out <- c(x_out, x)
+        r_out[idx] <- r
+        x_out[idx] <- x
+        idx <- idx + 1L
       }
     }
   }
@@ -136,15 +119,9 @@ logistic_bifurcation <- function(r_seq, n_iter = 200, discard = 100, x0 = 0.2) {
 #' series <- simulate_tent_map(100, r = 2, x0 = 0.1)
 #' @export
 simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
-  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
-    stop("n must be a positive integer")
-  }
-  if (!is.numeric(r) || length(r) != 1 || r <= 0 || r > 2) {
-    stop("r must be numeric in (0, 2]")
-  }
-  if (!is.numeric(x0) || length(x0) != 1 || x0 <= 0 || x0 >= 1) {
-    stop("x0 must be in (0, 1)")
-  }
+  checkmate::assert_count(n)
+  checkmate::assert_number(r, lower = 0, upper = 2, left.open = TRUE)
+  checkmate::assert_number(x0, lower = 0, upper = 1, left.open = TRUE, right.open = TRUE)
   x <- numeric(n)
   x[1] <- x0
   for (i in 1:(n - 1)) {
@@ -174,18 +151,11 @@ simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
 #' orbit <- simulate_lozi_map(100)
 #' @export
 simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
-  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
-    stop("n must be a positive integer")
-  }
-  if (!is.numeric(a) || length(a) != 1) {
-    stop("a must be numeric")
-  }
-  if (!is.numeric(b) || length(b) != 1) {
-    stop("b must be numeric")
-  }
-  if (!is.numeric(x0) || length(x0) != 1 || !is.numeric(y0) || length(y0) != 1) {
-    stop("x0 and y0 must be numeric")
-  }
+  checkmate::assert_count(n)
+  checkmate::assert_number(a)
+  checkmate::assert_number(b)
+  checkmate::assert_number(x0)
+  checkmate::assert_number(y0)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
@@ -211,12 +181,9 @@ simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
 #' orbit <- simulate_cat_map(100)
 #' @export
 simulate_cat_map <- function(n, x0 = 0.1, y0 = 0.1) {
-  if (!is.numeric(n) || length(n) != 1 || n <= 0) {
-    stop("n must be a positive integer")
-  }
-  if (!is.numeric(x0) || length(x0) != 1 || !is.numeric(y0) || length(y0) != 1) {
-    stop("x0 and y0 must be numeric")
-  }
+  checkmate::assert_count(n)
+  checkmate::assert_number(x0)
+  checkmate::assert_number(y0)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0 %% 1

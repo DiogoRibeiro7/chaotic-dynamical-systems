@@ -38,28 +38,23 @@ so the package can be checked and installed normally.
 - **`vignettes/`** – R Markdown tutorials: `estimating-theta-logistic.Rmd` and `block-maxima-vs-pot-henon.Rmd`.
 - **`roadmap.md`** – overview of the development plan (all current items are implemented).
 
+## Quick Start
+
+```r
+library(chaoticds)
+series <- simulate_logistic_map(1000, 3.8, 0.2)
+block_maxima(series, 50)
+```
+
 ## Installation
 
-Run the setup script to install all dependencies and initialise `renv`:
+Run the setup script to install dependencies:
 
 ```bash
-./setup.sh --minimal  # omit heavy optional packages
+./setup.sh --minimal
 ```
 
-The script logs all output to `setup.log`, which you can inspect if
-something goes wrong during installation.
-
-This will install the required R packages, create the basic directory
-structure and set up testing infrastructure.  You can also restore the
-environment manually and install the package from source:
-
-```R
-install.packages("renv")
-renv::restore()
-devtools::install_local(".")
-```
-
-For the optional Python utilities, execute `./setup-all.sh`.
+For optional Python utilities, use `./setup-all.sh`. Full installation details live in [INSTALL.md](INSTALL.md).
 
 ## Usage
 
@@ -102,7 +97,9 @@ Recurrence plots visualize when a system revisits similar states in reconstructe
 Use `recurrence_analysis()` to compute summary measures such as recurrence rate and determinism.
 An example script `analysis/recurrence-plots.R` demonstrates how to generate a
 recurrence plot for the built-in `logistic_ts` dataset and extract basic
-recurrence statistics.
+recurrence statistics. The script accepts an optional output file path and
+saves the plot non-interactively to a PNG image, making it easy to integrate
+into reproducible workflows.
 
 ## Example Datasets
 
@@ -135,13 +132,21 @@ props = recurrence_analysis([0.1, 0.5, 0.2, 0.9])
 
 ## Testing and Continuous Integration
 
-All unit tests live under `tests/` and use the **testthat** framework. After installing the package, you can run them (if `devtools` is available) with:
+All unit tests live under `tests/` and use the **testthat** framework. After
+installing the package, you can run them with:
 
-```R
+```r
+testthat::test_dir('tests/testthat')
+```
+
+or, if `devtools` is available:
+
+```r
 devtools::test()
 ```
 
-A GitHub Actions workflow automatically installs dependencies, performs `R CMD check`, and executes the test suite on every push and pull request.
+A GitHub Actions workflow automatically installs dependencies, performs `R CMD
+check`, and executes the test suite on every push and pull request.
 
 
 ## Roadmap Highlights

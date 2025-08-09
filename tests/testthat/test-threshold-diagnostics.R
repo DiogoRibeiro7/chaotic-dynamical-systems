@@ -1,4 +1,3 @@
-context('Threshold selection and diagnostics')
 
 test_that('mean_residual_life computes correctly', {
   x <- c(1, 2, 3, 4, 5)

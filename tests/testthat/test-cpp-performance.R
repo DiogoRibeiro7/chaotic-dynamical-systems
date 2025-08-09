@@ -1,4 +1,3 @@
-context('C++ performance implementations')
 
 test_that('C++ implementations give same results as R implementations', {
   skip_if_not_installed("Rcpp")

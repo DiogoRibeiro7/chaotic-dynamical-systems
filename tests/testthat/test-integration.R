@@ -1,4 +1,3 @@
-context('Integration tests')
 
 test_that('run_demo executes and logs info', {
   logf <- tempfile()
@@ -24,4 +23,13 @@ test_that('extremal index workflow runs end-to-end', {
   expect_true(all(c('runs', 'intervals') %in% names(result)))
   lines <- readLines(logf)
   expect_true(any(grepl('INFO: ei_workflow', lines)))
+})
+
+test_that('simulation results feed into recurrence analysis', {
+  set.seed(123)
+  x <- simulate_logistic_map(200, r = 3.8, x0 = 0.2)
+  props <- recurrence_analysis(x)
+  expect_true(is.list(props))
+  expect_true(props$recurrence_rate > 0)
+  expect_gte(props$determinism, 0)
 })

@@ -1,4 +1,3 @@
-context('Simulation utilities')
 
 test_that('simulate_logistic_map returns correct length and start value', {
   set.seed(123)
@@ -46,4 +45,12 @@ test_that('logistic_bifurcation returns data frame', {
   expect_s3_class(bif, 'data.frame')
   expect_true(all(c('r', 'x') %in% names(bif)))
   expect_true(nrow(bif) > 0)
+})
+
+test_that('logistic map variance increases in chaotic regime', {
+  set.seed(42)
+  series_periodic <- simulate_logistic_map(1000, r = 3.2, x0 = 0.2)
+  set.seed(42)
+  series_chaotic <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+  expect_lt(var(series_periodic), var(series_chaotic))
 })

@@ -1,4 +1,3 @@
-context('POT and block maxima utilities')
 
 test_that('exceedances extracts values above threshold', {
   x <- c(-1, 0.5, 1.2, 2, 0.3)

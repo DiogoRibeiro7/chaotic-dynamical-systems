@@ -1,4 +1,3 @@
-context('Utility functions')
 
 test_that('parameter validation works correctly', {
   # Test parameter validation for simulation functions

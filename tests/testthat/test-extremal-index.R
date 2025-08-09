@@ -1,4 +1,3 @@
-context('Extremal index estimation')
 
 test_that('extremal_index_runs returns numeric', {
   set.seed(123)

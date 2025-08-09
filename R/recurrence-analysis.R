@@ -14,8 +14,10 @@
 #' @importFrom stats dist sd
 #' @export
 recurrence_plot <- function(x, embed = 2L, delay = 1L, eps = NULL) {
-  stopifnot(is.numeric(x), is.numeric(embed), embed >= 1,
-            is.numeric(delay), delay >= 1)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_int(embed, lower = 1)
+  checkmate::assert_int(delay, lower = 1)
+  checkmate::assert_number(eps, null.ok = TRUE)
   n <- length(x) - (embed - 1) * delay
   if (n <= 0) stop("time series too short for chosen embedding")
 
@@ -39,6 +41,7 @@ recurrence_plot <- function(x, embed = 2L, delay = 1L, eps = NULL) {
 #' recurrence_analysis(rnorm(100))
 #' @export
 recurrence_analysis <- function(x, embed = 2L, delay = 1L, eps = NULL, lmin = 2L) {
+  checkmate::assert_int(lmin, lower = 1)
   rp <- recurrence_plot(x, embed = embed, delay = delay, eps = eps)
   n <- nrow(rp)
   rr <- sum(rp) / (n * n)
