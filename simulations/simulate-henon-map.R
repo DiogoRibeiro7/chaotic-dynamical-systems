@@ -15,9 +15,11 @@
 #' orbit <- simulate_henon_map(100, 1.4, 0.3)
 #' @export
 simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
-  stopifnot(is.numeric(n), n > 0,
-            is.numeric(a), is.numeric(b),
-            is.numeric(x0), is.numeric(y0))
+  checkmate::assert_int(n, lower = 1)
+  checkmate::assert_number(a)
+  checkmate::assert_number(b)
+  checkmate::assert_number(x0)
+  checkmate::assert_number(y0)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
