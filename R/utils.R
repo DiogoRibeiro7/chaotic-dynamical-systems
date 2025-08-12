@@ -11,9 +11,7 @@
 #' clean_extreme_data(c(1, NA, 2, Inf, 3))
 #' @export
 clean_extreme_data <- function(x) {
-  if (!is.numeric(x)) {
-    stop("x must be numeric")
-  }
+  checkmate::assert_numeric(x, any.missing = TRUE)
   x[is.finite(x)]
 }
 
@@ -31,12 +29,8 @@ clean_extreme_data <- function(x) {
 #' empirical_quantile(rnorm(100), 0.95)
 #' @export
 empirical_quantile <- function(x, prob) {
-  if (!is.numeric(x) || length(x) == 0) {
-    stop("x must be a non-empty numeric vector")
-  }
-  if (!is.numeric(prob) || length(prob) != 1 || prob < 0 || prob > 1) {
-    stop("prob must be a number between 0 and 1")
-  }
+  checkmate::assert_numeric(x, any.missing = TRUE, min.len = 1)
+  checkmate::assert_number(prob, lower = 0, upper = 1)
   as.numeric(stats::quantile(x, prob, type = 8, na.rm = TRUE))
 }
 
@@ -55,12 +49,8 @@ empirical_quantile <- function(x, prob) {
 #' compute_autocorrelation(rnorm(100), max_lag = 10)
 #' @export
 compute_autocorrelation <- function(x, max_lag = 10) {
-  if (!is.numeric(x) || length(x) <= 1) {
-    stop("x must be a numeric vector with at least two values")
-  }
-  if (!is.numeric(max_lag) || length(max_lag) != 1 || max_lag < 1) {
-    stop("max_lag must be a positive integer")
-  }
+  checkmate::assert_numeric(x, any.missing = FALSE, min.len = 2)
+  checkmate::assert_int(max_lag, lower = 1)
   stats::acf(x, lag.max = max_lag, plot = FALSE)$acf[1:(max_lag + 1)]
 }
 

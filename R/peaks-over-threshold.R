@@ -79,7 +79,6 @@ mean_residual_life <- function(x, thresholds) {
 mrl_plot <- function(mrl_df) {
   checkmate::assert_data_frame(mrl_df)
   checkmate::assert_subset(c("threshold", "mean_excess"), names(mrl_df))
-  library(ggplot2)
   ggplot(mrl_df, aes(x = threshold, y = mean_excess)) +
     geom_point() +
     geom_line() +
