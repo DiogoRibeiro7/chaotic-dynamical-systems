@@ -6,6 +6,11 @@ test_that('simulate_logistic_map returns correct length and start value', {
   expect_equal(res[1], 0.2)
 })
 
+test_that('simulate_logistic_map enforces x0 bounds', {
+  expect_error(simulate_logistic_map(10, r = 3.8, x0 = -0.1), '0')
+  expect_error(simulate_logistic_map(10, r = 3.8, x0 = 1.1), '1')
+})
+
 test_that('simulate_henon_map returns data frame with n rows', {
   set.seed(42)
   df <- simulate_henon_map(15)
@@ -45,6 +50,12 @@ test_that('logistic_bifurcation returns data frame', {
   expect_s3_class(bif, 'data.frame')
   expect_true(all(c('r', 'x') %in% names(bif)))
   expect_true(nrow(bif) > 0)
+})
+
+test_that('logistic_bifurcation enforces x0 bounds', {
+  r_vals <- seq(3, 3.5, length.out = 10)
+  expect_error(logistic_bifurcation(r_vals, x0 = -0.1), '0')
+  expect_error(logistic_bifurcation(r_vals, x0 = 1.1), '1')
 })
 
 test_that('logistic map variance increases in chaotic regime', {

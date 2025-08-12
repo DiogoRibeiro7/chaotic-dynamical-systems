@@ -25,9 +25,19 @@ test_that('recurrence_plot validates integer embed and delay', {
   expect_error(recurrence_plot(rnorm(10), delay = 1.2), 'integer')
 })
 
+test_that('recurrence_plot requires positive eps', {
+  expect_error(recurrence_plot(rnorm(10), eps = 0), '0')
+  expect_error(recurrence_plot(rnorm(10), eps = -1), '0')
+})
+
 test_that('recurrence_analysis determinism drops to zero when lmin is large', {
   x <- rnorm(20)
   props <- recurrence_analysis(x, lmin = 50)
   expect_equal(props$determinism, 0)
+})
+
+test_that('recurrence_analysis determinism is one for constant series with lmin = 1', {
+  props <- recurrence_analysis(rep(0, 5), embed = 1, eps = 1, lmin = 1)
+  expect_equal(props$determinism, 1)
 })
 

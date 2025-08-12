@@ -16,7 +16,7 @@
 simulate_logistic_map <- function(n, r, x0) {
   checkmate::assert_count(n)
   checkmate::assert_number(r)
-  checkmate::assert_number(x0)
+  checkmate::assert_number(x0, lower = 0, upper = 1, left.open = TRUE, right.open = TRUE)
   x <- numeric(n)
   x[1] <- x0
   for (i in 1:(n - 1)) {
@@ -68,7 +68,7 @@ simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
 #' @param n_iter Integer. Number of iterations for each parameter.
 #' @param discard Integer. Number of initial iterations to discard as
 #'   transient. Must be less than \code{n_iter}.
-#' @param x0 Numeric. Initial value for the orbit.
+#' @param x0 Numeric. Initial value in (0, 1) for the orbit.
 #'
 #' @return Data frame with columns `r` and `x` containing orbit values after
 #'   the transient period for each parameter in `r_seq`.
@@ -82,7 +82,7 @@ logistic_bifurcation <- function(r_seq, n_iter = 200, discard = 100, x0 = 0.2) {
   checkmate::assert_numeric(r_seq, any.missing = FALSE, min.len = 1)
   checkmate::assert_int(discard, lower = 0)
   checkmate::assert_int(n_iter, lower = discard + 1)
-  checkmate::assert_number(x0)
+  checkmate::assert_number(x0, lower = 0, upper = 1, left.open = TRUE, right.open = TRUE)
 
   keep <- n_iter - discard
   total <- length(r_seq) * keep
