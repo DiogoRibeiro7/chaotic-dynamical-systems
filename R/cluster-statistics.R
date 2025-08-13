@@ -11,9 +11,9 @@
 #' @return Various depending on the function; see details below.
 #' @export
 cluster_sizes <- function(x, threshold, run_length) {
-  stopifnot(is.numeric(x),
-            is.numeric(threshold), length(threshold) == 1,
-            is.numeric(run_length), run_length >= 1)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_number(threshold)
+  checkmate::assert_int(run_length, lower = 1)
   ix <- threshold_exceedances(x, threshold)
   ce <- cluster_exceedances(ix, as.integer(run_length))
   vapply(ce$clusters, length, integer(1))
@@ -28,7 +28,7 @@ cluster_sizes <- function(x, threshold, run_length) {
 #' @return Named numeric vector with elements `mean_size` and `var_size`.
 #' @export
 cluster_summary <- function(sizes) {
-  stopifnot(is.numeric(sizes))
+  checkmate::assert_numeric(sizes, any.missing = FALSE)
   c(mean_size = mean(sizes), var_size = var(sizes))
 }
 
@@ -42,7 +42,7 @@ cluster_summary <- function(sizes) {
 #' @importFrom ggplot2 ggplot aes geom_col labs theme_minimal
 #' @export
 cluster_histogram <- function(sizes) {
-  stopifnot(is.numeric(sizes))
+  checkmate::assert_numeric(sizes, any.missing = FALSE)
   library(ggplot2)
   df <- as.data.frame(table(size = sizes))
   df$size <- as.integer(as.character(df$size))

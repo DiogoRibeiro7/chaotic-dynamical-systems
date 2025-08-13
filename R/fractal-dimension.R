@@ -18,15 +18,10 @@
 #' cd$dimension
 #' @export
 estimate_correlation_dimension <- function(x, m = 2L, tau = 1L, r_vals = NULL) {
-  if (!is.numeric(x) || length(x) < (m - 1) * tau + 2) {
-    stop("x must be numeric with sufficient length for embedding")
-  }
-  if (!is.numeric(m) || length(m) != 1 || m < 1) {
-    stop("m must be a positive integer")
-  }
-  if (!is.numeric(tau) || length(tau) != 1 || tau < 1) {
-    stop("tau must be a positive integer")
-  }
+  checkmate::assert_int(m, lower = 1)
+  checkmate::assert_int(tau, lower = 1)
+  checkmate::assert_numeric(x, min.len = (m - 1) * tau + 2)
+  checkmate::assert_numeric(r_vals, lower = 0, null.ok = TRUE)
   n <- length(x) - (m - 1) * tau
   embed_mat <- sapply(0:(m - 1), function(k) x[(1:n) + k * tau])
   dists <- dist(embed_mat, method = "euclidean")

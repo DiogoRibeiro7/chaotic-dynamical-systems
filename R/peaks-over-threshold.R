@@ -9,7 +9,8 @@
 #' exceedances(rnorm(100), 1.5)
 #' @export
 exceedances <- function(x, threshold) {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_number(threshold)
   x[x > threshold]
 }
 
@@ -28,7 +29,8 @@ exceedances <- function(x, threshold) {
 #' fit_gpd(rnorm(1000), 1.5)
 #' @export
 fit_gpd <- function(x, threshold) {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_number(threshold)
   if (requireNamespace("evd", quietly = TRUE)) {
     evd::fpot(x, threshold)
   } else if (requireNamespace("evir", quietly = TRUE)) {
@@ -53,7 +55,8 @@ fit_gpd <- function(x, threshold) {
 #' mrl <- mean_residual_life(rnorm(1000), seq(0, 2, 0.2))
 #' @export
 mean_residual_life <- function(x, thresholds) {
-  stopifnot(is.numeric(x), is.numeric(thresholds))
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_numeric(thresholds, any.missing = FALSE)
   mean_excess <- sapply(thresholds, function(u) {
     exc <- x[x > u] - u
     if (length(exc) == 0) return(NA_real_)
@@ -74,9 +77,8 @@ mean_residual_life <- function(x, thresholds) {
 #' mrl_plot(df)
 #' @export
 mrl_plot <- function(mrl_df) {
-  stopifnot(is.data.frame(mrl_df),
-            all(c("threshold", "mean_excess") %in% names(mrl_df)))
-  library(ggplot2)
+  checkmate::assert_data_frame(mrl_df)
+  checkmate::assert_subset(c("threshold", "mean_excess"), names(mrl_df))
   ggplot(mrl_df, aes(x = threshold, y = mean_excess)) +
     geom_point() +
     geom_line() +

@@ -161,17 +161,19 @@ generate_known_distribution_data <- function(distribution = "exponential", n = 1
 #' @param expected_range Expected range (vector of length 2)
 validate_test_data <- function(data, expected_length = NULL, expected_range = NULL) {
   if (!is.null(expected_length)) {
-    stopifnot(length(data) == expected_length)
+    checkmate::assert_true(length(data) == expected_length)
   }
-  
+
   if (!is.null(expected_range)) {
-    stopifnot(min(data, na.rm = TRUE) >= expected_range[1])
-    stopifnot(max(data, na.rm = TRUE) <= expected_range[2])
+    checkmate::assert_number(expected_range[1])
+    checkmate::assert_number(expected_range[2])
+    checkmate::assert_true(min(data, na.rm = TRUE) >= expected_range[1])
+    checkmate::assert_true(max(data, na.rm = TRUE) <= expected_range[2])
   }
-  
+
   # Check for invalid values
-  stopifnot(!any(is.na(data)))
-  stopifnot(!any(is.infinite(data)))
+  checkmate::assert_true(!any(is.na(data)))
+  checkmate::assert_true(!any(is.infinite(data)))
   
   TRUE
 }

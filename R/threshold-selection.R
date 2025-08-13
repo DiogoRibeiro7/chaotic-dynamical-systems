@@ -18,7 +18,9 @@
 #' hill_plot(diag$hill)
 #' @export
 threshold_diagnostics <- function(x, thresholds, k_values) {
-  stopifnot(is.numeric(x), is.numeric(thresholds), is.numeric(k_values))
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_numeric(thresholds, any.missing = FALSE)
+  checkmate::assert_integerish(k_values, any.missing = FALSE)
   mrl_df <- mean_residual_life(x, thresholds)
   hill_df <- hill_estimates(x, k_values)
   list(mrl = mrl_df, hill = hill_df)
@@ -38,7 +40,8 @@ threshold_diagnostics <- function(x, thresholds, k_values) {
 #' hill_estimates(rexp(1000), 1:50)
 #' @export
 hill_estimates <- function(x, k_values) {
-  stopifnot(is.numeric(x), is.numeric(k_values))
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_integerish(k_values, any.missing = FALSE)
   x <- sort(x, decreasing = TRUE)
   n <- length(x)
   k_values <- k_values[k_values < n]
@@ -60,8 +63,8 @@ hill_estimates <- function(x, k_values) {
 #' hill_plot(df)
 #' @export
 hill_plot <- function(hill_df) {
-  stopifnot(is.data.frame(hill_df),
-            all(c("k", "hill") %in% names(hill_df)))
+  checkmate::assert_data_frame(hill_df)
+  checkmate::assert_subset(c("k", "hill"), names(hill_df))
   library(ggplot2)
   ggplot(hill_df, aes(x = k, y = hill)) +
     geom_line() +

@@ -28,10 +28,10 @@ bootstrap_extremal_index <- function(x, threshold, estimator = c("runs", "interv
                                      run_length = 5L, block_size = 50L, B = 1000L,
                                      parallel = FALSE) {
   estimator <- match.arg(estimator)
-  stopifnot(is.numeric(x), length(x) > 1,
-            is.numeric(threshold), length(threshold) == 1,
-            is.numeric(block_size), block_size > 0,
-            is.numeric(B), B > 1)
+  checkmate::assert_numeric(x, len = NULL, any.missing = FALSE, min.len = 2)
+  checkmate::assert_number(threshold)
+  checkmate::assert_int(block_size, lower = 1)
+  checkmate::assert_int(B, lower = 2)
   n <- length(x)
   n_blocks <- ceiling(n / block_size)
   # helper for block bootstrap resampling

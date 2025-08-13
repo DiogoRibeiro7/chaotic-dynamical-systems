@@ -5,7 +5,7 @@
 #' @param x Numeric vector representing the time series.
 #' @param embed Integer embedding dimension. Defaults to 2.
 #' @param delay Integer delay between coordinates in the embedding. Defaults to 1.
-#' @param eps Radius for defining recurrences. If NULL, uses 10% of the standard deviation of `x`.
+#' @param eps Positive radius for defining recurrences. If NULL, uses 10% of the standard deviation of `x`.
 #'
 #' @return A logical matrix representing the recurrence plot. Points within `eps` distance are marked as TRUE.
 #' @examples
@@ -14,10 +14,12 @@
 #' @importFrom stats dist sd
 #' @export
 recurrence_plot <- function(x, embed = 2L, delay = 1L, eps = NULL) {
-  stopifnot(is.numeric(x), is.numeric(embed), embed >= 1,
-            is.numeric(delay), delay >= 1)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_int(embed, lower = 1)
+  checkmate::assert_int(delay, lower = 1)
+  checkmate::assert_number(eps, null.ok = TRUE, lower = 0, left.open = TRUE)
   n <- length(x) - (embed - 1) * delay
-  if (n <= 0) stop("time series too short for chosen embedding")
+  checkmate::assert_true(n > 0, message = "time series too short for chosen embedding")
 
   emb <- stats::embed(x, embed)[seq_len(n), , drop = FALSE]
   dmat <- as.matrix(dist(emb))
@@ -39,18 +41,20 @@ recurrence_plot <- function(x, embed = 2L, delay = 1L, eps = NULL) {
 #' recurrence_analysis(rnorm(100))
 #' @export
 recurrence_analysis <- function(x, embed = 2L, delay = 1L, eps = NULL, lmin = 2L) {
+  checkmate::assert_int(lmin, lower = 1)
   rp <- recurrence_plot(x, embed = embed, delay = delay, eps = eps)
   n <- nrow(rp)
   rr <- sum(rp) / (n * n)
 
   diag_lengths <- function(mat, lmin) {
     n <- nrow(mat)
-    lens <- integer(0)
+    lens_list <- vector("list", 2 * n - 1)
     for (k in seq(-(n - 1), n - 1)) {
       v <- mat[row(mat) - col(mat) == k]
       r <- rle(v)
-      lens <- c(lens, r$lengths[r$values])
+      lens_list[[k + n]] <- r$lengths[r$values]
     }
+    lens <- unlist(lens_list, use.names = FALSE)
     lens[lens >= lmin]
   }
 

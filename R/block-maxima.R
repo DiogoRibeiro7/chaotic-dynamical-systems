@@ -13,10 +13,10 @@
 #' block_maxima(rnorm(1000), 50)
 #' @export
 block_maxima <- function(x, block_size) {
-  stopifnot(is.numeric(x),
-            length(x) >= block_size,
-            is.numeric(block_size),
-            block_size > 0)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_int(block_size, lower = 1)
+  checkmate::assert_true(length(x) >= block_size,
+                         message = "length(x) < block_size")
   n_blocks <- floor(length(x) / block_size)
   idx <- seq_len(n_blocks * block_size)
   mat <- matrix(x[idx], nrow = block_size, ncol = n_blocks)
@@ -39,7 +39,7 @@ block_maxima <- function(x, block_size) {
 #' fit <- fit_gev(m)
 #' @export
 fit_gev <- function(block_maxima) {
-  stopifnot(is.numeric(block_maxima), length(block_maxima) > 1)
+  checkmate::assert_numeric(block_maxima, any.missing = FALSE, min.len = 2)
   if (requireNamespace("evd", quietly = TRUE)) {
     evd::fgev(block_maxima)
   } else if (requireNamespace("ismev", quietly = TRUE)) {

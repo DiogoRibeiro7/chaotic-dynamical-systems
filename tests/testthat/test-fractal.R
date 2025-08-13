@@ -1,4 +1,3 @@
-context('Fractal dimension estimation')
 
 test_that('estimate_correlation_dimension returns numeric', {
   set.seed(123)

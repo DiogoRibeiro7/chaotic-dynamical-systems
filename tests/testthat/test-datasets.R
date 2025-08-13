@@ -1,4 +1,3 @@
-context('Example datasets')
 
 test_that('logistic_ts dataset is properly formatted', {
   data(logistic_ts)

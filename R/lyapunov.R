@@ -13,12 +13,8 @@
 #' estimate_lyapunov_exponent(logistic_ts[1:1000])
 #' @export
 estimate_lyapunov_exponent <- function(x, r = NULL) {
-  if (!is.numeric(x) || length(x) <= 1) {
-    stop("x must be a numeric vector of length > 1")
-  }
-  if (!is.null(r) && (!is.numeric(r) || length(r) != 1)) {
-    stop("r must be a single numeric value")
-  }
+  checkmate::assert_numeric(x, min.len = 2)
+  checkmate::assert_number(r, null.ok = TRUE)
   if (is.null(r)) {
     x_prev <- head(x, -1)
     x_next <- tail(x, -1)

@@ -1,4 +1,3 @@
-context('Bootstrap methods')
 
 test_that('bootstrap_extremal_index returns confidence intervals', {
   set.seed(123)

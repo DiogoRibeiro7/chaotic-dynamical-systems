@@ -1,4 +1,3 @@
-context('Utility functions')
 
 test_that('parameter validation works correctly', {
   # Test parameter validation for simulation functions
@@ -13,39 +12,30 @@ test_that('parameter validation works correctly', {
 test_that('data preprocessing utilities work', {
   # Test data cleaning if implemented
   test_data <- c(1, 2, NA, 4, Inf, 6, -Inf, 8)
-  
-  tryCatch({
-    cleaned_data <- clean_extreme_data(test_data)
-    expect_false(any(is.na(cleaned_data)))
-    expect_false(any(is.infinite(cleaned_data)))
-    expect_true(length(cleaned_data) <= length(test_data))
-  }, error = function(e) {
-    skip("clean_extreme_data function not yet implemented")
-  })
+  cleaned_data <- clean_extreme_data(test_data)
+  expect_false(any(is.na(cleaned_data)))
+  expect_false(any(is.infinite(cleaned_data)))
+  expect_true(length(cleaned_data) <= length(test_data))
+  expect_error(clean_extreme_data("a"), "numeric")
 })
 
 test_that('statistical helper functions work', {
   set.seed(123)
   test_data <- rnorm(100)
   
-  # Test empirical quantile function if implemented
-  tryCatch({
-    emp_quantile <- empirical_quantile(test_data, 0.95)
-    expect_true(is.numeric(emp_quantile))
-    expect_true(emp_quantile > quantile(test_data, 0.9))
-  }, error = function(e) {
-    skip("empirical_quantile function not yet implemented")
-  })
-  
-  # Test autocorrelation computation if implemented
-  tryCatch({
-    acf_values <- compute_autocorrelation(test_data, max_lag = 10)
-    expect_true(is.numeric(acf_values))
-    expect_true(length(acf_values) <= 11)  # Including lag 0
-    expect_true(acf_values[1] == 1)  # Lag 0 should be 1
-  }, error = function(e) {
-    skip("compute_autocorrelation function not yet implemented")
-  })
+  emp_quantile <- empirical_quantile(test_data, 0.95)
+  expect_true(is.numeric(emp_quantile))
+  expect_true(emp_quantile > quantile(test_data, 0.9))
+  expect_error(empirical_quantile(test_data, 1.5), "<= 1")
+  expect_error(empirical_quantile("a", 0.5), "numeric")
+
+  acf_values <- compute_autocorrelation(test_data, max_lag = 10)
+  expect_true(is.numeric(acf_values))
+  expect_true(length(acf_values) <= 11)  # Including lag 0
+  expect_true(acf_values[1] == 1)  # Lag 0 should be 1
+  expect_error(compute_autocorrelation("a", max_lag = 10), "numeric")
+  expect_error(compute_autocorrelation(test_data, max_lag = 0), ">= 1")
+  expect_error(compute_autocorrelation(1, max_lag = 10), "length")
 })
 
 test_that('error handling provides informative messages', {
@@ -78,22 +68,8 @@ test_that('boundary condition handling', {
   minimal_data <- c(0.1, 0.9, 0.1)
   threshold <- 0.5
   
-  # Should handle gracefully without crashing
-  expect_warning_or_output <- function(expr) {
-    tryCatch({
-      result <- expr
-      expect_true(is.numeric(result) || is.na(result) || length(result) == 0)
-    }, warning = function(w) {
-      # Warnings are acceptable for edge cases
-      TRUE
-    }, error = function(e) {
-      # Should not throw errors for valid inputs
-      fail(paste("Unexpected error:", e$message))
-    })
-  }
-  
-  expect_warning_or_output(extremal_index_runs(minimal_data, threshold, run_length = 1))
-  expect_warning_or_output(cluster_sizes(minimal_data, threshold, run_length = 1))
+  expect_silent(extremal_index_runs(minimal_data, threshold, run_length = 1))
+  expect_silent(cluster_sizes(minimal_data, threshold, run_length = 1))
 })
 
 test_that('reproducibility with random seeds', {

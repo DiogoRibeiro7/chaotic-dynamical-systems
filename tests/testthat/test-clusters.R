@@ -1,4 +1,3 @@
-context('Cluster analysis')
 
 test_that('cluster_sizes basic functionality', {
   set.seed(123)

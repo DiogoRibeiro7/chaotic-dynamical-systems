@@ -13,7 +13,8 @@
 #'   the length of the series.
 #' @export
 acf_decay <- function(x, lags) {
-  stopifnot(is.numeric(x), is.numeric(lags))
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_integerish(lags, any.missing = FALSE)
   stats::acf(x, lag.max = max(lags), plot = FALSE)$acf[lags + 1]
 }
 
@@ -30,7 +31,9 @@ acf_decay <- function(x, lags) {
 #'   For lags greater than the series length the function returns `NA`.
 #' @export
 mixing_coefficients <- function(x, threshold, lags) {
-  stopifnot(is.numeric(x), is.numeric(threshold), is.numeric(lags))
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_number(threshold)
+  checkmate::assert_integerish(lags, any.missing = FALSE)
   exc <- as.integer(x > threshold)
   n <- length(exc)
   sapply(lags, function(k) {
@@ -56,8 +59,9 @@ mixing_coefficients <- function(x, threshold, lags) {
 #'   the series.
 #' @export
 d_check <- function(x, threshold, r) {
-  stopifnot(is.numeric(x), is.numeric(threshold), length(threshold) == 1,
-            is.numeric(r), r >= 1)
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_number(threshold)
+  checkmate::assert_int(r, lower = 1)
   exc <- as.integer(x > threshold)
   n <- length(exc)
   if (r >= n) return(FALSE)

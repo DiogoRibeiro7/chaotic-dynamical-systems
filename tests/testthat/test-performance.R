@@ -1,4 +1,3 @@
-context('Performance benchmarks')
 
 test_that('simulation performance is acceptable', {
   skip_on_cran()
