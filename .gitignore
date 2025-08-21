@@ -77,3 +77,5 @@ renv/
 # Benchmarking results
 benchmarks/results/
 benchmarks/*.rds
+
+*.pyc
