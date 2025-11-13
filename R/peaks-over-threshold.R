@@ -5,6 +5,9 @@
 #'
 #' @return Numeric vector of exceedances (values above `threshold`). If no
 #'   values exceed `threshold` an empty vector is returned.
+#' @seealso [fit_gpd()] for fitting GPD to exceedances,
+#'   [threshold_exceedances()] for indices of exceedances,
+#'   [block_maxima()] for alternative block maxima approach
 #' @examples
 #' exceedances(rnorm(100), 1.5)
 #' @export
@@ -25,6 +28,15 @@ exceedances <- function(x, threshold) {
 #'
 #' @return Fitted model object. Stops with an error if none of the supporting
 #'   GPD-fitting packages (`evd`, `evir`, `ismev`) are installed.
+#' @references
+#' Pickands, J. (1975). Statistical inference using extreme order statistics.
+#' The Annals of Statistics, 3(1), 119-131.
+#'
+#' Davison, A. C., and Smith, R. L. (1990). Models for exceedances over high thresholds.
+#' Journal of the Royal Statistical Society: Series B (Methodological), 52(3), 393-425.
+#' @seealso [exceedances()] for extracting exceedances,
+#'   [threshold_diagnostics()] for threshold selection,
+#'   [fit_gev()] for alternative block maxima approach
 #' @examples
 #' fit_gpd(rnorm(1000), 1.5)
 #' @export

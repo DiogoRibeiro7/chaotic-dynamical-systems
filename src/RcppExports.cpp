@@ -10,6 +10,155 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// simulate_henon_map_cpp
+DataFrame simulate_henon_map_cpp(int n, double a, double b, double x0, double y0);
+RcppExport SEXP _chaoticds_simulate_henon_map_cpp(SEXP nSEXP, SEXP aSEXP, SEXP bSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_henon_map_cpp(n, a, b, x0, y0));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulate_tent_map_cpp
+NumericVector simulate_tent_map_cpp(int n, double r, double x0);
+RcppExport SEXP _chaoticds_simulate_tent_map_cpp(SEXP nSEXP, SEXP rSEXP, SEXP x0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_tent_map_cpp(n, r, x0));
+    return rcpp_result_gen;
+END_RCPP
+}
+// acf_cpp
+NumericVector acf_cpp(NumericVector x, int max_lag);
+RcppExport SEXP _chaoticds_acf_cpp(SEXP xSEXP, SEXP max_lagSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type max_lag(max_lagSEXP);
+    rcpp_result_gen = Rcpp::wrap(acf_cpp(x, max_lag));
+    return rcpp_result_gen;
+END_RCPP
+}
+// exceedances_cpp
+NumericVector exceedances_cpp(NumericVector x, double threshold);
+RcppExport SEXP _chaoticds_exceedances_cpp(SEXP xSEXP, SEXP thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(exceedances_cpp(x, threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
+// inter_exceedance_times_cpp
+IntegerVector inter_exceedance_times_cpp(IntegerVector exceedance_indices);
+RcppExport SEXP _chaoticds_inter_exceedance_times_cpp(SEXP exceedance_indicesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type exceedance_indices(exceedance_indicesSEXP);
+    rcpp_result_gen = Rcpp::wrap(inter_exceedance_times_cpp(exceedance_indices));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ecdf_cpp
+NumericVector ecdf_cpp(NumericVector x, NumericVector eval_points);
+RcppExport SEXP _chaoticds_ecdf_cpp(SEXP xSEXP, SEXP eval_pointsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type eval_points(eval_pointsSEXP);
+    rcpp_result_gen = Rcpp::wrap(ecdf_cpp(x, eval_points));
+    return rcpp_result_gen;
+END_RCPP
+}
+// return_level_empirical_cpp
+double return_level_empirical_cpp(NumericVector block_maxima, int return_period);
+RcppExport SEXP _chaoticds_return_level_empirical_cpp(SEXP block_maximaSEXP, SEXP return_periodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type block_maxima(block_maximaSEXP);
+    Rcpp::traits::input_parameter< int >::type return_period(return_periodSEXP);
+    rcpp_result_gen = Rcpp::wrap(return_level_empirical_cpp(block_maxima, return_period));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bootstrap_samples_cpp
+NumericMatrix bootstrap_samples_cpp(NumericVector x, int B);
+RcppExport SEXP _chaoticds_bootstrap_samples_cpp(SEXP xSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(bootstrap_samples_cpp(x, B));
+    return rcpp_result_gen;
+END_RCPP
+}
+// moving_average_cpp
+NumericVector moving_average_cpp(NumericVector x, int window_size);
+RcppExport SEXP _chaoticds_moving_average_cpp(SEXP xSEXP, SEXP window_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type window_size(window_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(moving_average_cpp(x, window_size));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mean_excess_cpp
+NumericVector mean_excess_cpp(NumericVector x, NumericVector thresholds);
+RcppExport SEXP _chaoticds_mean_excess_cpp(SEXP xSEXP, SEXP thresholdsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type thresholds(thresholdsSEXP);
+    rcpp_result_gen = Rcpp::wrap(mean_excess_cpp(x, thresholds));
+    return rcpp_result_gen;
+END_RCPP
+}
+// extremal_index_intervals_cpp
+double extremal_index_intervals_cpp(NumericVector x, double threshold);
+RcppExport SEXP _chaoticds_extremal_index_intervals_cpp(SEXP xSEXP, SEXP thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(extremal_index_intervals_cpp(x, threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
+// logistic_bifurcation_cpp
+DataFrame logistic_bifurcation_cpp(NumericVector r_values, int n_iter, int discard, double x0);
+RcppExport SEXP _chaoticds_logistic_bifurcation_cpp(SEXP r_valuesSEXP, SEXP n_iterSEXP, SEXP discardSEXP, SEXP x0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type r_values(r_valuesSEXP);
+    Rcpp::traits::input_parameter< int >::type n_iter(n_iterSEXP);
+    Rcpp::traits::input_parameter< int >::type discard(discardSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    rcpp_result_gen = Rcpp::wrap(logistic_bifurcation_cpp(r_values, n_iter, discard, x0));
+    return rcpp_result_gen;
+END_RCPP
+}
 // simulate_logistic_map_cpp
 NumericVector simulate_logistic_map_cpp(int n, double r, double x0);
 RcppExport SEXP _chaoticds_simulate_logistic_map_cpp(SEXP nSEXP, SEXP rSEXP, SEXP x0SEXP) {
@@ -86,6 +235,18 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_chaoticds_simulate_henon_map_cpp", (DL_FUNC) &_chaoticds_simulate_henon_map_cpp, 5},
+    {"_chaoticds_simulate_tent_map_cpp", (DL_FUNC) &_chaoticds_simulate_tent_map_cpp, 3},
+    {"_chaoticds_acf_cpp", (DL_FUNC) &_chaoticds_acf_cpp, 2},
+    {"_chaoticds_exceedances_cpp", (DL_FUNC) &_chaoticds_exceedances_cpp, 2},
+    {"_chaoticds_inter_exceedance_times_cpp", (DL_FUNC) &_chaoticds_inter_exceedance_times_cpp, 1},
+    {"_chaoticds_ecdf_cpp", (DL_FUNC) &_chaoticds_ecdf_cpp, 2},
+    {"_chaoticds_return_level_empirical_cpp", (DL_FUNC) &_chaoticds_return_level_empirical_cpp, 2},
+    {"_chaoticds_bootstrap_samples_cpp", (DL_FUNC) &_chaoticds_bootstrap_samples_cpp, 2},
+    {"_chaoticds_moving_average_cpp", (DL_FUNC) &_chaoticds_moving_average_cpp, 2},
+    {"_chaoticds_mean_excess_cpp", (DL_FUNC) &_chaoticds_mean_excess_cpp, 2},
+    {"_chaoticds_extremal_index_intervals_cpp", (DL_FUNC) &_chaoticds_extremal_index_intervals_cpp, 2},
+    {"_chaoticds_logistic_bifurcation_cpp", (DL_FUNC) &_chaoticds_logistic_bifurcation_cpp, 4},
     {"_chaoticds_simulate_logistic_map_cpp", (DL_FUNC) &_chaoticds_simulate_logistic_map_cpp, 3},
     {"_chaoticds_threshold_exceedances_cpp", (DL_FUNC) &_chaoticds_threshold_exceedances_cpp, 2},
     {"_chaoticds_cluster_sizes_cpp", (DL_FUNC) &_chaoticds_cluster_sizes_cpp, 2},

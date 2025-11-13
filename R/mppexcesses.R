@@ -6,11 +6,10 @@
 #' as described in Moreira–Freitas–Magalhães (2018). Provides tools for threshold selection,
 #' cluster identification, MPP construction, and fitting compound Poisson limits.
 #'
-#' @docType package
 #' @name mppexcesses
+#' @keywords internal
 #' @importFrom checkmate assertFunction assertNumeric assertIntegerish assertCount assertNumber
 #' @importFrom stats ecdf quantile optim
-#' @importFrom extRemes fevd
 NULL
 
 #' Simulate Orbit of a One-Dimensional Map
@@ -119,6 +118,9 @@ fit_compound_poisson <- function(mpp, period) {
   # rate = number of clusters / period
   lambda <- nrow(mpp) / period
   # Fit Pareto/GPD to marks
+  if (!requireNamespace("extRemes", quietly = TRUE)) {
+    stop("Package 'extRemes' is required for this function. Please install it.")
+  }
   gpd_fit <- extRemes::fevd(mpp$mark, threshold = 0, type = "GP")
   list(rate = lambda, gpd = gpd_fit)
 }

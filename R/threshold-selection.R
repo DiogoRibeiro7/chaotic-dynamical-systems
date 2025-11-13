@@ -36,6 +36,9 @@ threshold_diagnostics <- function(x, thresholds, k_values) {
 #'
 #' @return Data frame with columns `k` and `hill` containing the estimates.
 #'   Values of `k` greater than `length(x) - 1` are ignored.
+#' @references
+#' Hill, B. M. (1975). A simple general approach to inference about the tail of a distribution.
+#' The Annals of Statistics, 3(5), 1163-1174.
 #' @examples
 #' hill_estimates(rexp(1000), 1:50)
 #' @export

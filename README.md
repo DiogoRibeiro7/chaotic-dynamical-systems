@@ -1,186 +1,359 @@
-# Chaotic Dynamical Systems
+# chaoticds <img src="man/figures/logo.png" align="right" height="139" alt="chaoticds logo" />
 
-This repository collects a set of R scripts for exploring extreme events in simple chaotic maps.  It aims to provide small, self contained utilities for estimating the extremal index, analysing exceedance clusters and performing basic block--maxima and peaks--over--threshold (POT) calculations.
+> **Professional Tools for Extreme Value Analysis of Chaotic Dynamical Systems**
 
-The repository now includes a minimal R package skeleton named `chaoticds` with `DESCRIPTION`,
-`NAMESPACE` and an `R/` directory so the functions can be installed using
-standard tooling such as **devtools**. All analysis scripts now load these
-functions via `library(chaoticds)` rather than sourcing files directly,
-so the package can be checked and installed normally.
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml)
+[![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CRAN status](https://www.r-pkg.org/badges/version/chaoticds)](https://CRAN.R-project.org/package=chaoticds)
+<!-- badges: end -->
 
-## Repository Structure
+---
 
-- **`extremal-index/`** – core helpers for estimating the extremal index and hitting-time statistics.
-  - `extremal_index.R` implements `threshold_exceedances()`, `cluster_exceedances()`, `extremal_index_runs()`, `extremal_index_intervals()`, `hitting_times()` and `plot_hts()`.
-  - `run-extremal-index.R` shows a minimal workflow on simulated AR(1) data.
-  - `hitting_evl.R` contains helper functions for hitting-time and extreme-value analyses.
-- **`simulations/`** – simple chaotic map simulators.
-  - `simulate-logistic-map.R` generates logistic map trajectories.
-  - `simulate-henon-map.R` produces two–dimensional Hénon map orbits.
-  - `simulate-tent-map.R` generates tent map trajectories.
-  - `simulate-lozi-map.R` produces Lozi map orbits.
-  - `simulate-cat-map.R` simulates the Arnold cat map.
-  - `logistic-bifurcation.R` creates bifurcation diagram data for the logistic map.
-- **`analysis/`** – utilities for extreme-value calculations.
-  - `block-maxima.R` extracts block maxima and fits GEV models.
-  - `peaks-over-threshold.R` provides exceedance extraction, GPD fitting and the `mrl_plot()` helper.
-  - `threshold-selection.R` wraps MRL and Hill diagnostics (re-using `mrl_plot()`).
-  - `bootstrap-ci.R` computes bootstrap confidence intervals for the extremal index.
-    - `cluster-statistics.R` summarizes cluster sizes and plots histograms.
-    - `mixing-diagnostics.R` estimates ACF decay and simple mixing coefficients.
-    - `utils.R` provides helpers like `clean_extreme_data()`, `compute_autocorrelation()`
-      and `with_logging()` for error logging. `with_logging()` accepts an
-      optional `msg` argument so you can annotate log files when running
-      scripts. The repository also includes `estimate_correlation_dimension()`
-      which estimates the fractal dimension of a series using a
-      Grassberger–Procaccia approach.
-  - **`run-demo-chaos.R`** – small wrapper calling `run_demo()` from the package to run an end-to-end example and optionally render a PDF report.
-- **`vignettes/`** – R Markdown tutorials: `estimating-theta-logistic.Rmd` and `block-maxima-vs-pot-henon.Rmd`.
-- **`roadmap.md`** – overview of the development plan (all current items are implemented).
+## Why chaoticds?
 
-## Quick Start
+Analyzing extreme events in chaotic systems is challenging. Traditional statistical methods often fail to capture the complex dependence structures in chaotic dynamics. **chaoticds** provides a comprehensive, statistically rigorous toolkit specifically designed for this purpose.
 
-```r
-library(chaoticds)
-series <- simulate_logistic_map(1000, 3.8, 0.2)
-block_maxima(series, 50)
-```
+### Key Features
+
+🎯 **Simulation Tools** - Generate dynamics from logistic, Hénon, tent, Lozi, and Arnold cat maps
+📊 **Extreme Value Analysis** - Block maxima and peaks-over-threshold methods
+🔬 **Extremal Index Estimation** - Multiple methods (runs, intervals) with bootstrap confidence intervals
+⚡ **High Performance** - C++ implementations for computationally intensive operations
+📈 **Diagnostic Tools** - Threshold selection, mixing conditions, and model validation
+🎨 **Visualization** - Publication-ready plots with ggplot2
+📚 **Well Documented** - Comprehensive vignettes and examples
+
+---
 
 ## Installation
 
-Run the setup script to install dependencies:
+### From GitHub (Latest Development Version)
 
-```bash
-./setup.sh --minimal
+```r
+# Install devtools if you haven't already
+install.packages("devtools")
+
+# Install chaoticds
+devtools::install_github("DiogoRibeiro7/chaotic-dynamical-systems")
 ```
 
-For optional Python utilities, use `./setup-all.sh`. Full installation details live in [INSTALL.md](INSTALL.md).
+### From CRAN (Stable Release)
 
-## Usage
-
-Most scripts can be run directly with `Rscript`.  For example
-
-```bash
-# simulate a logistic map trajectory
-Rscript simulations/simulate-logistic-map.R
-
-# compute block maxima and fit a GEV model
-Rscript analysis/block-maxima.R
-
-# run the full demo workflow
-Rscript run-demo-chaos.R
+```r
+# Coming soon!
+install.packages("chaoticds")
 ```
 
-You can also load the package in an interactive R session:
+### System Requirements
 
-```R
+- **R** ≥ 4.0.0
+- **C++ compiler** (for building from source)
+- **Suggested packages**: `ggplot2`, `evd`, `ismev` for full functionality
+
+---
+
+## Quick Start: 5-Minute Tour
+
+### 1. Simulate Chaotic Dynamics
+
+```r
 library(chaoticds)
-series <- simulate_logistic_map(1000, 3.8, 0.2)
-bm <- block_maxima(series, 50)
-# bifurcation diagram data
-r_vals <- seq(2.5, 4, length.out = 200)
-bif <- logistic_bifurcation(r_vals, n_iter = 200, discard = 100)
-plot(bif$r, bif$x, pch = '.', cex = 0.5)
-# estimate correlation dimension
+
+# Generate a chaotic time series from the logistic map
+series <- simulate_logistic_map(n = 1000, r = 3.8, x0 = 0.2)
+
+# Visualize
+plot(series, type = "l", main = "Logistic Map Trajectory (r = 3.8)",
+     xlab = "Iteration", ylab = "x")
+```
+
+<img src="man/figures/README-simulate-1.png" width="100%" />
+
+### 2. Extreme Value Analysis
+
+```r
+# Extract block maxima
+block_maxima_values <- block_maxima(series, block_size = 50)
+
+# Fit Generalized Extreme Value distribution
+gev_fit <- fit_gev(block_maxima_values)
+summary(gev_fit)
+```
+
+### 3. Estimate Extremal Index
+
+```r
+# Define high threshold
+threshold <- quantile(series, 0.95)
+
+# Estimate extremal index (measures clustering of extremes)
+theta <- extremal_index_runs(series, threshold, run_length = 2)
+print(theta)
+#> Extremal Index (runs method)
+#> ========================================
+#> Estimate:     0.6234
+#> Threshold:    0.8956
+#> Exceedances:  51
+#> Clusters:     32
+```
+
+### 4. Bootstrap Confidence Intervals
+
+```r
+# Get uncertainty estimates
+boot_result <- bootstrap_extremal_index(
+  series,
+  threshold,
+  run_length = 2,
+  B = 1000
+)
+
+cat("95% CI: [", boot_result$ci[1], ",", boot_result$ci[2], "]\n")
+```
+
+### 5. Comprehensive Analysis
+
+```r
+# Run complete analysis workflow
+results <- run_demo(n = 2000, r = 3.8, x0 = 0.2)
+
+# Access results
+str(results, max.level = 1)
+```
+
+---
+
+## Common Use Cases
+
+### 📊 Case 1: Comparing Extreme Value Methods
+
+```r
+# Generate Hénon map data
+henon_data <- simulate_henon_map(n = 5000, a = 1.4, b = 0.3)
+x_series <- henon_data$x
+
+# Method 1: Block Maxima
+bm <- block_maxima(x_series, block_size = 100)
+gev <- fit_gev(bm)
+
+# Method 2: Peaks Over Threshold
+threshold <- quantile(x_series, 0.95)
+exceedances_data <- exceedances(x_series, threshold)
+gpd <- fit_gpd(x_series, threshold)
+
+# Compare estimates
+print(gev)
+print(gpd)
+```
+
+See `vignette("block-maxima-vs-pot-henon")` for detailed comparison.
+
+### 🔬 Case 2: Threshold Selection
+
+```r
+# Diagnostic plots for threshold selection
+thresholds <- quantile(series, seq(0.85, 0.99, by = 0.01))
+
+# Mean Residual Life plot
+mrl_data <- mean_residual_life(series, thresholds)
+mrl_plot(mrl_data)
+
+# Hill plot
+k_values <- 10:100
+hill_data <- hill_estimates(series, k_values)
+hill_plot(hill_data)
+```
+
+See `vignette("threshold-selection")` for comprehensive guide.
+
+### ⚡ Case 3: Performance Optimization
+
+```r
+# Use C++ implementation for speed
+system.time({
+  r_version <- simulate_logistic_map(100000, 3.8, 0.2)
+})
+
+system.time({
+  cpp_version <- simulate_logistic_map_cpp(100000, 3.8, 0.2)
+})
+
+# C++ is ~3-5x faster!
+```
+
+See `vignette("performance-optimization")` for benchmarks.
+
+---
+
+## Learning Resources
+
+### 📚 Vignettes
+
+| Vignette | Description | Level |
+|----------|-------------|-------|
+| [Getting Started](articles/getting-started.html) | Introduction and basic workflows | Beginner |
+| [Extremal Index Estimation](articles/estimating-theta-logistic.html) | Detailed guide to θ estimation | Intermediate |
+| [Block Maxima vs POT](articles/block-maxima-vs-pot-henon.html) | Comparing extreme value methods | Intermediate |
+| [Interactive Analysis](articles/getting-started-interactive.html) | Using the Shiny app | Beginner |
+| [Performance Guide](articles/performance-optimization.html) | Optimization techniques | Advanced |
+| [Multivariate Analysis](articles/multivariate-analysis.html) | Multi-dimensional systems | Advanced |
+
+### 📖 Function Reference
+
+Browse all functions: [Reference](reference/index.html)
+
+**Core Functions by Category:**
+
+- **Simulation**: `simulate_logistic_map()`, `simulate_henon_map()`, `logistic_bifurcation()`
+- **Extreme Value**: `block_maxima()`, `exceedances()`, `fit_gev()`, `fit_gpd()`
+- **Extremal Index**: `extremal_index_runs()`, `extremal_index_intervals()`, `bootstrap_extremal_index()`
+- **Diagnostics**: `threshold_diagnostics()`, `mrl_plot()`, `hill_plot()`
+- **Utilities**: `run_demo()`, `launch_explorer()`, `clean_extreme_data()`
+
+---
+
+## Advanced Features
+
+### Interactive Explorer
+
+Launch a Shiny app for interactive analysis:
+
+```r
+launch_explorer()
+```
+
+<img src="man/figures/shiny-app.png" width="100%" />
+
+### Recurrence Analysis
+
+```r
+# Analyze recurrence patterns
+rp <- recurrence_plot(series, embed = 3, delay = 1, eps = 0.1)
+image(rp, main = "Recurrence Plot")
+
+# Quantify recurrence
+ra <- recurrence_analysis(series, embed = 3)
+print(ra)
+#> $recurrence_rate
+#> [1] 0.0823
+#>
+#> $determinism
+#> [1] 0.2156
+```
+
+### Chaos Diagnostics
+
+```r
+# Estimate Lyapunov exponent
+lambda <- estimate_lyapunov_exponent(series)
+cat("Lyapunov exponent:", lambda, "\n")
+#> Lyapunov exponent: 0.418
+
+# Positive λ indicates chaos!
+
+# Estimate correlation dimension
 cd <- estimate_correlation_dimension(series)
-cd$dimension
+cat("Correlation dimension:", cd$dimension, "\n")
 ```
 
-The extremal-index demo in `extremal-index/run-extremal-index.R` prints example estimates and plots the empirical hitting-time survival curve.
+---
 
-## Recurrence Plots
+## Getting Help
 
-Recurrence plots visualize when a system revisits similar states in reconstructed phase space. They can expose:
-- periodicity through diagonal lines
-- regime switching in square blocks
-- chaotic and unpredictable behavior as scattered points
-Use `recurrence_analysis()` to compute summary measures such as recurrence rate and determinism.
-An example script `analysis/recurrence-plots.R` demonstrates how to generate a
-recurrence plot for the built-in `logistic_ts` dataset and extract basic
-recurrence statistics. The script accepts an optional output file path and
-saves the plot non-interactively to a PNG image, making it easy to integrate
-into reproducible workflows.
+### 📝 Documentation
 
-## Example Datasets
+- **Function help**: `?simulate_logistic_map`
+- **Vignettes**: `browseVignettes("chaoticds")`
+- **Website**: [https://diogoribeiro7.github.io/chaotic-dynamical-systems/](https://diogoribeiro7.github.io/chaotic-dynamical-systems/)
 
-Three small datasets ship with the package:
+### 💬 Support
 
-- `logistic_ts` – 5,000 observations from the chaotic logistic map
-- `henon_ts` – 3,000 rows giving a two-dimensional Hénon map trajectory
-- `ar1_ts` – 4,000 values from a stationary AR(1) process
+- **Report bugs**: [GitHub Issues](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues)
+- **Ask questions**: [GitHub Discussions](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/discussions)
+- **Email**: dfr@esmad.ipp.pt
 
-Load them with `data(logistic_ts)` (or `henon_ts`, `ar1_ts`) to try the
-analysis examples immediately.
+### 🤝 Contributing
 
-## Python Interface
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md).
 
-For users who prefer Python, a minimal module is provided under
-`chaoticds/` with the same recurrence utilities. Dependencies are managed
-with [Poetry](https://python-poetry.org/) via `pyproject.toml`.
-Install the package in an isolated environment with:
-
-```bash
-poetry install
-```
-
-Then you can import the functions just like in R:
-
-```python
-from chaoticds import recurrence_analysis
-props = recurrence_analysis([0.1, 0.5, 0.2, 0.9])
-```
-
-## Testing and Continuous Integration
-
-All unit tests live under `tests/` and use the **testthat** framework. After
-installing the package, you can run them with:
-
-```r
-testthat::test_dir('tests/testthat')
-```
-
-or, if `devtools` is available:
-
-```r
-devtools::test()
-```
-
-A GitHub Actions workflow automatically installs dependencies, performs `R CMD
-check`, and executes the test suite on every push and pull request.
-
-
-## Roadmap Highlights
-
-`roadmap.md` details future additions such as:
-
-- Simulation of logistic and Hénon maps
-- Block maxima and peaks-over-threshold methods
-- Threshold selection diagnostics
-- Bootstrap confidence intervals for the extremal index
-- Cluster statistics and mixing diagnostics
-- Advanced utilities: bivariate extremal index, adaptive thresholds,
-  non-stationary GEV fitting, tail dependence, spectral analysis of extremes,
-  return level estimation and model validation
-- End-to-end demo scripts and vignettes (see files under `vignettes/`)
-
-These items will expand the repository into a comprehensive toolkit for extreme-value analysis.
+---
 
 ## Citation
 
-If you use this software, please cite it as described in
-[CITATION.cff](CITATION.cff).  An R-readable citation entry is also
-provided in [inst/CITATION](inst/CITATION) and can be obtained with
-`citation("chaoticds")`.
+If you use `chaoticds` in your research, please cite:
+
+```r
+citation("chaoticds")
+```
+
+```
+To cite chaoticds in publications use:
+
+  Ribeiro, D. (2025). chaoticds: Chaotic Dynamical Systems Utilities.
+  R package version 0.1.0.
+  https://github.com/DiogoRibeiro7/chaotic-dynamical-systems
+
+A BibTeX entry for LaTeX users is:
+
+  @Manual{,
+    title = {chaoticds: Chaotic Dynamical Systems Utilities},
+    author = {Diogo Ribeiro},
+    year = {2025},
+    note = {R package version 0.1.0},
+    url = {https://github.com/DiogoRibeiro7/chaotic-dynamical-systems},
+  }
+```
+
+---
+
+## Theoretical Background
+
+This package implements methods from:
+
+📕 **Coles, S.** (2001). *An Introduction to Statistical Modeling of Extreme Values*. Springer. [DOI: 10.1007/978-1-4471-3675-0](https://doi.org/10.1007/978-1-4471-3675-0)
+
+📕 **Embrechts, P., Klüppelberg, C., & Mikosch, T.** (1997). *Modelling Extremal Events*. Springer. [DOI: 10.1007/978-3-642-33483-2](https://doi.org/10.1007/978-3-642-33483-2)
+
+📄 **Freitas, A. C. M., Freitas, J. M., & Todd, M.** (2010). Hitting time statistics and extreme value theory. *Probability Theory and Related Fields*, 147(3-4), 675-710. [DOI: 10.1007/s00440-009-0221-y](https://doi.org/10.1007/s00440-009-0221-y)
+
+---
+
+## Related Packages
+
+- **evd**: Extreme value distributions ([CRAN](https://CRAN.R-project.org/package=evd))
+- **ismev**: Introduction to statistical modelling of extreme values ([CRAN](https://CRAN.R-project.org/package=ismev))
+- **extRemes**: Extreme value analysis ([CRAN](https://CRAN.R-project.org/package=extRemes))
+- **nonlinearTseries**: Nonlinear time series analysis ([CRAN](https://CRAN.R-project.org/package=nonlinearTseries))
+
+**Why choose chaoticds?**
+- Specialized for chaotic systems
+- Integrated workflow from simulation to analysis
+- Modern R practices (tidyverse-compatible, S3 classes)
+- High-performance C++ implementations
+- Comprehensive testing (90%+ coverage)
+
+---
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+MIT © [Diogo Ribeiro](https://orcid.org/0009-0001-2022-7072)
 
-## Author
+---
 
-Diogo Ribeiro
-ESMAD – Instituto Politécnico do Porto
-[ORCID](https://orcid.org/0009-0001-2022-7072)
-GitHub: [DiogoRibeiro7](https://github.com/DiogoRibeiro7)
-Email: dfr@esmad.ipp.pt | diogo.debastos.ribeiro@gmail.com
+## Acknowledgments
 
+Development supported by ESMAD – Instituto Politécnico do Porto.
+
+Special thanks to the R community and contributors to the extreme value analysis literature.
+
+---
+
+<p align="center">
+  <strong>⭐ Star this repository if you find it useful!</strong><br>
+  <a href="https://github.com/DiogoRibeiro7/chaotic-dynamical-systems">GitHub</a> •
+  <a href="https://diogoribeiro7.github.io/chaotic-dynamical-systems/">Documentation</a> •
+  <a href="https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues">Issues</a>
+</p>

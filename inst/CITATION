@@ -1,7 +1,5 @@
-citHeader("To cite chaoticds in publications, please use the following entry:")
-
-citEntry(
-  entry = "Manual",
+bibentry(
+  bibtype = "Manual",
   title = "chaoticds: Chaotic Dynamical Systems Utilities",
   author = person(
     given = "Diogo",
@@ -11,10 +9,8 @@ citEntry(
     comment = c(ORCID = "0009-0001-2022-7072")
   ),
   year = "2025",
-  version = "0.1.0",
-  doi = "10.5281/zenodo.1234567",
+  note = "R package version 0.1.0",
   url = "https://github.com/DiogoRibeiro7/chaotic-dynamical-systems",
-  note = "Please see CITATION.cff for complete metadata."
+  header = "To cite chaoticds in publications use:",
+  footer = "For questions, contact Diogo Ribeiro at dfr@esmad.ipp.pt or diogo.debastos.ribeiro@gmail.com."
 )
-
-citFooter("For questions, contact Diogo Ribeiro at dfr@esmad.ipp.pt or diogo.debastos.ribeiro@gmail.com.")

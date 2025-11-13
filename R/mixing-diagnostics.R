@@ -11,6 +11,13 @@
 #' @return Depends on the function. For `acf_decay` this is a numeric vector of
 #'   autocorrelation values. Returns `NA` when `lags` contains values larger than
 #'   the length of the series.
+#' @examples
+#' # Simulate logistic map
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#'
+#' # Compute ACF decay
+#' acf_vals <- acf_decay(x, lags = 1:10)
+#' plot(1:10, acf_vals, type = "b", xlab = "Lag", ylab = "ACF")
 #' @export
 acf_decay <- function(x, lags) {
   checkmate::assert_numeric(x, any.missing = FALSE)
@@ -29,6 +36,10 @@ acf_decay <- function(x, lags) {
 #'
 #' @return Numeric vector of estimated coefficients corresponding to each lag.
 #'   For lags greater than the series length the function returns `NA`.
+#' @examples
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#' mix_coef <- mixing_coefficients(x, threshold = 0.9, lags = 1:10)
+#' plot(1:10, mix_coef, type = "b", xlab = "Lag", ylab = "Mixing Coefficient")
 #' @export
 mixing_coefficients <- function(x, threshold, lags) {
   checkmate::assert_numeric(x, any.missing = FALSE)
@@ -57,6 +68,9 @@ mixing_coefficients <- function(x, threshold, lags) {
 #' @return Logical indicating whether the empirical estimate suggests the D(un)
 #'   condition holds at lag `r`. Returns `FALSE` when `r` exceeds the length of
 #'   the series.
+#' @examples
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#' d_check(x, threshold = 0.9, r = 5)
 #' @export
 d_check <- function(x, threshold, r) {
   checkmate::assert_numeric(x, any.missing = FALSE)

@@ -9,6 +9,13 @@
 #'     that belongs to the same cluster.
 #'
 #' @return Various depending on the function; see details below.
+#' @examples
+#' # Simulate logistic map
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#'
+#' # Compute cluster sizes
+#' sizes <- cluster_sizes(x, threshold = 0.9, run_length = 2)
+#' head(sizes)
 #' @export
 cluster_sizes <- function(x, threshold, run_length) {
   checkmate::assert_numeric(x, any.missing = FALSE)
@@ -26,6 +33,10 @@ cluster_sizes <- function(x, threshold, run_length) {
 #' @param sizes Integer vector of cluster sizes.
 #'
 #' @return Named numeric vector with elements `mean_size` and `var_size`.
+#' @examples
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#' sizes <- cluster_sizes(x, threshold = 0.9, run_length = 2)
+#' cluster_summary(sizes)
 #' @export
 cluster_summary <- function(sizes) {
   checkmate::assert_numeric(sizes, any.missing = FALSE)
@@ -39,6 +50,10 @@ cluster_summary <- function(sizes) {
 #' @param sizes Integer vector of cluster sizes.
 #'
 #' @return A ggplot object showing the distribution.
+#' @examples
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#' sizes <- cluster_sizes(x, threshold = 0.9, run_length = 2)
+#' cluster_histogram(sizes)
 #' @importFrom ggplot2 ggplot aes geom_col labs theme_minimal
 #' @export
 cluster_histogram <- function(sizes) {

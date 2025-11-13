@@ -79,3 +79,4 @@ benchmarks/results/
 benchmarks/*.rds
 
 *.pyc
+.claude

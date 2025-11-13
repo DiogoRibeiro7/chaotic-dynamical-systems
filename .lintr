@@ -1,0 +1,27 @@
+linters: linters_with_defaults(
+    line_length_linter(120),
+    object_name_linter = NULL,  # Allow snake_case which is used throughout
+    commented_code_linter = NULL,  # Allow commented code in development
+    cyclocomp_linter = cyclocomp_linter(complexity_limit = 20),
+    indentation_linter = NULL,  # styler handles this
+    trailing_whitespace_linter(),
+    trailing_blank_lines_linter(),
+    T_and_F_symbol_linter(),
+    infix_spaces_linter(),
+    commas_linter(),
+    paren_body_linter(),
+    function_left_parentheses_linter(),
+    closed_curly_linter(),
+    open_curly_linter(),
+    spaces_left_parentheses_linter(),
+    unneeded_concatenation_linter(),
+    implicit_integer_linter(),
+    any_duplicated_linter(),
+    any_is_na_linter(),
+    vector_logic_linter()
+  )
+exclusions: list(
+    "R/RcppExports.R",
+    "tests/testthat.R"
+  )
+encoding: "UTF-8"

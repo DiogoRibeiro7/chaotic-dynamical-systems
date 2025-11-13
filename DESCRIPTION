@@ -10,25 +10,26 @@ License: MIT + file LICENSE
 URL: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems, https://diogoribeiro7.github.io/chaotic-dynamical-systems
 BugReports: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues
 Encoding: UTF-8
-LazyData: true
 Depends: R (>= 4.0.0)
 Imports:
     assertthat,
     ggplot2,
     evd,
     checkmate,
-    rmarkdown,
     Rcpp
 LinkingTo: Rcpp
-Suggests: 
+Suggests:
     testthat (>= 3.0.0),
     knitr,
+    rmarkdown,
     evir,
     ismev,
+    extRemes,
     pkgdown,
     shiny,
     shinydashboard,
     plotly,
     microbenchmark
 VignetteBuilder: knitr
-RoxygenNote: 7.0.0
+SystemRequirements: C++11
+RoxygenNote: 7.3.3

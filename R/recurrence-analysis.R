@@ -17,9 +17,14 @@ recurrence_plot <- function(x, embed = 2L, delay = 1L, eps = NULL) {
   checkmate::assert_numeric(x, any.missing = FALSE)
   checkmate::assert_int(embed, lower = 1)
   checkmate::assert_int(delay, lower = 1)
-  checkmate::assert_number(eps, null.ok = TRUE, lower = 0, left.open = TRUE)
+  checkmate::assert_number(eps, null.ok = TRUE, lower = 0)
+  if (!is.null(eps) && eps <= 0) {
+    stop("eps must be strictly positive")
+  }
   n <- length(x) - (embed - 1) * delay
-  checkmate::assert_true(n > 0, message = "time series too short for chosen embedding")
+  if (n <= 0) {
+    stop("time series too short for chosen embedding")
+  }
 
   emb <- stats::embed(x, embed)[seq_len(n), , drop = FALSE]
   dmat <- as.matrix(dist(emb))
