@@ -106,7 +106,7 @@ jobs:
         shell: Rscript {0}
         
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: benchmark-results
           path: benchmark-results/
