@@ -305,7 +305,6 @@ hitting_times <- function(x, threshold) {
 plot_hts <- function(times, theta) {
   assertthat::assert_that(is.numeric(times))
   assertthat::assert_that(is.numeric(theta), theta > 0)
-  library(ggplot2)
   df <- data.frame(t = sort(times))
   df$emp_surv <- 1 - ecdf(times)(df$t)
   df$theo_surv <- exp(-theta * df$t)

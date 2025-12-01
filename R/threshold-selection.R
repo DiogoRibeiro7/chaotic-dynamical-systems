@@ -68,7 +68,6 @@ hill_estimates <- function(x, k_values) {
 hill_plot <- function(hill_df) {
   checkmate::assert_data_frame(hill_df)
   checkmate::assert_subset(c("k", "hill"), names(hill_df))
-  library(ggplot2)
   ggplot(hill_df, aes(x = k, y = hill)) +
     geom_line() +
     geom_point() +

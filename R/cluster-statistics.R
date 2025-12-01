@@ -58,7 +58,6 @@ cluster_summary <- function(sizes) {
 #' @export
 cluster_histogram <- function(sizes) {
   checkmate::assert_numeric(sizes, any.missing = FALSE)
-  library(ggplot2)
   df <- as.data.frame(table(size = sizes))
   df$size <- as.integer(as.character(df$size))
   ggplot(df, aes(x = size, y = Freq)) +
