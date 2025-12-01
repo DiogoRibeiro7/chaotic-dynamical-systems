@@ -26,7 +26,7 @@ adaptive_threshold_selection <- function(x, window_size = 100L, prob = 0.95) {
   checkmate::assert_count(window_size)
   checkmate::assert_number(prob, lower = 0, upper = 1)
   checkmate::assert_true(length(x) >= window_size,
-                         msg = "x must have length >= window_size")
+                         .var.name = "window_size")
   vapply(seq_len(length(x) - window_size + 1), function(i) {
     stats::quantile(x[i:(i + window_size - 1)], prob, type = 8, na.rm = TRUE)
   }, numeric(1))
@@ -140,7 +140,7 @@ calculate_return_levels <- function(x, threshold, return_periods) {
   checkmate::assert_number(threshold)
   checkmate::assert_numeric(return_periods, any.missing = FALSE)
   exc <- x[x > threshold] - threshold
-  checkmate::assert_true(length(exc) >= 1, msg = "No exceedances above threshold")
+  if (length(exc) < 1) stop("No exceedances above threshold")
   # simple GPD fit via method of moments
   scale <- mean(exc)
   shape <- -scale^2 / (var(exc) - scale^2)
@@ -166,7 +166,7 @@ validate_extreme_model <- function(x, threshold, method = "qq") {
   checkmate::assert_number(threshold)
   checkmate::assert_choice(method, choices = "qq")
   exc <- x[x > threshold] - threshold
-  checkmate::assert_true(length(exc) >= 1, msg = "No exceedances above threshold")
+  if (length(exc) < 1) stop("No exceedances above threshold")
   exc <- sort(exc)
   p <- ppoints(length(exc))
   q <- quantile(exc, p, type = 8)
@@ -188,7 +188,7 @@ goodness_of_fit_test <- function(x, threshold) {
   checkmate::assert_numeric(x)
   checkmate::assert_number(threshold)
   exc <- x[x > threshold] - threshold
-  checkmate::assert_true(length(exc) >= 1, msg = "No exceedances above threshold")
+  if (length(exc) < 1) stop("No exceedances above threshold")
   scale <- mean(exc)
   shape <- -scale^2 / (var(exc) - scale^2)
   pgpd <- function(z) 1 - (1 + shape * z / scale)^(-1/shape)
