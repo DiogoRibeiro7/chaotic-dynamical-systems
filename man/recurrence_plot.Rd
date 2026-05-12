@@ -13,7 +13,7 @@ recurrence_plot(x, embed = 2L, delay = 1L, eps = NULL)
 
 \item{delay}{Integer delay between coordinates in the embedding. Defaults to 1.}
 
-\item{eps}{Positive radius for defining recurrences. If NULL, uses 10% of the standard deviation of `x`.}
+\item{eps}{Positive radius for defining recurrences. If NULL, uses 10\% of the standard deviation of `x`.}
 }
 \value{
 A logical matrix representing the recurrence plot. Points within `eps` distance are marked as TRUE.

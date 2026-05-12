@@ -16,7 +16,8 @@ Imports:
     ggplot2,
     evd,
     checkmate,
-    Rcpp
+    Rcpp,
+    extRemes
 LinkingTo: Rcpp
 Suggests:
     testthat (>= 3.0.0),
@@ -24,7 +25,6 @@ Suggests:
     rmarkdown,
     evir,
     ismev,
-    extRemes,
     pkgdown,
     shiny,
     shinydashboard,

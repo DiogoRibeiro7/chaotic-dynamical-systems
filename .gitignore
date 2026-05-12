@@ -16,7 +16,8 @@
 /*.tar.gz
 
 # Output files from R CMD check
-/*.Rcheck/
+*.Rcheck/
+..Rcheck/
 
 # RStudio files
 .Rproj.user/
@@ -80,3 +81,9 @@ benchmarks/*.rds
 
 *.pyc
 .claude
+
+# Compiled package artifacts
+src/*.o
+src/*.so
+src/*.dll
+src/symbols.rds

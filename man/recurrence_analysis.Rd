@@ -13,7 +13,7 @@ recurrence_analysis(x, embed = 2L, delay = 1L, eps = NULL, lmin = 2L)
 
 \item{delay}{Integer delay between coordinates in the embedding. Defaults to 1.}
 
-\item{eps}{Positive radius for defining recurrences. If NULL, uses 10% of the standard deviation of `x`.}
+\item{eps}{Positive radius for defining recurrences. If NULL, uses 10\% of the standard deviation of `x`.}
 
 \item{lmin}{Minimum diagonal line length to count toward determinism.}
 }

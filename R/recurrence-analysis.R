@@ -5,7 +5,7 @@
 #' @param x Numeric vector representing the time series.
 #' @param embed Integer embedding dimension. Defaults to 2.
 #' @param delay Integer delay between coordinates in the embedding. Defaults to 1.
-#' @param eps Positive radius for defining recurrences. If NULL, uses 10% of the standard deviation of `x`.
+#' @param eps Positive radius for defining recurrences. If NULL, uses 10\% of the standard deviation of `x`.
 #'
 #' @return A logical matrix representing the recurrence plot. Points within `eps` distance are marked as TRUE.
 #' @examples

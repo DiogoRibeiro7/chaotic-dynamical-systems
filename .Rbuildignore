@@ -1,6 +1,8 @@
 ^analysis/
 ^simulations/
 ^extremal-index/
+^archive/
+^docs/dev/
 ^run-demo-chaos.R
 ^SCATHING_CRITIQUE.md
 ^src/.*\.o$
@@ -17,7 +19,6 @@
 ^chaoticds/
 ^setup\.sh$
 ^setup-all\.sh$
-^AGENTS\.md$
 ^CITATION\.cff$
 ^CONTRIBUTING\.md$
 ^INSTALL\.md$
