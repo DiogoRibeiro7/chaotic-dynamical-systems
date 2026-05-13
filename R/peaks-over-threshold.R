@@ -26,7 +26,8 @@ exceedances <- function(x, threshold) {
 #' @param x Numeric vector of observations.
 #' @param threshold Numeric threshold defining exceedances.
 #'
-#' @return Fitted model object. Stops with an error if none of the supporting
+#' @return Fitted model object with class `chaotic_model` plus the original
+#'   backend class. Stops with an error if none of the supporting
 #'   GPD-fitting packages (`evd`, `evir`, `ismev`) are installed.
 #' @references
 #' Pickands, J. (1975). Statistical inference using extreme order statistics.
@@ -44,11 +45,26 @@ fit_gpd <- function(x, threshold) {
   checkmate::assert_numeric(x, any.missing = FALSE)
   checkmate::assert_number(threshold)
   if (requireNamespace("evd", quietly = TRUE)) {
-    evd::fpot(x, threshold)
+    wrap_chaotic_model(
+      evd::fpot(x, threshold),
+      model = "gpd",
+      method = "evd::fpot",
+      threshold = threshold
+    )
   } else if (requireNamespace("evir", quietly = TRUE)) {
-    evir::gpd(x, threshold)
+    wrap_chaotic_model(
+      evir::gpd(x, threshold),
+      model = "gpd",
+      method = "evir::gpd",
+      threshold = threshold
+    )
   } else if (requireNamespace("ismev", quietly = TRUE)) {
-    ismev::gpd.fit(x, threshold, show = FALSE)
+    wrap_chaotic_model(
+      ismev::gpd.fit(x, threshold, show = FALSE),
+      model = "gpd",
+      method = "ismev::gpd.fit",
+      threshold = threshold
+    )
   } else {
     stop("One of 'evd', 'evir' or 'ismev' packages is required")
   }

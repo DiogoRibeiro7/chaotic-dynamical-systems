@@ -199,10 +199,10 @@ block_maxima <- function(x, block_size) {
 #'   contain NA or infinite values.
 #'
 #' @return
-#' A fitted GEV model object. The exact class depends on which package
-#' is used:
-#' - If evd is available: object of class "uvevd" from `evd::fgev()`
-#' - If only ismev is available: list from `ismev::gev.fit()`
+#' A fitted model object with class `chaotic_model` plus the original backend
+#' class. The fit backend is:
+#' - `evd::fgev()` when `evd` is available
+#' - `ismev::gev.fit()` otherwise
 #'
 #' Both objects contain:
 #' - **Estimated parameters**: location (μ), scale (σ), shape (ξ)
@@ -290,9 +290,17 @@ block_maxima <- function(x, block_size) {
 fit_gev <- function(block_maxima) {
   checkmate::assert_numeric(block_maxima, any.missing = FALSE, min.len = 2)
   if (requireNamespace("evd", quietly = TRUE)) {
-    evd::fgev(block_maxima)
+    wrap_chaotic_model(
+      evd::fgev(block_maxima),
+      model = "gev",
+      method = "evd::fgev"
+    )
   } else if (requireNamespace("ismev", quietly = TRUE)) {
-    ismev::gev.fit(block_maxima, show = FALSE)
+    wrap_chaotic_model(
+      ismev::gev.fit(block_maxima, show = FALSE),
+      model = "gev",
+      method = "ismev::gev.fit"
+    )
   } else {
     stop("Package 'evd' or 'ismev' required for GEV fitting")
   }

@@ -12,7 +12,8 @@ fit_gpd(x, threshold)
 \item{threshold}{Numeric threshold defining exceedances.}
 }
 \value{
-Fitted model object. Stops with an error if none of the supporting
+Fitted model object with class `chaotic_model` plus the original
+  backend class. Stops with an error if none of the supporting
   GPD-fitting packages (`evd`, `evir`, `ismev`) are installed.
 }
 \description{

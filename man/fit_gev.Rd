@@ -13,10 +13,10 @@ for reliable estimation, though more (50+) is preferable. Must not
 contain NA or infinite values.}
 }
 \value{
-A fitted GEV model object. The exact class depends on which package
-is used:
-- If evd is available: object of class "uvevd" from `evd::fgev()`
-- If only ismev is available: list from `ismev::gev.fit()`
+A fitted model object with class `chaotic_model` plus the original backend
+class. The fit backend is:
+- `evd::fgev()` when `evd` is available
+- `ismev::gev.fit()` otherwise
 
 Both objects contain:
 - **Estimated parameters**: location (μ), scale (σ), shape (ξ)
