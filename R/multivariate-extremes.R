@@ -31,8 +31,7 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
     df,
     types = "numeric",
     min.cols = 2,
-    .var.name = "df",
-    info = "Provide a data frame with at least two numeric columns"
+    .var.name = "df"
   )
   p <- ncol(df)
   if (length(thresholds) == 1) thresholds <- rep(thresholds, p)
@@ -40,14 +39,12 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
     thresholds,
     any.missing = FALSE,
     len = p,
-    .var.name = "thresholds",
-    info = sprintf("Supply a numeric vector of length %d with no missing values", p)
+    .var.name = "thresholds"
   )
   checkmate::assert_count(
     run_length,
     positive = TRUE,
-    .var.name = "run_length",
-    info = "`run_length` must be a positive integer"
+    .var.name = "run_length"
   )
 
   exceed_mat <- mapply(function(col, thr) col > thr & !is.na(col), df, thresholds)
@@ -55,9 +52,25 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
   indices <- which(exceed_any)
   ce <- cluster_exceedances(indices, run_length)
   n_exc <- length(indices)
-  theta_joint <- if (n_exc == 0) NA_real_ else ce$n_clusters / n_exc
+  n_clusters <- if (!is.null(ce$n_clusters)) {
+    as.numeric(ce$n_clusters)
+  } else if (!is.null(ce$clusters)) {
+    as.numeric(length(ce$clusters))
+  } else {
+    as.numeric(length(ce))
+  }
+  theta_joint <- if (n_exc == 0) NA_real_ else n_clusters / n_exc
+  sanitize_theta <- function(v) {
+    if (!is.numeric(v) || length(v) != 1L || !is.finite(v)) {
+      return(NA_real_)
+    }
+    min(1, max(0, as.numeric(v)))
+  }
   thetas <- vapply(seq_len(p), function(j) {
-    extremal_index_runs(df[[j]], thresholds[j], run_length)
+    sanitize_theta(tryCatch(
+      extremal_index_runs(df[[j]], thresholds[j], run_length),
+      error = function(e) NA_real_
+    ))
   }, numeric(1))
   vals <- c(theta_joint, thetas)
   if (all(is.na(vals))) NA_real_ else mean(vals, na.rm = TRUE)
@@ -82,22 +95,20 @@ extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
     df,
     types = "numeric",
     min.cols = 2,
-    .var.name = "df",
-    info = "Provide a data frame with at least two numeric columns"
+    .var.name = "df"
   )
   if (length(thresholds) == 1) thresholds <- rep(thresholds, 2)
+  if (length(thresholds) > 2) thresholds <- thresholds[1:2]
   checkmate::assert_numeric(
     thresholds,
     any.missing = FALSE,
     len = 2,
-    .var.name = "thresholds",
-    info = "Supply two numeric thresholds with no missing values"
+    .var.name = "thresholds"
   )
   checkmate::assert_count(
     run_length,
     positive = TRUE,
-    .var.name = "run_length",
-    info = "`run_length` must be a positive integer"
+    .var.name = "run_length"
   )
   extremal_index_multivariate(df[, 1:2], thresholds, run_length)
 }
@@ -122,14 +133,10 @@ extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
 #' tail_dependence_asymmetric(x, y, tx, ty)
 #' @export
 tail_dependence_asymmetric <- function(x, y, ux, uy, lower = FALSE) {
-  checkmate::assert_numeric(x, .var.name = "x",
-                           info = "`x` must be a numeric vector")
-  checkmate::assert_numeric(y, len = length(x), .var.name = "y",
-                           info = "`y` must be numeric and match the length of `x`")
-  checkmate::assert_number(ux, finite = TRUE, .var.name = "ux",
-                           info = "Provide a finite numeric threshold for `x`")
-  checkmate::assert_number(uy, finite = TRUE, .var.name = "uy",
-                           info = "Provide a finite numeric threshold for `y`")
+  checkmate::assert_numeric(x, .var.name = "x")
+  checkmate::assert_numeric(y, len = length(x), .var.name = "y")
+  checkmate::assert_number(ux, finite = TRUE, .var.name = "ux")
+  checkmate::assert_number(uy, finite = TRUE, .var.name = "uy")
   checkmate::assert_flag(lower, .var.name = "lower")
   cc <- stats::complete.cases(x, y)
   x <- x[cc]
@@ -191,22 +198,19 @@ plot_exceedance_clusters <- function(df, thresholds, run_length = 3L) {
     df,
     types = "numeric",
     min.cols = 2,
-    .var.name = "df",
-    info = "Provide a data frame with at least two numeric columns"
+    .var.name = "df"
   )
   if (length(thresholds) == 1) thresholds <- rep(thresholds, 2)
   checkmate::assert_numeric(
     thresholds,
     any.missing = FALSE,
     len = 2,
-    .var.name = "thresholds",
-    info = "Supply two numeric thresholds with no missing values"
+    .var.name = "thresholds"
   )
   checkmate::assert_count(
     run_length,
     positive = TRUE,
-    .var.name = "run_length",
-    info = "`run_length` must be a positive integer"
+    .var.name = "run_length"
   )
   exc_any <- which(df[[1]] > thresholds[1] | df[[2]] > thresholds[2])
   ce <- cluster_exceedances(exc_any, run_length)
@@ -247,15 +251,13 @@ tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
     df,
     types = "numeric",
     min.cols = 2,
-    .var.name = "df",
-    info = "Provide a data frame with at least two numeric columns"
+    .var.name = "df"
   )
   checkmate::assert_number(
     quantile_level,
     lower = 0,
     upper = 1,
-    .var.name = "quantile_level",
-    info = "`quantile_level` must be between 0 and 1"
+    .var.name = "quantile_level"
   )
   p <- ncol(df)
   combs <- utils::combn(p, 2)
@@ -273,4 +275,138 @@ tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
     ggplot2::labs(title = "Tail Dependence Heatmap", x = NULL, y = NULL,
          fill = "Lambda") +
     ggplot2::theme_minimal()
+}
+
+#' End-to-end multivariate extremes workflow
+#'
+#' Computes a practical summary for multivariate extremes combining
+#' thresholding, pairwise tail dependence, joint exceedance diagnostics,
+#' and a multivariate extremal index estimate.
+#'
+#' @details
+#' ## Assumptions
+#' - Input columns are numeric observables from the same time index.
+#' - The series are approximately stationary in the tail region.
+#' - Thresholds are high enough for POT-style asymptotics to be informative.
+#'
+#' ## Notes
+#' This workflow is intended as a diagnostic entrypoint rather than a
+#' replacement for full model validation. Always inspect sensitivity to
+#' threshold choices and run lengths.
+#'
+#' @param df [data.frame] or [matrix] with numeric columns.
+#' @param quantile_level [numeric] Quantile level in (0,1) used to derive
+#'   per-variable thresholds.
+#' @param run_length [integer] Run parameter for extremal-index clustering.
+#' @param include_lower_tail [logical] Whether to also compute lower-tail
+#'   dependence coefficients.
+#'
+#' @return A list with components:
+#' \describe{
+#'   \item{thresholds}{Named numeric vector of per-variable thresholds.}
+#'   \item{pairwise_dependence}{Data frame with pairwise upper/lower tail dependence.}
+#'   \item{joint_exceedance_rate}{Proportion of rows with at least one exceedance.}
+#'   \item{all_exceedance_rate}{Proportion of rows exceeding all thresholds.}
+#'   \item{multivariate_extremal_index}{Estimated extremal index from
+#'     [extremal_index_multivariate()].}
+#'   \item{settings}{List of workflow settings for reproducibility.}
+#' }
+#' @examples
+#' set.seed(1)
+#' x <- rnorm(1000)
+#' y <- 0.6 * x + rnorm(1000, sd = 0.8)
+#' z <- -0.2 * x + rnorm(1000, sd = 1.0)
+#' df <- data.frame(x = x, y = y, z = z)
+#'
+#' wf <- multivariate_extreme_workflow(df, quantile_level = 0.95, run_length = 3)
+#' wf$multivariate_extremal_index
+#' head(wf$pairwise_dependence)
+#' @export
+multivariate_extreme_workflow <- function(
+    df,
+    quantile_level = 0.95,
+    run_length = 3L,
+    include_lower_tail = TRUE
+) {
+  df <- as.data.frame(df)
+  checkmate::assert_data_frame(
+    df,
+    types = "numeric",
+    min.cols = 2,
+    .var.name = "df"
+  )
+  checkmate::assert_number(
+    quantile_level,
+    lower = 0,
+    upper = 1,
+    .var.name = "quantile_level"
+  )
+  checkmate::assert_count(
+    run_length,
+    positive = TRUE,
+    .var.name = "run_length"
+  )
+  checkmate::assert_flag(include_lower_tail, .var.name = "include_lower_tail")
+
+  p <- ncol(df)
+  nm <- names(df)
+  thresholds <- stats::quantile(df[[1]], probs = quantile_level, na.rm = TRUE, type = 8)
+  thresholds <- vapply(df, function(col) {
+    stats::quantile(col, probs = quantile_level, na.rm = TRUE, type = 8)
+  }, numeric(1))
+  names(thresholds) <- nm
+
+  lower_thresholds <- vapply(df, function(col) {
+    stats::quantile(col, probs = 1 - quantile_level, na.rm = TRUE, type = 8)
+  }, numeric(1))
+  names(lower_thresholds) <- nm
+
+  combs <- utils::combn(p, 2)
+  pairwise <- apply(combs, 2, function(idx) {
+    i <- idx[1]
+    j <- idx[2]
+    up <- upper_tail_dependence(
+      df[[i]], df[[j]],
+      ux = thresholds[i], uy = thresholds[j]
+    )
+    low <- if (include_lower_tail) {
+      lower_tail_dependence(
+        df[[i]], df[[j]],
+        ux = lower_thresholds[i], uy = lower_thresholds[j]
+      )
+    } else {
+      NA_real_
+    }
+    c(i = i, j = j, upper = up, lower = low)
+  })
+  pairwise <- t(pairwise)
+  pairwise_dependence <- data.frame(
+    var1 = nm[pairwise[, "i"]],
+    var2 = nm[pairwise[, "j"]],
+    upper_tail = as.numeric(pairwise[, "upper"]),
+    lower_tail = as.numeric(pairwise[, "lower"])
+  )
+
+  exceed_mat <- mapply(function(col, thr) col > thr & !is.na(col), df, thresholds)
+  joint_exceedance_rate <- mean(apply(exceed_mat, 1, any))
+  all_exceedance_rate <- mean(apply(exceed_mat, 1, all))
+
+  mult_theta <- extremal_index_multivariate(
+    df = df,
+    thresholds = thresholds,
+    run_length = run_length
+  )
+
+  list(
+    thresholds = thresholds,
+    pairwise_dependence = pairwise_dependence,
+    joint_exceedance_rate = joint_exceedance_rate,
+    all_exceedance_rate = all_exceedance_rate,
+    multivariate_extremal_index = mult_theta,
+    settings = list(
+      quantile_level = quantile_level,
+      run_length = run_length,
+      include_lower_tail = include_lower_tail
+    )
+  )
 }

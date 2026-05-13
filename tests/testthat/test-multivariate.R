@@ -13,7 +13,8 @@ test_that("extremal_index_multivariate handles missing estimates", {
 
 test_that("extremal_index_multivariate validates arguments", {
   df <- data.frame(a = rnorm(10), b = rnorm(10))
-  expect_error(extremal_index_multivariate(df, c(0.5)), "length")
+  expect_silent(extremal_index_multivariate(df, c(0.5)))
+  expect_error(extremal_index_multivariate(df, c(0.5, 0.6, 0.7)), "length")
 })
 
 test_that("tail_dependence_asymmetric removes NAs and uses thresholds", {
@@ -59,4 +60,29 @@ test_that("tail_dependence_heatmap returns ggplot", {
   df <- data.frame(a = rnorm(50), b = rnorm(50), c = rnorm(50))
   p <- tail_dependence_heatmap(df, 0.8)
   expect_s3_class(p, "ggplot")
+})
+
+test_that("multivariate_extreme_workflow returns structured output", {
+  set.seed(42)
+  x <- rnorm(400)
+  y <- 0.5 * x + rnorm(400, sd = 0.8)
+  z <- -0.2 * x + rnorm(400, sd = 1.1)
+  df <- data.frame(x = x, y = y, z = z)
+
+  wf <- multivariate_extreme_workflow(df, quantile_level = 0.9, run_length = 2)
+
+  expect_true(is.list(wf))
+  expect_true(all(c(
+    "thresholds", "pairwise_dependence", "joint_exceedance_rate",
+    "all_exceedance_rate", "multivariate_extremal_index", "settings"
+  ) %in% names(wf)))
+
+  expect_true(is.numeric(wf$thresholds))
+  expect_equal(length(wf$thresholds), 3)
+  expect_s3_class(wf$pairwise_dependence, "data.frame")
+  expect_true(all(c("var1", "var2", "upper_tail", "lower_tail") %in% names(wf$pairwise_dependence)))
+  expect_true(is.numeric(wf$joint_exceedance_rate))
+  expect_true(is.numeric(wf$all_exceedance_rate))
+  expect_true(wf$joint_exceedance_rate >= 0 && wf$joint_exceedance_rate <= 1)
+  expect_true(wf$all_exceedance_rate >= 0 && wf$all_exceedance_rate <= 1)
 })
