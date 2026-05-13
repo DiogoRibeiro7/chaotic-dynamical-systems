@@ -14,15 +14,14 @@ Depends: R (>= 4.0.0)
 Imports:
     assertthat,
     ggplot2,
-    evd,
     checkmate,
-    Rcpp,
     extRemes
 LinkingTo: Rcpp
 Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
+    evd,
     evir,
     ismev,
     pkgdown,
