@@ -7,15 +7,16 @@ test_that('bootstrap_extremal_index returns confidence intervals', {
   # Test with small sample for speed
   sample_data <- logistic_ts[1:500]
   
-  tryCatch({
-    ci <- bootstrap_extremal_index(sample_data, threshold, n_bootstrap = 10, method = "runs")
-    expect_true(is.numeric(ci))
-    expect_true(length(ci) == 2)  # Lower and upper bounds
-    expect_true(ci[1] <= ci[2])    # Lower <= Upper
-  }, error = function(e) {
-    # If function doesn't exist yet, just pass
-    skip("bootstrap_extremal_index function not yet implemented")
-  })
+  boot <- bootstrap_extremal_index(sample_data, threshold, n_bootstrap = 10, method = "runs")
+  expect_type(boot, "list")
+  expect_true(all(c("estimate", "replicates", "ci") %in% names(boot)))
+  expect_true(length(boot$replicates) == 10)
+  expect_true(length(boot$ci) == 2)
+  if (all(is.finite(boot$ci))) {
+    expect_true(boot$ci[1] <= boot$ci[2])
+  } else {
+    expect_true(all(is.na(boot$ci)))
+  }
 })
 
 test_that('bootstrap confidence intervals are well-formed', {
@@ -25,15 +26,20 @@ test_that('bootstrap confidence intervals are well-formed', {
   test_data <- c(rep(0.1, 80), rep(0.9, 20))
   threshold <- 0.5
   
-  tryCatch({
-    ci_runs <- bootstrap_extremal_index(test_data, threshold, n_bootstrap = 20, method = "runs")
-    ci_intervals <- bootstrap_extremal_index(test_data, threshold, n_bootstrap = 20, method = "intervals")
-    
-    expect_true(all(ci_runs >= 0 & ci_runs <= 1))
-    expect_true(all(ci_intervals >= 0 & ci_intervals <= 1))
-  }, error = function(e) {
-    skip("bootstrap_extremal_index function not yet implemented")
-  })
+  ci_runs <- bootstrap_extremal_index(test_data, threshold, n_bootstrap = 20, method = "runs")
+  ci_intervals <- bootstrap_extremal_index(test_data, threshold, n_bootstrap = 20, method = "intervals")
+
+  if (all(is.finite(ci_runs$ci))) {
+    expect_true(all(ci_runs$ci >= 0 & ci_runs$ci <= 1))
+  } else {
+    expect_true(all(is.na(ci_runs$ci)))
+  }
+
+  if (all(is.finite(ci_intervals$ci))) {
+    expect_true(all(ci_intervals$ci >= 0 & ci_intervals$ci <= 1))
+  } else {
+    expect_true(all(is.na(ci_intervals$ci)))
+  }
 })
 
 test_that('bootstrap handles edge cases', {
@@ -43,35 +49,24 @@ test_that('bootstrap handles edge cases', {
   no_exceed_data <- rep(0.1, 100)
   threshold <- 0.5
   
-  tryCatch({
-    ci <- bootstrap_extremal_index(no_exceed_data, threshold, n_bootstrap = 10)
-    expect_true(is.numeric(ci) || is.na(ci[1]))
-  }, error = function(e) {
-    skip("bootstrap_extremal_index function not yet implemented")
-  })
+  ci <- bootstrap_extremal_index(no_exceed_data, threshold, n_bootstrap = 10)
+  expect_true(is.list(ci))
+  expect_true(is.numeric(ci$ci) || is.na(ci$ci[1]))
   
   # Test with all exceedances
   all_exceed_data <- rep(0.9, 100)
   threshold <- 0.5
   
-  tryCatch({
-    ci <- bootstrap_extremal_index(all_exceed_data, threshold, n_bootstrap = 10)
-    expect_true(is.numeric(ci))
-  }, error = function(e) {
-    skip("bootstrap_extremal_index function not yet implemented")
-  })
+  ci <- bootstrap_extremal_index(all_exceed_data, threshold, n_bootstrap = 10)
+  expect_true(is.list(ci))
+  expect_true(is.numeric(ci$ci))
 })
 
 test_that('block bootstrap maintains temporal dependence', {
   set.seed(123)
   data(logistic_ts)
   
-  # Test block bootstrap function if it exists
-  tryCatch({
-    resampled <- block_bootstrap(logistic_ts[1:100], block_length = 10)
-    expect_true(length(resampled) == 100)
-    expect_true(is.numeric(resampled))
-  }, error = function(e) {
-    skip("block_bootstrap function not yet implemented")
-  })
+  resampled <- block_bootstrap(logistic_ts[1:100], block_length = 10)
+  expect_true(length(resampled) == 100)
+  expect_true(is.numeric(resampled))
 })

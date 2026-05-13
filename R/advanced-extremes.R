@@ -210,8 +210,9 @@ goodness_of_fit_test <- function(x, threshold) {
 block_bootstrap <- function(x, block_length) {
   checkmate::assert_numeric(x)
   checkmate::assert_count(block_length)
-  checkmate::assert_true(length(x) > block_length,
-                         msg = "block_length must be < length of x")
+  if (length(x) <= block_length) {
+    stop("block_length must be < length of x", call. = FALSE)
+  }
   n <- length(x)
   starts <- sample(seq_len(n - block_length + 1), n, replace = TRUE)
   idx <- unlist(lapply(starts, function(s) s:(s + block_length - 1)))

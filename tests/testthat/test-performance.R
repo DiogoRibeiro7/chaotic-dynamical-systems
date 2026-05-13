@@ -115,7 +115,7 @@ test_that('parallel processing capability', {
       time_par <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
       
       # Results should be similar (within reasonable tolerance)
-      expect_true(abs(result_seq[1] - result_par[1]) < 0.1)
+      expect_true(abs(result_seq$estimate - result_par$estimate) < 0.1)
       
       # Parallel should be faster or at least not much slower
       expect_true(time_par <= time_seq * 1.5)

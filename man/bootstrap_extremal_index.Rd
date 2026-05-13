@@ -8,10 +8,15 @@ bootstrap_extremal_index(
   x,
   threshold,
   estimator = c("runs", "intervals"),
+  method = NULL,
   run_length = 5L,
   block_size = 50L,
+  bootstrap_type = c("moving_block", "stationary"),
   B = 1000L,
-  parallel = FALSE
+  n_bootstrap = NULL,
+  parallel = FALSE,
+  n_cores = NULL,
+  seed = NULL
 )
 }
 \arguments{
@@ -21,14 +26,26 @@ bootstrap_extremal_index(
 
 \item{estimator}{Character string, either "runs" or "intervals".}
 
+\item{method}{Deprecated alias for `estimator` kept for compatibility.}
+
 \item{run_length}{Integer run parameter for the runs estimator.}
 
 \item{block_size}{Integer block length for resampling.}
 
+\item{bootstrap_type}{Character string, either `"moving_block"` (default)
+or `"stationary"`.}
+
 \item{B}{Integer number of bootstrap replicates.}
 
+\item{n_bootstrap}{Deprecated alias for `B` kept for compatibility.}
+
 \item{parallel}{Logical. If TRUE use parallel processing via
-[parallel::mclapply()].}
+[parallel::mclapply()] where available, otherwise sequential evaluation.}
+
+\item{n_cores}{Integer number of cores when `parallel = TRUE`. Defaults to
+`max(1, detectCores() - 1)`.}
+
+\item{seed}{Optional integer seed for reproducible bootstrap replicates.}
 }
 \value{
 A list with elements `theta_hat`, the point estimate; `replicates`,
