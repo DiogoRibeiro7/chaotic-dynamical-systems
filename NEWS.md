@@ -1,5 +1,15 @@
 # chaoticds (development version)
 
+## Repository and Consistency Cleanup
+
+* Moved `extRemes` from `Suggests` to `Imports` to match mandatory runtime use.
+* Fixed Rd escaping for recurrence documentation (`10\%`) to avoid parser issues.
+* Removed tracked compiled artifacts from `src/` (`*.o`, `*.dll`, `symbols.rds`) and added ignore rules.
+* Improved check-output ignore rules in `.gitignore` (including `..Rcheck/`).
+* Removed obsolete Python-side files and references; repository is now R-only.
+* Archived non-package research folders under `archive/` (`analysis/`, `simulations/`, `extremal-index/`).
+* Moved internal development documents to `docs/dev/` and excluded them from package builds.
+
 # chaoticds 0.1.0
 
 ## Major Features

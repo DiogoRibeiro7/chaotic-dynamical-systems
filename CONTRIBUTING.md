@@ -12,6 +12,6 @@ Optional longer description explaining the motivation and approach.
 Run the unit tests before submitting a pull request:
 
 ```bash
-R -q -e 'devtools::load_all(); testthat::test_dir("tests/testthat")'
-pytest -q
+R -q -e 'devtools::test()'
+R -q -e 'devtools::check(manual = FALSE)'
 ```

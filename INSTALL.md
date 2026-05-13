@@ -22,5 +22,3 @@ packages are installed:
 ```r
 install.packages(c("testthat", "checkmate", "assertthat"))
 ```
-
-For the optional Python utilities, execute `./setup-all.sh`.
