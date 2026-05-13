@@ -343,3 +343,56 @@ block_maxima_from_file <- function(file_path, block_size, skip_lines = 0) {
   message(sprintf("Processed %d complete blocks", block_count))
   return(block_maxima)
 }
+
+#' Chunked exceedance summary for very large vectors
+#'
+#' Computes exceedance diagnostics in fixed-size chunks to keep memory usage
+#' stable for very large vectors (1M+ observations).
+#'
+#' @param x Numeric vector.
+#' @param threshold Numeric exceedance threshold.
+#' @param chunk_size Integer chunk size used for streaming computation.
+#'
+#' @return A list with `n`, `n_exceedances`, `exceedance_rate`,
+#'   `mean_excess`, and `max_excess`.
+#' @export
+threshold_summary_chunked <- function(x, threshold, chunk_size = 1000000L) {
+  checkmate::assert_numeric(x, any.missing = FALSE)
+  checkmate::assert_number(threshold)
+  checkmate::assert_int(chunk_size, lower = 1000)
+
+  n <- length(x)
+  if (n == 0) {
+    return(list(
+      n = 0L,
+      n_exceedances = 0L,
+      exceedance_rate = 0,
+      mean_excess = NA_real_,
+      max_excess = NA_real_
+    ))
+  }
+
+  n_exceed <- 0L
+  excess_sum <- 0
+  max_excess <- -Inf
+
+  for (start_idx in seq.int(1L, n, by = chunk_size)) {
+    end_idx <- min(start_idx + chunk_size - 1L, n)
+    chunk <- x[start_idx:end_idx]
+    exc <- chunk[chunk > threshold] - threshold
+    k <- length(exc)
+    if (k > 0) {
+      n_exceed <- n_exceed + k
+      excess_sum <- excess_sum + sum(exc)
+      max_excess <- max(max_excess, max(exc))
+    }
+  }
+
+  list(
+    n = as.integer(n),
+    n_exceedances = as.integer(n_exceed),
+    exceedance_rate = n_exceed / n,
+    mean_excess = if (n_exceed > 0) excess_sum / n_exceed else NA_real_,
+    max_excess = if (is.finite(max_excess)) max_excess else NA_real_
+  )
+}

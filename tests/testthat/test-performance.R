@@ -158,3 +158,19 @@ test_that('benchmark regression detection', {
                            "- took", elapsed, "seconds, expected <", expected_max_time))
   }
 })
+
+test_that("threshold_summary_chunked matches direct computation", {
+  set.seed(99)
+  x <- rnorm(10000)
+  u <- quantile(x, 0.95)
+
+  res <- threshold_summary_chunked(x, u, chunk_size = 1500)
+  exc <- x[x > u] - u
+
+  expect_true(is.list(res))
+  expect_equal(res$n, length(x))
+  expect_equal(res$n_exceedances, length(exc))
+  expect_equal(res$exceedance_rate, length(exc) / length(x))
+  expect_equal(res$mean_excess, if (length(exc) > 0) mean(exc) else NA_real_)
+  expect_equal(res$max_excess, if (length(exc) > 0) max(exc) else NA_real_)
+})

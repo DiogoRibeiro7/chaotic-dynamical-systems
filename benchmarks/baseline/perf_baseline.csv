@@ -1,0 +1,5 @@
+test,time_seconds
+logistic_sim_10k,0.05
+extremal_index,0.01
+cluster_analysis,0.01
+chunked_exceedance_1m,0.08

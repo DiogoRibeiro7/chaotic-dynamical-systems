@@ -3,6 +3,8 @@ name: Performance Benchmarks
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   benchmark:
@@ -26,50 +28,7 @@ jobs:
         
       - name: Run simulation benchmarks
         run: |
-          library(chaoticds)
-          
-          # Create benchmarks directory if it doesn't exist
-          if (!dir.exists("benchmark-results")) {
-            dir.create("benchmark-results")
-          }
-          
-          # Source benchmark scripts if they exist
-          if (file.exists("benchmarks/simulation_benchmarks.R")) {
-            cat("Running simulation benchmarks...\n")
-            source("benchmarks/simulation_benchmarks.R")
-          }
-          
-          # Run basic performance tests
-          cat("=== Basic Performance Tests ===\n")
-          
-          # Test simulation performance
-          sim_time <- system.time({
-            sim_data <- simulate_logistic_map(10000, r = 3.8, x0 = 0.2)
-          })
-          cat("Logistic map (10k obs):", sim_time[3], "seconds\n")
-          
-          # Test extremal index performance
-          threshold <- quantile(sim_data, 0.95)
-          ei_time <- system.time({
-            theta <- extremal_index_runs(sim_data, threshold, run_length = 3)
-          })
-          cat("Extremal index computation:", ei_time[3], "seconds\n")
-          
-          # Test cluster analysis performance
-          cluster_time <- system.time({
-            sizes <- cluster_sizes(sim_data, threshold, run_length = 3)
-          })
-          cat("Cluster analysis:", cluster_time[3], "seconds\n")
-          
-          # Save timing results
-          timing_results <- data.frame(
-            test = c("logistic_sim_10k", "extremal_index", "cluster_analysis"),
-            time_seconds = c(sim_time[3], ei_time[3], cluster_time[3]),
-            timestamp = Sys.time()
-          )
-          
-          write.csv(timing_results, "benchmark-results/timing_results.csv", row.names = FALSE)
-          cat("Benchmark results saved to benchmark-results/timing_results.csv\n")
+          source("benchmarks/run_ci_benchmarks.R")
         shell: Rscript {0}
         
       - name: Run memory benchmarks
@@ -113,43 +72,29 @@ jobs:
           
       - name: Performance regression check
         run: |
-          # Check if performance has regressed compared to baseline
           cat("=== Performance Regression Check ===\n")
-          
-          # Read current results
-          if (file.exists("benchmark-results/timing_results.csv")) {
-            current_results <- read.csv("benchmark-results/timing_results.csv")
-            
-            # Set performance thresholds (in seconds)
-            thresholds <- list(
-              logistic_sim_10k = 1.0,
-              extremal_index = 0.5,
-              cluster_analysis = 0.5
-            )
-            
-            # Check each test
-            regression_found <- FALSE
-            for (test_name in names(thresholds)) {
-              if (test_name %in% current_results$test) {
-                current_time <- current_results$time_seconds[current_results$test == test_name]
-                threshold <- thresholds[[test_name]]
-                
-                if (current_time > threshold) {
-                  cat("PERFORMANCE REGRESSION:", test_name, "took", current_time, 
-                      "seconds (threshold:", threshold, ")\n")
-                  regression_found <- TRUE
-                } else {
-                  cat("PASS:", test_name, "took", current_time, "seconds (threshold:", threshold, ")\n")
-                }
-              }
-            }
-            
-            if (regression_found) {
-              cat("Performance regression detected!\n")
-              # Uncomment next line to fail the build on regression
-              # quit(status = 1)
-            } else {
-              cat("No performance regressions detected.\n")
-            }
+
+          baseline_path <- "benchmarks/baseline/perf_baseline.csv"
+          current_path <- "benchmark-results/timing_results.csv"
+          if (!file.exists(baseline_path)) stop("Missing baseline file: ", baseline_path)
+          if (!file.exists(current_path)) stop("Missing benchmark results: ", current_path)
+
+          baseline <- read.csv(baseline_path, stringsAsFactors = FALSE)
+          current <- read.csv(current_path, stringsAsFactors = FALSE)
+
+          tolerance <- 1.30  # allow up to 30% slowdown before failing
+          merged <- merge(baseline, current, by = "test", suffixes = c("_base", "_cur"))
+          if (nrow(merged) == 0) stop("No overlapping benchmark tests between baseline and current results")
+
+          merged$ratio <- merged$time_seconds_cur / merged$time_seconds_base
+          print(merged[, c("test", "time_seconds_base", "time_seconds_cur", "ratio")])
+
+          bad <- merged[is.finite(merged$ratio) & merged$ratio > tolerance, , drop = FALSE]
+          if (nrow(bad) > 0) {
+            cat("Performance regression detected (ratio >", tolerance, "):\n")
+            print(bad[, c("test", "time_seconds_base", "time_seconds_cur", "ratio")])
+            quit(status = 1)
           }
+
+          cat("No benchmark regressions beyond tolerance.\n")
         shell: Rscript {0}
