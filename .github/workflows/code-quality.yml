@@ -3,6 +3,8 @@ name: Code Quality
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   lint:
@@ -23,41 +25,32 @@ jobs:
           
       - name: Lint R code
         run: |
-          # Install lintr if not available
           if (!requireNamespace("lintr", quietly = TRUE)) {
             install.packages("lintr")
           }
-          
-          # Run lintr on R/ directory
+
           lint_results <- lintr::lint_dir("R/")
-          
-          # Print results
           print(lint_results)
-          
-          # Fail if there are linting errors (optional - can be warnings only)
+
           if (length(lint_results) > 0) {
             cat("Linting issues found. Please review and fix.\n")
-            # Uncomment next line to make linting errors fail the build
-            # quit(status = 1)
+            quit(status = 1)
           }
         shell: Rscript {0}
         
       - name: Check code style
         run: |
-          # Install styler if not available
           if (!requireNamespace("styler", quietly = TRUE)) {
             install.packages("styler")
           }
-          
-          # Check if code needs styling
-          needs_styling <- styler::style_pkg(dry = "on")
-          
-          if (length(needs_styling) > 0) {
+
+          style_results <- styler::style_pkg(dry = "on")
+          styled_files <- style_results$file[style_results$changed]
+          if (length(styled_files) > 0) {
             cat("Code style issues found in the following files:\n")
-            print(needs_styling)
+            cat(paste0("  - ", styled_files, collapse = "\n"), "\n")
             cat("Run styler::style_pkg() to fix these issues.\n")
-          } else {
-            cat("Code style looks good!\n")
+            quit(status = 1)
           }
         shell: Rscript {0}
         
@@ -82,15 +75,12 @@ jobs:
           if (!requireNamespace("spelling", quietly = TRUE)) {
             install.packages("spelling")
           }
-          
-          # Check spelling in package
+
           spelling_errors <- spelling::spell_check_package()
-          
           if (nrow(spelling_errors) > 0) {
             cat("Spelling errors found:\n")
             print(spelling_errors)
             cat("Add words to inst/WORDLIST or fix spelling.\n")
-          } else {
-            cat("No spelling errors found!\n")
+            quit(status = 1)
           }
         shell: Rscript {0}
