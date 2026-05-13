@@ -1,0 +1,89 @@
+---
+title: "chaoticds Extreme-Value Report"
+output: html_document
+params:
+  data_rds: ""
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+report <- readRDS(params$data_rds)
+```
+
+## Overview
+
+- Source: `r report$source_label`
+- Observations: `r report$n`
+- Threshold quantile: `r report$threshold_q`
+- Threshold value: `r signif(report$threshold, 6)`
+- Block size: `r report$block_size`
+- Run length: `r report$run_length`
+
+## Warning Flags
+
+```{r}
+if (length(report$warnings) == 0) {
+  cat("No major warning flags detected.")
+} else {
+  cat(paste0("- ", report$warnings, collapse = "\n"))
+}
+```
+
+## Time Series and Threshold
+
+```{r}
+plot(report$series, type = "l", col = "gray40",
+     xlab = "Time", ylab = "Value",
+     main = "Series with POT Threshold")
+abline(h = report$threshold, col = "red", lty = 2, lwd = 2)
+```
+
+## Block Maxima
+
+```{r}
+hist(report$block_maxima, breaks = 20, col = "lightblue", border = "white",
+     main = "Block Maxima Distribution", xlab = "Block maximum")
+```
+
+## Exceedances
+
+```{r}
+hist(report$exceedances, breaks = 20, col = "mistyrose", border = "white",
+     main = "Exceedances Above Threshold", xlab = "Exceedance value")
+```
+
+## Extremal Index
+
+```{r}
+ei <- c(runs = report$theta_runs, intervals = report$theta_intervals)
+print(ei)
+```
+
+## Cluster Summary
+
+```{r}
+print(report$cluster_summary)
+if (length(report$cluster_sizes) > 0) {
+  hist(report$cluster_sizes, breaks = 15, col = "thistle", border = "white",
+       main = "Cluster Size Distribution", xlab = "Cluster size")
+}
+```
+
+## Threshold Diagnostics
+
+```{r}
+print(head(report$diagnostics$mrl, 10))
+print(head(report$diagnostics$hill, 10))
+```
+
+## Model Fits
+
+### GEV Fit
+```{r}
+print(report$gev_fit)
+```
+
+### GPD Fit
+```{r}
+print(report$gpd_fit)
+```

@@ -33,3 +33,18 @@ test_that('simulation results feed into recurrence analysis', {
   expect_true(props$recurrence_rate > 0)
   expect_gte(props$determinism, 0)
 })
+
+test_that("report_extremes generates html report", {
+  skip_if_not_installed("rmarkdown")
+  out <- tempfile(fileext = ".html")
+  expect_silent(
+    report_extremes(
+      x = simulate_logistic_map(1000, r = 3.8, x0 = 0.2),
+      output_file = out,
+      block_size = 50,
+      threshold_q = 0.95,
+      run_length = 2
+    )
+  )
+  expect_true(file.exists(out))
+})
