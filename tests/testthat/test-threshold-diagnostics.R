@@ -43,3 +43,45 @@ test_that('hill_estimates computes for valid k values', {
   expect_true('hill' %in% names(hill_est))
   expect_true(all(is.finite(hill_est$hill)))
 })
+
+test_that("select_threshold_auto returns ranked candidates", {
+  set.seed(123)
+  x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+
+  res <- select_threshold_auto(
+    x,
+    candidate_probs = c(0.9, 0.92, 0.94, 0.96, 0.98),
+    min_exceedances = 15
+  )
+
+  expect_true(is.list(res))
+  expect_true(all(c("recommended_threshold", "recommended_probability", "score", "ranking") %in% names(res)))
+  expect_true(is.numeric(res$recommended_threshold))
+  expect_true(is.numeric(res$recommended_probability))
+  expect_true(is.numeric(res$score))
+  expect_s3_class(res$ranking, "data.frame")
+
+  required_cols <- c(
+    "probability", "threshold", "n_exceedances",
+    "mrl_score", "stability_score", "exceedance_score",
+    "score", "rationale"
+  )
+  expect_true(all(required_cols %in% names(res$ranking)))
+})
+
+test_that("select_threshold_auto score is sorted decreasing", {
+  set.seed(42)
+  x <- rnorm(1200)
+  res <- select_threshold_auto(x, candidate_probs = seq(0.9, 0.98, by = 0.02))
+  scores <- res$ranking$score
+  finite_scores <- scores[is.finite(scores)]
+  expect_true(all(diff(finite_scores) <= 1e-12))
+})
+
+test_that("select_threshold_auto respects score bounds", {
+  set.seed(7)
+  x <- rexp(1500)
+  res <- select_threshold_auto(x, candidate_probs = seq(0.9, 0.99, by = 0.01))
+  finite_scores <- res$ranking$score[is.finite(res$ranking$score)]
+  expect_true(all(finite_scores >= 0 & finite_scores <= 1))
+})
