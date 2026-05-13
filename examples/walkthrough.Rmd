@@ -1,0 +1,156 @@
+---
+title: "chaoticds: end-to-end walkthrough"
+author: "Diogo Ribeiro"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: flatly
+    df_print: kable
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4,
+  fig.align = "center",
+  warning   = FALSE,
+  message   = FALSE
+)
+set.seed(20260513)
+library(chaoticds)
+library(ggplot2)
+theme_set(theme_minimal(base_size = 12))
+```
+
+A compact tour of the package: **simulate → block maxima / POT → extremal index →
+plot**, in one short narrative. For deeper treatment of any step, see the
+[package vignettes](https://diogoribeiro7.github.io/chaotic-dynamical-systems/articles/).
+
+## 1. Simulate a chaotic orbit
+
+We generate a logistic-map trajectory in the fully chaotic regime (`r = 3.8`).
+A short transient is discarded by `simulate_logistic_map()` so the orbit lives
+on the attractor from step 1.
+
+```{r simulate}
+n       <- 5000
+series  <- simulate_logistic_map(n = n, r = 3.8, x0 = 0.2)
+
+ggplot(data.frame(t = seq_len(n), x = series), aes(t, x)) +
+  geom_line(colour = "steelblue", linewidth = 0.3) +
+  labs(title = "Logistic map (r = 3.8)", x = "iteration", y = expression(x[t]))
+```
+
+## 2. Block maxima → GEV
+
+Split the series into blocks of size 50 and fit a Generalised Extreme Value
+distribution to the per-block maxima.
+
+```{r block-maxima}
+bm <- block_maxima(series, block_size = 50)
+
+ggplot(data.frame(bm), aes(bm)) +
+  geom_histogram(bins = 25, fill = "steelblue", colour = "white") +
+  labs(title = sprintf("Block maxima (n = %d, block size = 50)", length(bm)),
+       x = "block maximum", y = "count")
+```
+
+```{r fit-gev, eval = requireNamespace("evd", quietly = TRUE)}
+gev <- fit_gev(bm)
+print(gev)
+```
+
+## 3. Peaks over threshold → GPD
+
+Same data, different lens: take all values above the 95th percentile and fit a
+Generalised Pareto distribution to the excesses.
+
+```{r pot}
+threshold <- quantile(series, 0.95)
+exc       <- exceedances(series, threshold)
+
+ggplot(data.frame(t = which(series > threshold), x = series[series > threshold]),
+       aes(t, x)) +
+  geom_segment(aes(xend = t, yend = threshold), colour = "firebrick", alpha = 0.6) +
+  geom_hline(yintercept = threshold, linetype = "dashed") +
+  labs(title = sprintf("Exceedances over u = %.3f (%d points)",
+                       threshold, length(exc)),
+       x = "iteration", y = expression(x[t]))
+```
+
+```{r fit-gpd, eval = requireNamespace("evd", quietly = TRUE)}
+gpd <- fit_gpd(series, threshold)
+print(gpd)
+```
+
+## 4. Extremal index — do extremes cluster?
+
+For an IID sequence θ = 1. Chaotic dynamics typically give θ < 1, meaning
+extremes arrive in clusters. Two estimators agree to within bootstrap noise:
+
+```{r theta}
+theta_runs      <- extremal_index_runs(series, threshold, run_length = 2)
+theta_intervals <- extremal_index_intervals(series, threshold)
+
+c(runs = theta_runs, intervals = theta_intervals)
+```
+
+A block-bootstrap confidence interval quantifies the uncertainty (small `B` here
+to keep the walkthrough fast — bump to 1000+ for real work):
+
+```{r theta-bootstrap}
+boot <- bootstrap_extremal_index(
+  series, threshold,
+  estimator   = "runs",
+  run_length  = 2,
+  B           = 200,
+  seed        = 1
+)
+
+sprintf("theta = %.3f   95%% CI = [%.3f, %.3f]",
+        boot$estimate, boot$ci[1], boot$ci[2])
+```
+
+## 5. Cluster structure
+
+Group consecutive exceedances into clusters and inspect their sizes — the
+empirical mean cluster size is roughly `1/θ`.
+
+```{r clusters}
+sizes <- cluster_sizes(series, threshold, run_length = 2)
+summary(sizes)
+cat(sprintf("1/theta_runs = %.2f, mean(cluster size) = %.2f\n",
+            1 / theta_runs, mean(sizes)))
+```
+
+```{r cluster-plot, fig.height = 3}
+ggplot(data.frame(size = sizes), aes(factor(size))) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Cluster size distribution", x = "cluster size", y = "count")
+```
+
+## 6. One-shot: `run_demo()`
+
+Everything above is bundled into `run_demo()`, which is convenient when you
+want the full pipeline as a named list (handy for reports or unit tests):
+
+```{r run-demo, eval = FALSE}
+results <- run_demo(n = 2000, r = 3.8, x0 = 0.2,
+                    block_size = 50, threshold_q = 0.95,
+                    output_report = FALSE)
+str(results, max.level = 1)
+```
+
+## Where to next
+
+- **Theory & deeper examples** — start with the `getting-started` vignette, then
+  `estimating-theta-logistic` and `block-maxima-vs-pot-henon`.
+- **Higher-dimensional dynamics** — see `multivariate-analysis`.
+- **Performance** — for series with >1e6 points, see the `*_cpp` / `*_smart`
+  variants and the `performance-optimization` vignette.
+- **Interactive** — `launch_explorer()` opens a Shiny app for hands-on
+  parameter exploration.

@@ -130,5 +130,10 @@ parameter values, \code{\link{simulate_henon_map}} for a 2D chaotic system,
 
 For using this in extreme value analysis, see
 \code{vignette("estimating-theta-logistic")}.
+
+Other simulation functions: 
+\code{\link{simulate_duffing}()},
+\code{\link{simulate_lorenz}()},
+\code{\link{simulate_rossler}()}
 }
 \concept{simulation functions}

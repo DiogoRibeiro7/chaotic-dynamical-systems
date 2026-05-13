@@ -57,6 +57,8 @@ install.packages("chaoticds")
 
 ## Quick Start: 5-Minute Tour
 
+> 📓 Prefer a runnable notebook? Open [`examples/walkthrough.Rmd`](examples/walkthrough.Rmd) for the same tour as a single, end-to-end R Markdown document with rendered plots.
+
 ### 1. Simulate Chaotic Dynamics
 
 ```r

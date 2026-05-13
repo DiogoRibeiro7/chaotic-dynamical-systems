@@ -17,6 +17,9 @@ reference:
   - simulate_tent_map
   - simulate_lozi_map
   - simulate_cat_map
+  - simulate_lorenz
+  - simulate_rossler
+  - simulate_duffing
   - logistic_bifurcation
 
 - title: "Extreme Value Analysis"
@@ -109,11 +112,12 @@ articles:
 - title: "Vignettes"
   navbar: ~
   contents:
+  - getting-started
   - estimating-theta-logistic
   - block-maxima-vs-pot-henon
+  - multivariate-analysis
   - getting-started-interactive
   - performance-optimization
-  - multivariate-analysis
 
 navbar:
   structure:
@@ -123,10 +127,18 @@ navbar:
     articles:
       text: "Vignettes"
       menu:
-      - text: "Extremal Index for Logistic Map"
+      - text: "Getting Started"
+        href: articles/getting-started.html
+      - text: "Extremal Index for the Logistic Map"
         href: articles/estimating-theta-logistic.html
-      - text: "Block Maxima vs POT for Hénon Map"
+      - text: "Block Maxima vs POT for the Hénon Map"
         href: articles/block-maxima-vs-pot-henon.html
+      - text: "Multivariate Extremes"
+        href: articles/multivariate-analysis.html
+      - text: "Interactive Explorer (Shiny)"
+        href: articles/getting-started-interactive.html
+      - text: "Performance Optimization"
+        href: articles/performance-optimization.html
 
 news:
   releases:
