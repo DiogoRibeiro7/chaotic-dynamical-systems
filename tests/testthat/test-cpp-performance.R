@@ -147,6 +147,62 @@ test_that('auto-detection of C++ availability works', {
   expect_true(is.numeric(small_bm))
 })
 
+test_that('C++ simulators match the R reference for Lozi and cat maps', {
+  skip_if_not_installed("Rcpp")
+  if (!exists("simulate_lozi_map_cpp")) skip("C++ Lozi simulator not available")
+  if (!exists("simulate_cat_map_cpp"))  skip("C++ cat-map simulator not available")
+
+  r_lozi   <- simulate_lozi_map(200, a = 1.7, b = 0.5, x0 = 0, y0 = 0)
+  cpp_lozi <- simulate_lozi_map_cpp(200, a = 1.7, b = 0.5, x0 = 0, y0 = 0)
+  expect_equal(cpp_lozi, r_lozi, tolerance = 1e-12)
+
+  r_cat   <- simulate_cat_map(200, x0 = 0.1, y0 = 0.1)
+  cpp_cat <- simulate_cat_map_cpp(200, x0 = 0.1, y0 = 0.1)
+  expect_equal(cpp_cat, r_cat, tolerance = 1e-12)
+})
+
+test_that('C++ continuous simulators match the R reference', {
+  skip_if_not_installed("Rcpp")
+  if (!exists("simulate_lorenz_cpp"))  skip("C++ Lorenz simulator not available")
+  if (!exists("simulate_rossler_cpp")) skip("C++ Rossler simulator not available")
+  if (!exists("simulate_duffing_cpp")) skip("C++ Duffing simulator not available")
+
+  # Short integration windows keep accumulated floating-point drift small;
+  # parity is asserted on every state variable.
+  r_lorenz   <- simulate_lorenz(t_max = 5, dt = 0.01)
+  cpp_lorenz <- simulate_lorenz_cpp(t_max = 5, dt = 0.01)
+  expect_equal(cpp_lorenz$t, r_lorenz$t, tolerance = 1e-12)
+  expect_equal(cpp_lorenz$x, r_lorenz$x, tolerance = 1e-8)
+  expect_equal(cpp_lorenz$y, r_lorenz$y, tolerance = 1e-8)
+  expect_equal(cpp_lorenz$z, r_lorenz$z, tolerance = 1e-8)
+
+  r_rossler   <- simulate_rossler(t_max = 10, dt = 0.05)
+  cpp_rossler <- simulate_rossler_cpp(t_max = 10, dt = 0.05)
+  expect_equal(cpp_rossler$x, r_rossler$x, tolerance = 1e-8)
+  expect_equal(cpp_rossler$y, r_rossler$y, tolerance = 1e-8)
+  expect_equal(cpp_rossler$z, r_rossler$z, tolerance = 1e-8)
+
+  r_duffing   <- simulate_duffing(t_max = 10, dt = 0.05)
+  cpp_duffing <- simulate_duffing_cpp(t_max = 10, dt = 0.05)
+  expect_equal(cpp_duffing$x, r_duffing$x, tolerance = 1e-8)
+  expect_equal(cpp_duffing$v, r_duffing$v, tolerance = 1e-8)
+})
+
+test_that('C++ continuous simulators honour the transient argument', {
+  if (!exists("simulate_lorenz_cpp")) skip("C++ Lorenz simulator not available")
+
+  cpp_lorenz <- simulate_lorenz_cpp(t_max = 3, dt = 0.01, transient = 2)
+  expect_equal(cpp_lorenz$t[1L], 0, tolerance = 1e-12)
+  expect_equal(nrow(cpp_lorenz), 301L)
+})
+
+test_that('C++ continuous simulators reject invalid arguments', {
+  if (!exists("simulate_lorenz_cpp")) skip("C++ Lorenz simulator not available")
+  expect_error(simulate_lorenz_cpp(t_max = -1))
+  expect_error(simulate_lorenz_cpp(dt = 0))
+  expect_error(simulate_rossler_cpp(transient = -1))
+})
+
 test_that('C++ implementations are faster for large data', {
   skip_on_cran()
   skip_if_not_installed("microbenchmark")

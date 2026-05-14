@@ -145,6 +145,92 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// simulate_lozi_map_cpp
+DataFrame simulate_lozi_map_cpp(int n, double a, double b, double x0, double y0);
+RcppExport SEXP _chaoticds_simulate_lozi_map_cpp(SEXP nSEXP, SEXP aSEXP, SEXP bSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_lozi_map_cpp(n, a, b, x0, y0));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulate_cat_map_cpp
+DataFrame simulate_cat_map_cpp(int n, double x0, double y0);
+RcppExport SEXP _chaoticds_simulate_cat_map_cpp(SEXP nSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_cat_map_cpp(n, x0, y0));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulate_lorenz_cpp
+DataFrame simulate_lorenz_cpp(double t_max, double dt, double x0, double y0, double z0, double sigma, double rho, double beta, double transient);
+RcppExport SEXP _chaoticds_simulate_lorenz_cpp(SEXP t_maxSEXP, SEXP dtSEXP, SEXP x0SEXP, SEXP y0SEXP, SEXP z0SEXP, SEXP sigmaSEXP, SEXP rhoSEXP, SEXP betaSEXP, SEXP transientSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type t_max(t_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
+    Rcpp::traits::input_parameter< double >::type z0(z0SEXP);
+    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type transient(transientSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_lorenz_cpp(t_max, dt, x0, y0, z0, sigma, rho, beta, transient));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulate_rossler_cpp
+DataFrame simulate_rossler_cpp(double t_max, double dt, double x0, double y0, double z0, double a, double b, double c, double transient);
+RcppExport SEXP _chaoticds_simulate_rossler_cpp(SEXP t_maxSEXP, SEXP dtSEXP, SEXP x0SEXP, SEXP y0SEXP, SEXP z0SEXP, SEXP aSEXP, SEXP bSEXP, SEXP cSEXP, SEXP transientSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type t_max(t_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
+    Rcpp::traits::input_parameter< double >::type z0(z0SEXP);
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< double >::type c(cSEXP);
+    Rcpp::traits::input_parameter< double >::type transient(transientSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_rossler_cpp(t_max, dt, x0, y0, z0, a, b, c, transient));
+    return rcpp_result_gen;
+END_RCPP
+}
+// simulate_duffing_cpp
+DataFrame simulate_duffing_cpp(double t_max, double dt, double x0, double v0, double alpha, double beta, double delta, double gamma, double omega, double transient);
+RcppExport SEXP _chaoticds_simulate_duffing_cpp(SEXP t_maxSEXP, SEXP dtSEXP, SEXP x0SEXP, SEXP v0SEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP deltaSEXP, SEXP gammaSEXP, SEXP omegaSEXP, SEXP transientSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type t_max(t_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type v0(v0SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< double >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< double >::type transient(transientSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_duffing_cpp(t_max, dt, x0, v0, alpha, beta, delta, gamma, omega, transient));
+    return rcpp_result_gen;
+END_RCPP
+}
 // logistic_bifurcation_cpp
 DataFrame logistic_bifurcation_cpp(NumericVector r_values, int n_iter, int discard, double x0);
 RcppExport SEXP _chaoticds_logistic_bifurcation_cpp(SEXP r_valuesSEXP, SEXP n_iterSEXP, SEXP discardSEXP, SEXP x0SEXP) {
@@ -246,6 +332,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_chaoticds_moving_average_cpp", (DL_FUNC) &_chaoticds_moving_average_cpp, 2},
     {"_chaoticds_mean_excess_cpp", (DL_FUNC) &_chaoticds_mean_excess_cpp, 2},
     {"_chaoticds_extremal_index_intervals_cpp", (DL_FUNC) &_chaoticds_extremal_index_intervals_cpp, 2},
+    {"_chaoticds_simulate_lozi_map_cpp", (DL_FUNC) &_chaoticds_simulate_lozi_map_cpp, 5},
+    {"_chaoticds_simulate_cat_map_cpp", (DL_FUNC) &_chaoticds_simulate_cat_map_cpp, 3},
+    {"_chaoticds_simulate_lorenz_cpp", (DL_FUNC) &_chaoticds_simulate_lorenz_cpp, 9},
+    {"_chaoticds_simulate_rossler_cpp", (DL_FUNC) &_chaoticds_simulate_rossler_cpp, 9},
+    {"_chaoticds_simulate_duffing_cpp", (DL_FUNC) &_chaoticds_simulate_duffing_cpp, 10},
     {"_chaoticds_logistic_bifurcation_cpp", (DL_FUNC) &_chaoticds_logistic_bifurcation_cpp, 4},
     {"_chaoticds_simulate_logistic_map_cpp", (DL_FUNC) &_chaoticds_simulate_logistic_map_cpp, 3},
     {"_chaoticds_threshold_exceedances_cpp", (DL_FUNC) &_chaoticds_threshold_exceedances_cpp, 2},

@@ -136,6 +136,82 @@ extremal_index_intervals_cpp <- function(x, threshold) {
     .Call('_chaoticds_extremal_index_intervals_cpp', PACKAGE = 'chaoticds', x, threshold)
 }
 
+#' Fast Lozi map simulation (C++ implementation)
+#'
+#' Efficient C++ implementation of the two-dimensional Lozi map.
+#'
+#' @param n Number of iterations
+#' @param a Parameter a
+#' @param b Parameter b
+#' @param x0 Initial x value
+#' @param y0 Initial y value
+#' @return DataFrame with x and y columns
+#' @export
+simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0) {
+    .Call('_chaoticds_simulate_lozi_map_cpp', PACKAGE = 'chaoticds', n, a, b, x0, y0)
+}
+
+#' Fast Arnold cat map simulation (C++ implementation)
+#'
+#' Efficient C++ implementation of the Arnold cat map on the unit torus.
+#'
+#' @param n Number of iterations
+#' @param x0 Initial x value
+#' @param y0 Initial y value
+#' @return DataFrame with x and y columns
+#' @export
+simulate_cat_map_cpp <- function(n, x0 = 0.1, y0 = 0.1) {
+    .Call('_chaoticds_simulate_cat_map_cpp', PACKAGE = 'chaoticds', n, x0, y0)
+}
+
+#' Fast Lorenz system simulation (C++ implementation)
+#'
+#' RK4 integration of the classical Lorenz system, mirroring [simulate_lorenz()].
+#'
+#' @param t_max Total integration time after any transient
+#' @param dt Integration step size
+#' @param x0,y0,z0 Initial conditions
+#' @param sigma,rho,beta Lorenz parameters
+#' @param transient Integration time discarded from the start of the trajectory
+#' @return DataFrame with columns t, x, y, z
+#' @export
+simulate_lorenz_cpp <- function(t_max = 50.0, dt = 0.01, x0 = 1.0, y0 = 1.0, z0 = 1.05, sigma = 10.0, rho = 28.0, beta = 8.0 / 3.0, transient = 0.0) {
+    .Call('_chaoticds_simulate_lorenz_cpp', PACKAGE = 'chaoticds', t_max, dt, x0, y0, z0, sigma, rho, beta, transient)
+}
+
+#' Fast Rossler system simulation (C++ implementation)
+#'
+#' RK4 integration of the Rossler system, mirroring [simulate_rossler()].
+#'
+#' @param t_max Total integration time after any transient
+#' @param dt Integration step size
+#' @param x0,y0,z0 Initial conditions
+#' @param a,b,c Rossler parameters
+#' @param transient Integration time discarded from the start of the trajectory
+#' @return DataFrame with columns t, x, y, z
+#' @export
+simulate_rossler_cpp <- function(t_max = 200.0, dt = 0.05, x0 = 0.0, y0 = 1.0, z0 = 0.0, a = 0.2, b = 0.2, c = 5.7, transient = 0.0) {
+    .Call('_chaoticds_simulate_rossler_cpp', PACKAGE = 'chaoticds', t_max, dt, x0, y0, z0, a, b, c, transient)
+}
+
+#' Fast forced Duffing oscillator simulation (C++ implementation)
+#'
+#' RK4 integration of the forced Duffing oscillator, mirroring
+#' [simulate_duffing()]. Unlike Lorenz and Rossler the forcing introduces
+#' explicit time dependence, so the integrator threads the internal clock
+#' through the derivative evaluation.
+#'
+#' @param t_max Total integration time after any transient
+#' @param dt Integration step size
+#' @param x0,v0 Initial position and velocity
+#' @param alpha,beta,delta,gamma,omega Duffing parameters
+#' @param transient Integration time discarded from the start of the trajectory
+#' @return DataFrame with columns t, x, v
+#' @export
+simulate_duffing_cpp <- function(t_max = 100.0, dt = 0.05, x0 = 1.0, v0 = 0.0, alpha = -1.0, beta = 1.0, delta = 0.2, gamma = 0.3, omega = 1.0, transient = 0.0) {
+    .Call('_chaoticds_simulate_duffing_cpp', PACKAGE = 'chaoticds', t_max, dt, x0, v0, alpha, beta, delta, gamma, omega, transient)
+}
+
 #' Fast logistic bifurcation diagram data (C++ implementation)
 #'
 #' Generate bifurcation diagram data efficiently.

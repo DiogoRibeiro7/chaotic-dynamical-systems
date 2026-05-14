@@ -346,6 +346,331 @@ double extremal_index_intervals_cpp(NumericVector x, double threshold) {
   return theta;
 }
 
+//' Fast Lozi map simulation (C++ implementation)
+//'
+//' Efficient C++ implementation of the two-dimensional Lozi map.
+//'
+//' @param n Number of iterations
+//' @param a Parameter a
+//' @param b Parameter b
+//' @param x0 Initial x value
+//' @param y0 Initial y value
+//' @return DataFrame with x and y columns
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_lozi_map_cpp(int n, double a = 1.7, double b = 0.5,
+                                 double x0 = 0.0, double y0 = 0.0) {
+  NumericVector x(n);
+  NumericVector y(n);
+
+  x[0] = x0;
+  y[0] = y0;
+
+  for (int i = 1; i < n; i++) {
+    x[i] = 1.0 - a * std::fabs(x[i-1]) + b * y[i-1];
+    y[i] = x[i-1];
+  }
+
+  return DataFrame::create(
+    Named("x") = x,
+    Named("y") = y
+  );
+}
+
+//' Fast Arnold cat map simulation (C++ implementation)
+//'
+//' Efficient C++ implementation of the Arnold cat map on the unit torus.
+//'
+//' @param n Number of iterations
+//' @param x0 Initial x value
+//' @param y0 Initial y value
+//' @return DataFrame with x and y columns
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_cat_map_cpp(int n, double x0 = 0.1, double y0 = 0.1) {
+  NumericVector x(n);
+  NumericVector y(n);
+
+  // Wrap initial conditions into the unit torus to match the R reference.
+  auto wrap_unit = [](double v) {
+    double w = std::fmod(v, 1.0);
+    if (w < 0.0) w += 1.0;
+    return w;
+  };
+
+  x[0] = wrap_unit(x0);
+  y[0] = wrap_unit(y0);
+
+  for (int i = 1; i < n; i++) {
+    double x_new = wrap_unit(x[i-1] + y[i-1]);
+    double y_new = wrap_unit(x[i-1] + 2.0 * y[i-1]);
+    x[i] = x_new;
+    y[i] = y_new;
+  }
+
+  return DataFrame::create(
+    Named("x") = x,
+    Named("y") = y
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Continuous-time chaotic systems
+//
+// Each simulator below uses a fixed-step classical Runge-Kutta (RK4) scheme
+// with the same arithmetic ordering as R/simulate-continuous.R, so the
+// outputs agree bit-for-bit modulo IEEE rounding propagation (parity tests
+// use tolerance 1e-8). The integrator is inlined into each function to match
+// the flat style of the existing _cpp simulators.
+// ---------------------------------------------------------------------------
+
+//' Fast Lorenz system simulation (C++ implementation)
+//'
+//' RK4 integration of the classical Lorenz system, mirroring [simulate_lorenz()].
+//'
+//' @param t_max Total integration time after any transient
+//' @param dt Integration step size
+//' @param x0,y0,z0 Initial conditions
+//' @param sigma,rho,beta Lorenz parameters
+//' @param transient Integration time discarded from the start of the trajectory
+//' @return DataFrame with columns t, x, y, z
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_lorenz_cpp(double t_max = 50.0, double dt = 0.01,
+                              double x0 = 1.0, double y0 = 1.0, double z0 = 1.05,
+                              double sigma = 10.0, double rho = 28.0,
+                              double beta = 8.0 / 3.0,
+                              double transient = 0.0) {
+  if (t_max <= 0.0) stop("t_max must be strictly positive");
+  if (dt <= 0.0)    stop("dt must be strictly positive");
+  if (transient < 0.0) stop("transient must be non-negative");
+
+  double total = transient + t_max;
+  int n_steps = (int)std::round(total / dt);
+  if (n_steps < 1) stop("dt is too large relative to t_max");
+
+  int n_total = n_steps + 1;
+  std::vector<double> tx(n_total), xx(n_total), yy(n_total), zz(n_total);
+  xx[0] = x0; yy[0] = y0; zz[0] = z0;
+  tx[0] = 0.0;
+
+  for (int i = 0; i < n_steps; i++) {
+    double xi = xx[i], yi = yy[i], zi = zz[i];
+
+    double k1x = sigma * (yi - xi);
+    double k1y = xi * (rho - zi) - yi;
+    double k1z = xi * yi - beta * zi;
+
+    double x2 = xi + dt / 2.0 * k1x;
+    double y2 = yi + dt / 2.0 * k1y;
+    double z2 = zi + dt / 2.0 * k1z;
+    double k2x = sigma * (y2 - x2);
+    double k2y = x2 * (rho - z2) - y2;
+    double k2z = x2 * y2 - beta * z2;
+
+    double x3 = xi + dt / 2.0 * k2x;
+    double y3 = yi + dt / 2.0 * k2y;
+    double z3 = zi + dt / 2.0 * k2z;
+    double k3x = sigma * (y3 - x3);
+    double k3y = x3 * (rho - z3) - y3;
+    double k3z = x3 * y3 - beta * z3;
+
+    double x4 = xi + dt * k3x;
+    double y4 = yi + dt * k3y;
+    double z4 = zi + dt * k3z;
+    double k4x = sigma * (y4 - x4);
+    double k4y = x4 * (rho - z4) - y4;
+    double k4z = x4 * y4 - beta * z4;
+
+    xx[i+1] = xi + dt / 6.0 * (k1x + 2.0 * k2x + 2.0 * k3x + k4x);
+    yy[i+1] = yi + dt / 6.0 * (k1y + 2.0 * k2y + 2.0 * k3y + k4y);
+    zz[i+1] = zi + dt / 6.0 * (k1z + 2.0 * k2z + 2.0 * k3z + k4z);
+    tx[i+1] = tx[i] + dt;
+  }
+
+  // Drop the transient and re-zero the time column to match the R reference.
+  std::vector<double> t_out, x_out, y_out, z_out;
+  t_out.reserve(n_total);
+  for (int i = 0; i < n_total; i++) {
+    if (tx[i] >= transient) {
+      t_out.push_back(tx[i] - transient);
+      x_out.push_back(xx[i]);
+      y_out.push_back(yy[i]);
+      z_out.push_back(zz[i]);
+    }
+  }
+
+  return DataFrame::create(
+    Named("t") = wrap(t_out),
+    Named("x") = wrap(x_out),
+    Named("y") = wrap(y_out),
+    Named("z") = wrap(z_out)
+  );
+}
+
+//' Fast Rossler system simulation (C++ implementation)
+//'
+//' RK4 integration of the Rossler system, mirroring [simulate_rossler()].
+//'
+//' @param t_max Total integration time after any transient
+//' @param dt Integration step size
+//' @param x0,y0,z0 Initial conditions
+//' @param a,b,c Rossler parameters
+//' @param transient Integration time discarded from the start of the trajectory
+//' @return DataFrame with columns t, x, y, z
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_rossler_cpp(double t_max = 200.0, double dt = 0.05,
+                               double x0 = 0.0, double y0 = 1.0, double z0 = 0.0,
+                               double a = 0.2, double b = 0.2, double c = 5.7,
+                               double transient = 0.0) {
+  if (t_max <= 0.0) stop("t_max must be strictly positive");
+  if (dt <= 0.0)    stop("dt must be strictly positive");
+  if (transient < 0.0) stop("transient must be non-negative");
+
+  double total = transient + t_max;
+  int n_steps = (int)std::round(total / dt);
+  if (n_steps < 1) stop("dt is too large relative to t_max");
+
+  int n_total = n_steps + 1;
+  std::vector<double> tx(n_total), xx(n_total), yy(n_total), zz(n_total);
+  xx[0] = x0; yy[0] = y0; zz[0] = z0;
+  tx[0] = 0.0;
+
+  for (int i = 0; i < n_steps; i++) {
+    double xi = xx[i], yi = yy[i], zi = zz[i];
+
+    double k1x = -(yi + zi);
+    double k1y = xi + a * yi;
+    double k1z = b + zi * (xi - c);
+
+    double x2 = xi + dt / 2.0 * k1x;
+    double y2 = yi + dt / 2.0 * k1y;
+    double z2 = zi + dt / 2.0 * k1z;
+    double k2x = -(y2 + z2);
+    double k2y = x2 + a * y2;
+    double k2z = b + z2 * (x2 - c);
+
+    double x3 = xi + dt / 2.0 * k2x;
+    double y3 = yi + dt / 2.0 * k2y;
+    double z3 = zi + dt / 2.0 * k2z;
+    double k3x = -(y3 + z3);
+    double k3y = x3 + a * y3;
+    double k3z = b + z3 * (x3 - c);
+
+    double x4 = xi + dt * k3x;
+    double y4 = yi + dt * k3y;
+    double z4 = zi + dt * k3z;
+    double k4x = -(y4 + z4);
+    double k4y = x4 + a * y4;
+    double k4z = b + z4 * (x4 - c);
+
+    xx[i+1] = xi + dt / 6.0 * (k1x + 2.0 * k2x + 2.0 * k3x + k4x);
+    yy[i+1] = yi + dt / 6.0 * (k1y + 2.0 * k2y + 2.0 * k3y + k4y);
+    zz[i+1] = zi + dt / 6.0 * (k1z + 2.0 * k2z + 2.0 * k3z + k4z);
+    tx[i+1] = tx[i] + dt;
+  }
+
+  std::vector<double> t_out, x_out, y_out, z_out;
+  t_out.reserve(n_total);
+  for (int i = 0; i < n_total; i++) {
+    if (tx[i] >= transient) {
+      t_out.push_back(tx[i] - transient);
+      x_out.push_back(xx[i]);
+      y_out.push_back(yy[i]);
+      z_out.push_back(zz[i]);
+    }
+  }
+
+  return DataFrame::create(
+    Named("t") = wrap(t_out),
+    Named("x") = wrap(x_out),
+    Named("y") = wrap(y_out),
+    Named("z") = wrap(z_out)
+  );
+}
+
+//' Fast forced Duffing oscillator simulation (C++ implementation)
+//'
+//' RK4 integration of the forced Duffing oscillator, mirroring
+//' [simulate_duffing()]. Unlike Lorenz and Rossler the forcing introduces
+//' explicit time dependence, so the integrator threads the internal clock
+//' through the derivative evaluation.
+//'
+//' @param t_max Total integration time after any transient
+//' @param dt Integration step size
+//' @param x0,v0 Initial position and velocity
+//' @param alpha,beta,delta,gamma,omega Duffing parameters
+//' @param transient Integration time discarded from the start of the trajectory
+//' @return DataFrame with columns t, x, v
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_duffing_cpp(double t_max = 100.0, double dt = 0.05,
+                               double x0 = 1.0, double v0 = 0.0,
+                               double alpha = -1.0, double beta = 1.0,
+                               double delta = 0.2, double gamma = 0.3,
+                               double omega = 1.0, double transient = 0.0) {
+  if (t_max <= 0.0) stop("t_max must be strictly positive");
+  if (dt <= 0.0)    stop("dt must be strictly positive");
+  if (transient < 0.0) stop("transient must be non-negative");
+
+  double total = transient + t_max;
+  int n_steps = (int)std::round(total / dt);
+  if (n_steps < 1) stop("dt is too large relative to t_max");
+
+  int n_total = n_steps + 1;
+  std::vector<double> tx(n_total), xx(n_total), vv(n_total);
+  xx[0] = x0; vv[0] = v0;
+  tx[0] = 0.0;
+
+  auto force = [&](double t) { return gamma * std::cos(omega * t); };
+
+  for (int i = 0; i < n_steps; i++) {
+    double ti = tx[i];
+    double xi = xx[i], vi = vv[i];
+
+    double k1x = vi;
+    double k1v = -delta * vi - alpha * xi - beta * xi * xi * xi + force(ti);
+
+    double xm = xi + dt / 2.0 * k1x;
+    double vm = vi + dt / 2.0 * k1v;
+    double tm = ti + dt / 2.0;
+    double k2x = vm;
+    double k2v = -delta * vm - alpha * xm - beta * xm * xm * xm + force(tm);
+
+    xm = xi + dt / 2.0 * k2x;
+    vm = vi + dt / 2.0 * k2v;
+    double k3x = vm;
+    double k3v = -delta * vm - alpha * xm - beta * xm * xm * xm + force(tm);
+
+    double xe = xi + dt * k3x;
+    double ve = vi + dt * k3v;
+    double te = ti + dt;
+    double k4x = ve;
+    double k4v = -delta * ve - alpha * xe - beta * xe * xe * xe + force(te);
+
+    xx[i+1] = xi + dt / 6.0 * (k1x + 2.0 * k2x + 2.0 * k3x + k4x);
+    vv[i+1] = vi + dt / 6.0 * (k1v + 2.0 * k2v + 2.0 * k3v + k4v);
+    tx[i+1] = te;
+  }
+
+  std::vector<double> t_out, x_out, v_out;
+  t_out.reserve(n_total);
+  for (int i = 0; i < n_total; i++) {
+    if (tx[i] >= transient) {
+      t_out.push_back(tx[i] - transient);
+      x_out.push_back(xx[i]);
+      v_out.push_back(vv[i]);
+    }
+  }
+
+  return DataFrame::create(
+    Named("t") = wrap(t_out),
+    Named("x") = wrap(x_out),
+    Named("v") = wrap(v_out)
+  );
+}
+
 //' Fast logistic bifurcation diagram data (C++ implementation)
 //'
 //' Generate bifurcation diagram data efficiently.

@@ -15,7 +15,8 @@ Imports:
     assertthat,
     ggplot2,
     checkmate,
-    extRemes
+    extRemes,
+    Rcpp
 LinkingTo: Rcpp
 Suggests:
     testthat (>= 3.0.0),
