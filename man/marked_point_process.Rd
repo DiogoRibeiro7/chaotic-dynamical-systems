@@ -7,7 +7,7 @@
 marked_point_process(
   X,
   u,
-  run_length = 0L,
+  run_length = 1L,
   type = c("REPP", "EOT", "POT", "AOT")
 )
 }
@@ -21,7 +21,9 @@ marked_point_process(
 \item{type}{Character: one of "REPP","EOT","POT","AOT".}
 }
 \value{
-Data.frame with columns time (start of cluster) and mark.
+Data.frame with columns time (start of cluster) and mark. Returns
+  an empty data.frame with the correct columns when there are no
+  exceedances above `u`.
 }
 \description{
 Build Marked Point Process

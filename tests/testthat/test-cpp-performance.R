@@ -1,49 +1,26 @@
 
-test_that('C++ implementations give same results as R implementations', {
+test_that('simulate_logistic_map_cpp matches the R reference', {
   skip_if_not_installed("Rcpp")
-  
-  # Test data
-  set.seed(123)
+  cpp_sim <- simulate_logistic_map_cpp(1000, 3.8, 0.2)
+  r_sim   <- simulate_logistic_map(1000, 3.8, 0.2)
+  expect_equal(cpp_sim, r_sim, tolerance = 1e-10)
+})
+
+test_that('extremal_index_runs_cpp matches the R reference', {
+  skip_if_not_installed("Rcpp")
   test_data <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
   threshold <- quantile(test_data, 0.95)
-  
-  # Test C++ simulation if available
-  tryCatch({
-    if (exists("simulate_logistic_map_cpp")) {
-      set.seed(123)
-      cpp_sim <- simulate_logistic_map_cpp(1000, 3.8, 0.2)
-      set.seed(123)
-      r_sim <- simulate_logistic_map(1000, 3.8, 0.2)
-      
-      expect_equal(cpp_sim, r_sim, tolerance = 1e-10)
-    }
-  }, error = function(e) {
-    skip("C++ simulation function not available")
-  })
-  
-  # Test C++ extremal index if available
-  tryCatch({
-    if (exists("extremal_index_runs_cpp")) {
-      cpp_ei <- extremal_index_runs_cpp(test_data, threshold, 3)
-      r_ei <- extremal_index_runs(test_data, threshold, 3)
-      
-      expect_equal(cpp_ei, r_ei, tolerance = 1e-10)
-    }
-  }, error = function(e) {
-    skip("C++ extremal index function not available")
-  })
-  
-  # Test C++ block maxima if available
-  tryCatch({
-    if (exists("block_maxima_cpp")) {
-      cpp_bm <- block_maxima_cpp(test_data, 50)
-      r_bm <- block_maxima(test_data, 50)
-      
-      expect_equal(cpp_bm, r_bm, tolerance = 1e-10)
-    }
-  }, error = function(e) {
-    skip("C++ block maxima function not available")
-  })
+  cpp_ei <- extremal_index_runs_cpp(test_data, threshold, 3)
+  r_ei   <- extremal_index_runs(test_data, threshold, 3)
+  expect_equal(cpp_ei, r_ei, tolerance = 1e-10)
+})
+
+test_that('block_maxima_cpp matches the R reference', {
+  skip_if_not_installed("Rcpp")
+  test_data <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+  cpp_bm <- block_maxima_cpp(test_data, 50)
+  r_bm   <- block_maxima(test_data, 50)
+  expect_equal(cpp_bm, r_bm, tolerance = 1e-10)
 })
 
 test_that('fast wrapper functions work correctly', {
@@ -67,41 +44,23 @@ test_that('fast wrapper functions work correctly', {
   expect_equal(fast_bm, regular_bm)
 })
 
-test_that('C++ functions handle edge cases correctly', {
+test_that('threshold_exceedances_cpp handles empty input', {
   skip_if_not_installed("Rcpp")
-  
-  # Test with empty data
-  tryCatch({
-    if (exists("threshold_exceedances_cpp")) {
-      empty_result <- threshold_exceedances_cpp(numeric(0), 0.5)
-      expect_equal(length(empty_result), 0)
-    }
-  }, error = function(e) {
-    skip("C++ threshold exceedances function not available")
-  })
-  
-  # Test with no exceedances
-  tryCatch({
-    if (exists("extremal_index_runs_cpp")) {
-      no_exceed_data <- rep(0.1, 100)
-      result <- extremal_index_runs_cpp(no_exceed_data, 0.5, 3)
-      expect_true(is.na(result))
-    }
-  }, error = function(e) {
-    skip("C++ extremal index function not available")
-  })
-  
-  # Test with extreme parameters
-  tryCatch({
-    if (exists("simulate_logistic_map_cpp")) {
-      # Very small simulation
-      small_sim <- simulate_logistic_map_cpp(2, 3.8, 0.2)
-      expect_equal(length(small_sim), 2)
-      expect_equal(small_sim[1], 0.2)
-    }
-  }, error = function(e) {
-    skip("C++ simulation function not available")
-  })
+  empty_result <- threshold_exceedances_cpp(numeric(0), 0.5)
+  expect_equal(length(empty_result), 0)
+})
+
+test_that('extremal_index_runs_cpp returns NA when there are no exceedances', {
+  skip_if_not_installed("Rcpp")
+  no_exceed_data <- rep(0.1, 100)
+  expect_true(is.na(extremal_index_runs_cpp(no_exceed_data, 0.5, 3)))
+})
+
+test_that('simulate_logistic_map_cpp handles very small n', {
+  skip_if_not_installed("Rcpp")
+  small_sim <- simulate_logistic_map_cpp(2, 3.8, 0.2)
+  expect_equal(length(small_sim), 2)
+  expect_equal(small_sim[1], 0.2)
 })
 
 test_that('performance analysis functions work', {

@@ -57,43 +57,24 @@ exceedance_indices <- function(X, u) {
   which(X > u)
 }
 
-#' Cluster Exceedances by Run-Length
-#'
-#' @param idx Integer vector sorted. Exceedance time indices.
-#' @param run_length Integer >=0. Maximum gap to belong to same cluster.
-#' @return List of integer vectors: each cluster's indices.
-#' @export
-cluster_exceedances <- function(idx, run_length = 1) {
-  checkmate::assertIntegerish(idx, lower=1, sorted = TRUE)
-  checkmate::assertCount(run_length, null.ok=FALSE)
-  if (length(idx) == 0L) return(list())
-  clusters <- list(); current <- idx[1]
-  for (i in idx[-1]) {
-    if (i - tail(current,1) <= run_length) {
-      current <- c(current, i)
-    } else {
-      clusters[[length(clusters)+1]] <- current
-      current <- i
-    }
-  }
-  clusters[[length(clusters)+1]] <- current
-  clusters
-}
-
 #' Build Marked Point Process
 #'
 #' @param X Numeric vector. Time series.
 #' @param u Numeric scalar. Threshold.
 #' @param run_length Integer. Cluster run-length p.
 #' @param type Character: one of "REPP","EOT","POT","AOT".
-#' @return Data.frame with columns time (start of cluster) and mark.
+#' @return Data.frame with columns time (start of cluster) and mark. Returns
+#'   an empty data.frame with the correct columns when there are no
+#'   exceedances above `u`.
 #' @export
-marked_point_process <- function(X, u, run_length = 0L, type = c("REPP","EOT","POT","AOT")) {
+marked_point_process <- function(X, u, run_length = 1L, type = c("REPP","EOT","POT","AOT")) {
   type <- match.arg(type)
   idx <- exceedance_indices(X, u)
-  clusters <- cluster_exceedances(idx, run_length)
-  # For each cluster compute time and mark
-  mpp <- do.call(rbind, lapply(clusters, function(cl) {
+  ce <- cluster_exceedances(idx, run_length)
+  if (length(ce$clusters) == 0L) {
+    return(data.frame(time = integer(0), mark = numeric(0)))
+  }
+  mpp <- do.call(rbind, lapply(ce$clusters, function(cl) {
     cluster_vals <- X[cl]
     mark <- switch(type,
       REPP = length(cl),

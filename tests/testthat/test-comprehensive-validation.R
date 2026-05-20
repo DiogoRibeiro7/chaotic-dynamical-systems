@@ -250,11 +250,17 @@ test_that("cluster_exceedances: validates documented behavior", {
   indices <- c(1, 2, 3, 10, 11, 20)
   run_length <- 2
 
-  clusters <- cluster_exceedances(indices, run_length)
+  out <- cluster_exceedances(indices, run_length)
 
-  expect_type(clusters, "list")
-  # Should have 3 clusters: (1,2,3), (10,11), (20)
-  expect_equal(length(clusters), 3)
+  # Documented return: list(clusters, n_clusters)
+  expect_type(out, "list")
+  expect_named(out, c("clusters", "n_clusters"))
+  # Three clusters: (1,2,3), (10,11), (20)
+  expect_equal(out$n_clusters, 3L)
+  expect_length(out$clusters, 3L)
+  expect_equal(out$clusters[[1]], c(1L, 2L, 3L))
+  expect_equal(out$clusters[[2]], c(10L, 11L))
+  expect_equal(out$clusters[[3]], 20L)
 })
 
 test_that("hitting_times: validates statistical properties", {

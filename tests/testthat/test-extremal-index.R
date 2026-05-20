@@ -1,14 +1,14 @@
 
-test_that('extremal_index_runs returns numeric', {
+test_that('extremal_index_runs returns a scalar in (0, 1]', {
   set.seed(123)
   data(logistic_ts)
   threshold <- quantile(logistic_ts, 0.95)
-  
+
   theta <- extremal_index_runs(logistic_ts, threshold, run_length = 2)
+  expect_length(theta, 1L)
   expect_true(is.numeric(theta))
-  if (length(theta) > 0) {
-    expect_true(theta > 0 && theta <= 1)
-  }
+  expect_gt(theta, 0)
+  expect_lte(theta, 1)
 })
 
 test_that('extremal_index_intervals returns numeric', {

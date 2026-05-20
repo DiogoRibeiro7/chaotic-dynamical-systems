@@ -46,7 +46,9 @@ cluster_exceedances <- function(indices, run_length) {
   clusters <- list()
   clusters[[1]] <- idx[1]
   n <- 1L
-  for (i in seq(2L, length(idx))) {
+  # seq_along(idx)[-1] is empty when length(idx) == 1L; seq(2L, 1L) would
+  # produce c(2L, 1L) (descending) and walk off the end of idx.
+  for (i in seq_along(idx)[-1L]) {
     if (idx[i] - idx[i-1] <= run_length) {
       clusters[[n]] <- c(clusters[[n]], idx[i])
     } else {
