@@ -55,6 +55,7 @@ reference:
   - cluster_sizes
   - cluster_summary
   - cluster_histogram
+  - decluster
 
 - title: "Statistical Diagnostics"
   desc: "Functions for assessing mixing and dependence"
