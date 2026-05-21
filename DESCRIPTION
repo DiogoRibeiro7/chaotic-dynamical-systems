@@ -1,11 +1,18 @@
 Package: chaoticds
 Type: Package
-Title: Chaotic Dynamical Systems Utilities
+Title: Extreme Value Analysis for Chaotic Dynamical Systems
 Version: 0.1.0
 Author: Diogo Ribeiro <dfr@esmad.ipp.pt>
 Maintainer: Diogo Ribeiro <dfr@esmad.ipp.pt>
 Authors@R: c(person("Diogo", "Ribeiro", email = "dfr@esmad.ipp.pt", role = c("aut", "cre"), comment = c(ORCID = "0009-0001-2022-7072")))
-Description: Collection of utilities for extreme-value analysis of simple chaotic maps. Includes simulation of logistic and Henon maps and tools for block maxima, peaks-over-threshold (POT) and extremal index estimation. Provides functions for threshold diagnostics, bootstrap confidence intervals, cluster analysis, and mixing condition checks.
+Description: Toolkit for simulation and extreme-value analysis of chaotic
+    dynamical systems. Includes logistic, Henon, tent, Lozi, and cat-map
+    generators plus block maxima, peaks-over-threshold (POT), and extremal
+    index estimators. Provides threshold diagnostics, bootstrap confidence
+    intervals, clustering analysis, dependence checks, and publication-ready
+    visualizations.
+Keywords: chaotic systems, extreme value theory, time series, extremal index,
+    threshold diagnostics, statistical computing
 License: MIT + file LICENSE
 URL: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems, https://diogoribeiro7.github.io/chaotic-dynamical-systems
 BugReports: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues

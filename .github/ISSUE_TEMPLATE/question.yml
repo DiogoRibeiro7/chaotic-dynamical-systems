@@ -1,7 +1,7 @@
 name: Question
 description: Ask a question about the package usage or methodology
 title: "[Question]: "
-labels: ["question", "help-wanted"]
+labels: ["type: question", "status: needs-triage"]
 assignees: []
 body:
   - type: markdown

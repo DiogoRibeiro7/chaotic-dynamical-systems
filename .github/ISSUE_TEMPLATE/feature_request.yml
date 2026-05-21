@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature or enhancement for the package
 title: "[Feature]: "
-labels: ["enhancement", "feature-request"]
+labels: ["type: enhancement", "type: feature", "status: needs-triage"]
 assignees: []
 body:
   - type: markdown

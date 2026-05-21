@@ -1,6 +1,6 @@
 # chaoticds <img src="man/figures/logo.png" align="right" height="139" alt="chaoticds logo" />
 
-> **Professional Tools for Extreme Value Analysis of Chaotic Dynamical Systems**
+> **Extreme Value Analysis Toolkit for Chaotic Dynamical Systems in R**
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml)
@@ -15,6 +15,11 @@
 ## Why chaoticds?
 
 Analyzing extreme events in chaotic systems is challenging. Traditional statistical methods often fail to capture the complex dependence structures in chaotic dynamics. **chaoticds** provides a comprehensive, statistically rigorous toolkit specifically designed for this purpose.
+
+## Repository Metadata
+
+- Description: R toolkit for simulation and extreme value analysis of chaotic dynamical systems, including extremal index estimation and threshold diagnostics.
+- Suggested topics/tags: r, rstats, chaos-theory, dynamical-systems, extreme-value-theory, statistics, time-series, evt, extremal-index, scientific-computing
 
 ### Key Features
 
@@ -359,3 +364,7 @@ Special thanks to the R community and contributors to the extreme value analysis
   <a href="https://diogoribeiro7.github.io/chaotic-dynamical-systems/">Documentation</a> •
   <a href="https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues">Issues</a>
 </p>
+
+
+
+
