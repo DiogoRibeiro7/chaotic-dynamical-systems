@@ -25,6 +25,9 @@ test_that("fit_gev returns unified chaotic_model object", {
 
 test_that("fit_gpd returns unified chaotic_model object", {
   skip_if_not_installed("evd")
+  # Seed because evd::fpot's MLE occasionally hits a singular information
+  # matrix on unseeded Gaussian data, which would make the test flake.
+  set.seed(1L)
   x <- rnorm(500)
   u <- quantile(x, 0.95)
   fit <- fit_gpd(x, u)

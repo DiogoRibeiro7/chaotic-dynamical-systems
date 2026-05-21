@@ -26,8 +26,11 @@ test_that('recurrence_plot validates integer embed and delay', {
 })
 
 test_that('recurrence_plot requires positive eps', {
-  expect_error(recurrence_plot(rnorm(10), eps = 0), '0')
-  expect_error(recurrence_plot(rnorm(10), eps = -1), '0')
+  # eps == 0 trips the manual strict-inequality stop ("strictly positive");
+  # eps < 0 trips the checkmate lower-bound assertion ("not >= 0") first,
+  # so only the eps == 0 message is stable to pin against.
+  expect_error(recurrence_plot(rnorm(10), eps = 0), 'positive')
+  expect_error(recurrence_plot(rnorm(10), eps = -1))
 })
 
 test_that('recurrence_analysis determinism drops to zero when lmin is large', {

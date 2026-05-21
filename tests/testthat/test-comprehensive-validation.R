@@ -199,7 +199,7 @@ test_that("fit_gev: validates documented behavior and error handling", {
   }
 
   # Should error with too little data
-  expect_error(fit_gev(c(1)), "min.len")
+  expect_error(fit_gev(c(1)), "length")
 })
 
 # =============================================================================
@@ -336,12 +336,12 @@ test_that("cluster_summary: validates documented statistics", {
 
   summary_stats <- cluster_summary(sizes)
 
-  expect_type(summary_stats, "list")
-  expect_true("mean_size" %in% names(summary_stats))
-  expect_true("var_size" %in% names(summary_stats))
+  # Documented return is a named numeric vector with mean_size and var_size.
+  expect_type(summary_stats, "double")
+  expect_named(summary_stats, c("mean_size", "var_size"))
 
-  expect_equal(summary_stats$mean_size, mean(sizes))
-  expect_equal(summary_stats$var_size, var(sizes))
+  expect_equal(summary_stats[["mean_size"]], mean(sizes))
+  expect_equal(summary_stats[["var_size"]], var(sizes))
 })
 
 # =============================================================================
@@ -430,22 +430,24 @@ test_that("clean_extreme_data: validates documented behavior", {
 test_that("empirical_quantile: validates documented behavior", {
   x <- 1:100
 
-  q50 <- empirical_quantile(x, 0.5)
-  q95 <- empirical_quantile(x, 0.95)
-
-  expect_equal(q50, 50.5)
-  expect_equal(q95, 95.05)
+  # empirical_quantile uses stats::quantile(..., type = 8), so anchor the
+  # expected values to that interpolation rule rather than the default type 7.
+  expect_equal(empirical_quantile(x, 0.5),
+               as.numeric(stats::quantile(x, 0.5,  type = 8)))
+  expect_equal(empirical_quantile(x, 0.95),
+               as.numeric(stats::quantile(x, 0.95, type = 8)))
 })
 
 test_that("compute_autocorrelation: validates range", {
   set.seed(42)
   x <- simulate_logistic_map(200, 3.8, 0.2)
 
-  acf_val <- compute_autocorrelation(x, lag = 5)
+  # Returns the ACF for lags 0..max_lag, so length is max_lag + 1.
+  acf_vec <- compute_autocorrelation(x, max_lag = 5)
 
-  expect_type(acf_val, "double")
-  expect_gte(acf_val, -1)
-  expect_lte(acf_val, 1)
+  expect_type(acf_vec, "double")
+  expect_length(acf_vec, 6L)
+  expect_true(all(acf_vec >= -1 & acf_vec <= 1))
 })
 
 # =============================================================================

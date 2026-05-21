@@ -125,15 +125,15 @@
 #'
 #' @export
 simulate_logistic_map <- function(n, r, x0) {
-  checkmate::assert_count(n)
+  checkmate::assert_count(n, positive = TRUE)
   checkmate::assert_number(r)
-  checkmate::assert_number(x0, lower = 0, upper = 1)
+  checkmate::assert_number(x0)
   if (x0 <= 0 || x0 >= 1) {
     stop("x0 must be strictly between 0 and 1")
   }
   x <- numeric(n)
   x[1] <- x0
-  for (i in 1:(n - 1)) {
+  for (i in seq_len(n - 1L)) {
     x[i + 1] <- r * x[i] * (1 - x[i])  # logistic iteration
   }
   x
@@ -168,7 +168,7 @@ simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
   y <- numeric(n)
   x[1] <- x0
   y[1] <- y0
-  for (i in 1:(n - 1)) {
+  for (i in seq_len(n - 1L)) {
     x[i + 1] <- 1 - a * x[i]^2 + y[i]
     y[i + 1] <- b * x[i]
   }
@@ -249,7 +249,7 @@ simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
   }
   x <- numeric(n)
   x[1] <- x0
-  for (i in 1:(n - 1)) {
+  for (i in seq_len(n - 1L)) {
     if (x[i] < 0.5) {
       x[i + 1] <- r * x[i]
     } else {
@@ -285,7 +285,7 @@ simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
   y <- numeric(n)
   x[1] <- x0
   y[1] <- y0
-  for (i in 1:(n - 1)) {
+  for (i in seq_len(n - 1L)) {
     x[i + 1] <- 1 - a * abs(x[i]) + b * y[i]
     y[i + 1] <- x[i]
   }
@@ -313,7 +313,7 @@ simulate_cat_map <- function(n, x0 = 0.1, y0 = 0.1) {
   y <- numeric(n)
   x[1] <- x0 %% 1
   y[1] <- y0 %% 1
-  for (i in 1:(n - 1)) {
+  for (i in seq_len(n - 1L)) {
     x_new <- (x[i] + y[i]) %% 1
     y_new <- (x[i] + 2 * y[i]) %% 1
     x[i + 1] <- x_new

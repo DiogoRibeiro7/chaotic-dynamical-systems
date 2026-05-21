@@ -55,7 +55,8 @@ test_that("cluster_sizes: handles no clusters", {
 
   sizes <- cluster_sizes(x, threshold, run_length = 2)
   expect_length(sizes, 0)
-  expect_type(sizes, "double")
+  # Cluster sizes are counts; the function returns an integer vector.
+  expect_type(sizes, "integer")
 })
 
 test_that("mean_residual_life: handles edge thresholds", {
