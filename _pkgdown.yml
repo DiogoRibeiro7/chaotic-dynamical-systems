@@ -72,6 +72,12 @@ reference:
   - bootstrap_extremal_index
   - block_bootstrap
 
+- title: "Profile-Likelihood Inference"
+  desc: "Likelihood-ratio confidence intervals for GEV and GPD parameters"
+  contents:
+  - profile_likelihood
+  - profile_ci
+
 - title: "Advanced Analysis"
   desc: "Higher-level modelling utilities"
   contents:
