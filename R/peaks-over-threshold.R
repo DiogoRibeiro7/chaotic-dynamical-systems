@@ -70,6 +70,74 @@ fit_gpd <- function(x, threshold) {
   }
 }
 
+#' Fit a Poisson point-process likelihood (PPL) model
+#'
+#' @description
+#' Fits the GEV-parameterised Poisson point-process likelihood of Coles
+#' (2001, §7.4) to threshold exceedances. The PPL unifies block-maxima
+#' and peaks-over-threshold inference: both can be derived as
+#' marginalisations of the same Poisson point process. Compared with
+#' [fit_gpd()], the PPL returns parameters \eqn{(\mu, \sigma, \xi)}
+#' directly on the block-maximum GEV scale, removing the need to
+#' back-transform GPD scale to a return level.
+#'
+#' @details
+#' For a series of length `n_y` observations and threshold \eqn{u}, with
+#' `n_per_block` observations per (notional) block, the log-likelihood is
+#' \deqn{\ell(\mu, \sigma, \xi) = -\frac{n_y}{n_{\text{pb}}}
+#'   \big(1 + \xi\,(u - \mu)/\sigma\big)^{-1/\xi} - k \log \sigma -
+#'   (1 + 1/\xi) \sum_{i=1}^{k} \log\big(1 + \xi (x_i - \mu)/\sigma\big),}
+#' where \eqn{x_1, \ldots, x_k} are the observed exceedances and
+#' \eqn{n_{\text{pb}}} is the number of observations per block (e.g. 365 for
+#' daily series with annual blocks). The \eqn{\xi = 0} (Gumbel) case is
+#' handled separately.
+#'
+#' The implementation wraps `evd::fpot(model = "pp")`, which performs the
+#' maximum-likelihood fit by numerical optimisation. The returned
+#' parameters are the *annual* (block-size `n_per_block`) GEV parameters,
+#' regardless of how many observations went into the fit.
+#'
+#' @param x Numeric vector. The raw time series, not just the exceedances.
+#' @param threshold Numeric scalar. The high threshold \eqn{u}.
+#' @param n_per_block Numeric (\eqn{\ge 1}). Observations per notional
+#'   block. Defaults to 365 (annual blocks for daily data); set to 1 if
+#'   you want each observation to count as its own block.
+#'
+#' @return A `chaotic_model` with `model = "ppp"`, wrapping
+#'   `evd::fpot(model = "pp")` and carrying the standard
+#'   `(loc, scale, shape)` parameters on the block-maximum GEV scale.
+#'
+#' @references
+#' Coles, S. (2001). *An Introduction to Statistical Modeling of Extreme
+#' Values*. Springer, §7.4.
+#'
+#' @seealso [fit_gev()] for block-maxima inference, [fit_gpd()] for the
+#'   POT marginal, [profile_return_level()] for return-level CIs from a
+#'   PPL fit.
+#'
+#' @examples
+#' set.seed(1)
+#' x <- evd::rgev(2000, loc = 0, scale = 1, shape = 0.1)
+#' u <- quantile(x, 0.9)
+#' fit_ppp(x, threshold = u, n_per_block = 50)
+#'
+#' @export
+fit_ppp <- function(x, threshold, n_per_block = 365) {
+  checkmate::assert_numeric(x, any.missing = FALSE, min.len = 10L)
+  checkmate::assert_number(threshold, finite = TRUE)
+  checkmate::assert_number(n_per_block, lower = 1)
+  if (!requireNamespace("evd", quietly = TRUE)) {
+    stop("Package 'evd' is required for fit_ppp()")
+  }
+  fit <- evd::fpot(x, threshold, model = "pp", npp = n_per_block)
+  wrap_chaotic_model(
+    fit,
+    model     = "ppp",
+    method    = "evd::fpot(model = \"pp\")",
+    threshold = threshold
+  )
+}
+
 #' Mean Residual Life (MRL) values
 #'
 #' Computes the average excess above a sequence of thresholds.

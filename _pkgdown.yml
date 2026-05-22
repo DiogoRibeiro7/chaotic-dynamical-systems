@@ -26,9 +26,12 @@ reference:
   desc: "Core extreme value theory functions"
   contents:
   - block_maxima
+  - block_r_largest
   - exceedances
   - fit_gev
+  - fit_gev_rlargest
   - fit_gpd
+  - fit_ppp
 
 - title: "Threshold Diagnostics"
   desc: "Tools for threshold selection and validation"
@@ -77,6 +80,14 @@ reference:
   contents:
   - profile_likelihood
   - profile_ci
+  - profile_return_level
+
+- title: "broom Tidiers"
+  desc: "tidy() / glance() / augment() methods for chaotic_model fits"
+  contents:
+  - tidy.chaotic_model
+  - glance.chaotic_model
+  - augment.chaotic_model
 
 - title: "Advanced Analysis"
   desc: "Higher-level modelling utilities"

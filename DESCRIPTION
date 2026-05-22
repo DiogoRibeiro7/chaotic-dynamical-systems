@@ -23,6 +23,7 @@ Imports:
     ggplot2,
     checkmate,
     extRemes,
+    generics,
     Rcpp
 LinkingTo: Rcpp
 Suggests:

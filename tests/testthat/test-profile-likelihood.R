@@ -84,6 +84,51 @@ test_that("profile_likelihood rejects bad arguments", {
   expect_error(profile_likelihood(fit, "shape", n_points = 2L))
 })
 
+test_that("profile_return_level returns a CI bracketing the MLE for GEV", {
+  skip_if_not_installed("evd")
+  set.seed(10L)
+  x   <- evd::rgev(800, loc = 0, scale = 1, shape = 0.1)
+  fit <- fit_gev(x)
+
+  pr <- profile_return_level(fit, m = 100)
+  expect_s3_class(pr, "profile_likelihood")
+  expect_equal(pr$parameter, "return_level_100")
+  expect_true(is.finite(pr$mle))
+  expect_false(is.na(pr$ci[["lower"]]))
+  expect_false(is.na(pr$ci[["upper"]]))
+  expect_lt(pr$ci[["lower"]], pr$mle)
+  expect_gt(pr$ci[["upper"]], pr$mle)
+})
+
+test_that("profile_return_level returns a CI bracketing the MLE for GPD", {
+  skip_if_not_installed("evd")
+  set.seed(11L)
+  # GPD exceedances above 0 with sigma=1, xi=0.1
+  excs <- (1 / 0.1) * ((1 - runif(800))^(-0.1) - 1)
+  # Embed in a longer raw series so the function can infer the exceedance rate.
+  raw  <- c(excs, rep(-1, 1200))
+  fit  <- fit_gpd(raw, threshold = 0)
+
+  pr <- profile_return_level(fit, m = 50, n_per_year = 1)
+  expect_s3_class(pr, "profile_likelihood")
+  expect_true(is.finite(pr$mle))
+  expect_false(is.na(pr$ci[["lower"]]))
+  expect_false(is.na(pr$ci[["upper"]]))
+  expect_lt(pr$ci[["lower"]], pr$mle)
+  expect_gt(pr$ci[["upper"]], pr$mle)
+})
+
+test_that("profile_return_level errors when GPD exceedance_rate is needed but missing", {
+  skip_if_not_installed("evd")
+  set.seed(12L)
+  # Construct a fit but strip the raw data so the function can't infer the rate.
+  excs <- (1 / 0.1) * ((1 - runif(400))^(-0.1) - 1)
+  fit  <- fit_gpd(excs, threshold = 0)
+  fit$data <- NULL
+  fit$xdata <- NULL
+  expect_error(profile_return_level(fit, m = 50), "exceedance_rate")
+})
+
 test_that("plot.profile_likelihood returns a ggplot", {
   skip_if_not_installed("evd")
   skip_if_not_installed("ggplot2")
