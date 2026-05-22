@@ -48,24 +48,32 @@ Two design commitments stay constant:
 Close the gap between `chaoticds` and a textbook EVT toolbox. These items
 each correct a known weakness in the current fits.
 
-- **Profile-likelihood intervals.** Add `profile_ci()` for GEV/GPD parameters
-  and return levels. Wald intervals on the shape ξ are notoriously
-  asymmetric and miscalibrated; profile intervals are the standard fix and
-  the default in `ismev`. Pairs with the existing bootstrap CIs.
-- **Point-process likelihood (PPL).** A unified fit that subsumes BM and POT
-  as marginalisations of the same Poisson point process. Coles 2001 §7.4;
-  removes the bias-variance tradeoff in threshold choice.
-- **r-largest order statistics.** Fit GEV to the top `r` order statistics
-  per block, not just the maximum. Useful when blocks are short and the
-  maximum alone loses too much information.
-- **Bayesian posteriors.** Stan back-end (via `rstan` or `cmdstanr`) for
-  full posteriors on GEV/GPD parameters and return levels. Gives
-  predictive intervals, not just point estimates and Wald CIs.
-- **Penultimate / sub-asymptotic corrections.** Apply Smith's (1987)
-  penultimate approximation so finite-block GEV fits are bias-corrected.
-- **broom tidiers.** `tidy()`, `glance()`, `augment()` methods for
-  `chaotic_model` so EVT fits drop straight into `dplyr` / `ggplot2`
-  pipelines. Cheap and high signal-to-noise for adoption.
+- **Profile-likelihood intervals.** ✅ `profile_likelihood()`,
+  `profile_ci()`, and `profile_return_level()` invert the LRT for GEV
+  parameters, GPD parameters, and m-period return levels. Wald intervals
+  on ξ and on return levels were the package's most-cited weakness;
+  profile-likelihood is the standard fix.
+- **Point-process likelihood (PPL).** ✅ `fit_ppp()` wraps the Poisson
+  point-process MLE (Coles 2001 §7.4), parameterising directly in
+  block-maximum GEV coordinates. PPL profile-likelihood support is a
+  follow-up (different likelihood structure than GEV/GPD; needs its own
+  log-lik + extractors).
+- **r-largest order statistics.** ✅ `block_r_largest()` extracts the
+  top r values per block and `fit_gev_rlargest()` fits the joint
+  Poisson-process likelihood (Coles 2001 §3.5). Inherits from
+  `chaotic_model` so the tidier and profile-likelihood machinery work
+  unchanged.
+- **broom tidiers.** ✅ `tidy.chaotic_model()`, `glance.chaotic_model()`,
+  `augment.chaotic_model()` registered against the `generics` package's
+  generics. EVT fits drop straight into dplyr / ggplot2 pipelines.
+- **Bayesian posteriors.** Deferred to a focused session. Stan back-end
+  (via `rstan` or `cmdstanr`) requires `.stan` model files under
+  `inst/stan/`, a posterior-summary class, and likely its own vignette;
+  too large a footprint to bundle with the rest of Phase 2.
+- **Penultimate / sub-asymptotic corrections.** Deferred. No clean R
+  implementation to mirror in the EVT ecosystem (the standard packages
+  -- `evd`, `ismev`, `extRemes`, `evir` -- don't ship one); needs
+  methodology decisions before code.
 
 ---
 
