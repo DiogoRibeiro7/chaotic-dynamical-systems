@@ -760,6 +760,58 @@ DataFrame simulate_duffing_cpp(double t_max = 100.0, double dt = 0.05,
   );
 }
 
+//' Fast Mackey-Glass DDE simulation (C++ implementation)
+//'
+//' Explicit Euler discretisation with delay buffer, matching the R
+//' reference simulate_mackey_glass(). Cheap O(n_total) sweep; the inner
+//' loop is dominated by the std::pow call for the Hill term.
+//'
+//' @param t_max Total integration time after the transient
+//' @param dt Integration step
+//' @param x0 Initial / history value
+//' @param beta Production rate
+//' @param gamma Decay rate
+//' @param n Hill exponent
+//' @param tau Delay
+//' @param transient Time discarded from the start
+//' @return DataFrame with columns t and x
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_mackey_glass_cpp(double t_max = 200.0, double dt = 0.1,
+                                     double x0 = 1.2,
+                                     double beta = 0.2, double gamma = 0.1,
+                                     double n = 10.0, double tau = 17.0,
+                                     double transient = 0.0) {
+  if (t_max <= 0.0)    stop("t_max must be strictly positive");
+  if (dt    <= 0.0)    stop("dt must be strictly positive");
+  if (tau   <= 0.0)    stop("tau must be strictly positive");
+  if (transient < 0.0) stop("transient must be non-negative");
+
+  int n_delay     = (int)std::round(tau / dt);
+  int n_transient = (int)std::round(transient / dt);
+  int n_keep      = (int)std::round(t_max / dt);
+  int n_total     = n_transient + n_keep;
+
+  std::vector<double> buf(n_delay + 1 + n_total, x0);
+
+  for (int k = n_delay; k < n_delay + n_total; ++k) {
+    double x_d  = buf[k - n_delay];
+    double dxdt = beta * x_d / (1.0 + std::pow(x_d, n)) - gamma * buf[k];
+    buf[k + 1]  = buf[k] + dt * dxdt;
+  }
+
+  int start = n_delay + n_transient;
+  int end   = n_delay + n_total;
+  int len   = end - start + 1;
+
+  NumericVector t_out(len), x_out(len);
+  for (int i = 0; i < len; ++i) {
+    t_out[i] = i * dt;
+    x_out[i] = buf[start + i];
+  }
+  return DataFrame::create(Named("t") = t_out, Named("x") = x_out);
+}
+
 //' Fast logistic bifurcation diagram data (C++ implementation)
 //'
 //' Generate bifurcation diagram data efficiently.

@@ -82,23 +82,27 @@ each correct a known weakness in the current fits.
 Broaden the chaotic-systems side from "canonical maps + 3 ODEs" to a
 genuine simulation catalog.
 
-- **More dynamical systems** — Standard map, Ikeda map, Mackey-Glass
-  delay-differential equation, Belousov-Zhabotinsky, coupled map lattices,
-  Kuramoto oscillators, Burgers / KdV PDE surrogates.
-- **Stochastic perturbations.** Wrap each deterministic map with optional
-  additive / multiplicative noise (`simulate_*(..., noise = function(x) ...)`).
-  Captures the real-world case where chaotic structure is contaminated.
-- **Ensemble simulators.** First-class support for Monte Carlo over initial
-  conditions — `ensemble_simulate(map_fn, n_replicates, ...)` returning a
-  long-format data frame keyed by replicate.
-- **Lyapunov spectrum.** Estimate the full spectrum, not just the largest
-  exponent. Enables Kaplan-Yorke dimension and finer chaos diagnostics.
-- **Symbolic dynamics.** Partition-based encoders that turn an orbit into
-  a symbol sequence (Markov partition where available, generating partition
-  otherwise). Opens the door to entropy estimation and itinerary statistics.
-- **Recurrence quantification analysis.** Extend `recurrence_analysis` from
-  the current handful of statistics to the standard RQA suite (RR, DET,
-  LAM, L, ENT, TT, etc.).
+- **More dynamical systems.** Partial. ✅ Chirikov standard map, Ikeda
+  map, and Mackey-Glass delay-differential equation are in (R + C++
+  fast paths). Coupled map lattices, Kuramoto oscillators, Belousov-
+  Zhabotinsky, and Burgers / KdV PDE surrogates remain.
+- **Stochastic perturbations.** ✅ Every discrete simulator now takes a
+  `noise_sd` argument (R + C++); under the same RNG seed the two
+  implementations are bit-identical, which made R-vs-C++ parity tests
+  possible on noisy orbits.
+- **Ensemble simulators.** ✅ `ensemble_simulate(expr, n_replicates,
+  seed)` captures any simulator call unevaluated and re-evaluates it per
+  replicate, so random sub-expressions like `runif(1)` give per-replicate
+  draws automatically. Returns a long-format data frame keyed by
+  `replicate`.
+- **Lyapunov spectrum.** Outstanding. Largest exponent already exists
+  via `estimate_lyapunov_exponent()`; the full spectrum needs the
+  variational equation + QR re-orthogonalisation each step.
+- **Symbolic dynamics.** Outstanding. Markov-partition encoders for the
+  tent / logistic / Henon maps, plus entropy estimation.
+- **Recurrence quantification analysis.** Outstanding. `recurrence_analysis`
+  ships a handful of statistics; the standard RQA suite (RR, DET, LAM,
+  L, ENT, TT, ...) is still to come.
 
 ---
 

@@ -79,6 +79,7 @@ Other simulation functions:
 \code{\link{simulate_duffing}()},
 \code{\link{simulate_ikeda_map}()},
 \code{\link{simulate_logistic_map}()},
+\code{\link{simulate_mackey_glass}()},
 \code{\link{simulate_rossler}()},
 \code{\link{simulate_standard_map}()}
 }

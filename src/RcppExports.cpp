@@ -265,6 +265,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// simulate_mackey_glass_cpp
+DataFrame simulate_mackey_glass_cpp(double t_max, double dt, double x0, double beta, double gamma, double n, double tau, double transient);
+RcppExport SEXP _chaoticds_simulate_mackey_glass_cpp(SEXP t_maxSEXP, SEXP dtSEXP, SEXP x0SEXP, SEXP betaSEXP, SEXP gammaSEXP, SEXP nSEXP, SEXP tauSEXP, SEXP transientSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type t_max(t_maxSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< double >::type transient(transientSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_mackey_glass_cpp(t_max, dt, x0, beta, gamma, n, tau, transient));
+    return rcpp_result_gen;
+END_RCPP
+}
 // logistic_bifurcation_cpp
 DataFrame logistic_bifurcation_cpp(NumericVector r_values, int n_iter, int discard, double x0);
 RcppExport SEXP _chaoticds_logistic_bifurcation_cpp(SEXP r_valuesSEXP, SEXP n_iterSEXP, SEXP discardSEXP, SEXP x0SEXP) {
@@ -374,6 +392,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_chaoticds_simulate_lorenz_cpp", (DL_FUNC) &_chaoticds_simulate_lorenz_cpp, 9},
     {"_chaoticds_simulate_rossler_cpp", (DL_FUNC) &_chaoticds_simulate_rossler_cpp, 9},
     {"_chaoticds_simulate_duffing_cpp", (DL_FUNC) &_chaoticds_simulate_duffing_cpp, 10},
+    {"_chaoticds_simulate_mackey_glass_cpp", (DL_FUNC) &_chaoticds_simulate_mackey_glass_cpp, 8},
     {"_chaoticds_logistic_bifurcation_cpp", (DL_FUNC) &_chaoticds_logistic_bifurcation_cpp, 4},
     {"_chaoticds_simulate_logistic_map_cpp", (DL_FUNC) &_chaoticds_simulate_logistic_map_cpp, 4},
     {"_chaoticds_threshold_exceedances_cpp", (DL_FUNC) &_chaoticds_threshold_exceedances_cpp, 2},

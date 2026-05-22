@@ -22,7 +22,9 @@ reference:
   - simulate_lorenz
   - simulate_rossler
   - simulate_duffing
+  - simulate_mackey_glass
   - logistic_bifurcation
+  - ensemble_simulate
 
 - title: "Extreme Value Analysis"
   desc: "Core extreme value theory functions"

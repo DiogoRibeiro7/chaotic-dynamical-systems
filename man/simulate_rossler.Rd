@@ -66,6 +66,7 @@ Other simulation functions:
 \code{\link{simulate_ikeda_map}()},
 \code{\link{simulate_logistic_map}()},
 \code{\link{simulate_lorenz}()},
+\code{\link{simulate_mackey_glass}()},
 \code{\link{simulate_standard_map}()}
 }
 \concept{simulation functions}

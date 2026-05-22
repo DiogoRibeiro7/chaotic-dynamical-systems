@@ -243,6 +243,26 @@ simulate_duffing_cpp <- function(t_max = 100.0, dt = 0.05, x0 = 1.0, v0 = 0.0, a
     .Call(`_chaoticds_simulate_duffing_cpp`, t_max, dt, x0, v0, alpha, beta, delta, gamma, omega, transient)
 }
 
+#' Fast Mackey-Glass DDE simulation (C++ implementation)
+#'
+#' Explicit Euler discretisation with delay buffer, matching the R
+#' reference simulate_mackey_glass(). Cheap O(n_total) sweep; the inner
+#' loop is dominated by the std::pow call for the Hill term.
+#'
+#' @param t_max Total integration time after the transient
+#' @param dt Integration step
+#' @param x0 Initial / history value
+#' @param beta Production rate
+#' @param gamma Decay rate
+#' @param n Hill exponent
+#' @param tau Delay
+#' @param transient Time discarded from the start
+#' @return DataFrame with columns t and x
+#' @export
+simulate_mackey_glass_cpp <- function(t_max = 200.0, dt = 0.1, x0 = 1.2, beta = 0.2, gamma = 0.1, n = 10.0, tau = 17.0, transient = 0.0) {
+    .Call(`_chaoticds_simulate_mackey_glass_cpp`, t_max, dt, x0, beta, gamma, n, tau, transient)
+}
+
 #' Fast logistic bifurcation diagram data (C++ implementation)
 #'
 #' Generate bifurcation diagram data efficiently.
