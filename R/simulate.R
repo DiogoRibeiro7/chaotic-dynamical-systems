@@ -291,6 +291,114 @@ simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
   }
   data.frame(x = x, y = y)
 }
+#' Simulate the Chirikov standard map
+#'
+#' @description
+#' Iterates the area-preserving Chirikov-Taylor map on the torus
+#' \eqn{[0, 2\pi)^2}:
+#' \deqn{p_{n+1} = (p_n + K \sin \theta_n) \bmod 2\pi,}
+#' \deqn{\theta_{n+1} = (\theta_n + p_{n+1}) \bmod 2\pi.}
+#'
+#' The parameter `K` controls the strength of the nonlinear kick. The map
+#' is integrable at `K = 0`, the last invariant KAM torus disappears near
+#' the Chirikov value `K \approx 0.971635`, and the dynamics are
+#' progressively more chaotic for larger `K`.
+#'
+#' @param n Integer. Number of iterations to generate.
+#' @param K Numeric. Kick strength. Defaults to 1.2 (well into the chaotic
+#'   regime).
+#' @param p0 Numeric. Initial momentum in \eqn{[0, 2\pi)}. Defaults to 1.
+#' @param theta0 Numeric. Initial angle in \eqn{[0, 2\pi)}. Defaults to 1.
+#'
+#' @return Data frame with columns `p` and `theta` of length `n`.
+#'
+#' @references
+#' Chirikov, B. V. (1979). A universal instability of many-dimensional
+#' oscillator systems. *Physics Reports*, 52(5), 263-379.
+#' \doi{10.1016/0370-1573(79)90023-1}
+#'
+#' @seealso [simulate_henon_map()], [simulate_cat_map()].
+#' @family simulation functions
+#'
+#' @examples
+#' orbit <- simulate_standard_map(2000, K = 1.2)
+#' plot(orbit$theta, orbit$p, pch = ".",
+#'      xlab = expression(theta), ylab = "p",
+#'      main = "Standard map (K = 1.2)")
+#'
+#' @export
+simulate_standard_map <- function(n, K = 1.2, p0 = 1, theta0 = 1) {
+  checkmate::assert_count(n, positive = TRUE)
+  checkmate::assert_number(K)
+  checkmate::assert_number(p0)
+  checkmate::assert_number(theta0)
+  two_pi <- 2 * pi
+  p     <- numeric(n)
+  theta <- numeric(n)
+  p[1]     <- p0     %% two_pi
+  theta[1] <- theta0 %% two_pi
+  for (i in seq_len(n - 1L)) {
+    p_new     <- (p[i] + K * sin(theta[i])) %% two_pi
+    theta_new <- (theta[i] + p_new)         %% two_pi
+    p[i + 1]     <- p_new
+    theta[i + 1] <- theta_new
+  }
+  data.frame(p = p, theta = theta)
+}
+
+#' Simulate the Ikeda map
+#'
+#' @description
+#' Iterates the two-dimensional Ikeda map, which models the light field in
+#' a nonlinear ring cavity:
+#' \deqn{t_n = 0.4 - 6 / (1 + x_n^2 + y_n^2),}
+#' \deqn{x_{n+1} = 1 + u (x_n \cos t_n - y_n \sin t_n),}
+#' \deqn{y_{n+1} = u (x_n \sin t_n + y_n \cos t_n).}
+#'
+#' With the standard parameter `u = 0.9` the trajectory traces a strange
+#' attractor with a teardrop-shaped support.
+#'
+#' @param n Integer. Number of iterations to generate.
+#' @param u Numeric. Dissipation parameter, typically in (0, 1). Defaults
+#'   to 0.9 (chaotic regime).
+#' @param x0 Numeric. Initial x. Defaults to 0.
+#' @param y0 Numeric. Initial y. Defaults to 0.
+#'
+#' @return Data frame with columns `x` and `y` of length `n`.
+#'
+#' @references
+#' Ikeda, K. (1979). Multiple-valued stationary state and its instability
+#' of the transmitted light by a ring cavity system. *Optics
+#' Communications*, 30(2), 257-261.
+#' \doi{10.1016/0030-4018(79)90090-7}
+#'
+#' @seealso [simulate_henon_map()], [simulate_lorenz()].
+#' @family simulation functions
+#'
+#' @examples
+#' orbit <- simulate_ikeda_map(5000, u = 0.9)
+#' plot(orbit$x, orbit$y, pch = ".",
+#'      xlab = "x", ylab = "y",
+#'      main = "Ikeda map (u = 0.9)")
+#'
+#' @export
+simulate_ikeda_map <- function(n, u = 0.9, x0 = 0, y0 = 0) {
+  checkmate::assert_count(n, positive = TRUE)
+  checkmate::assert_number(u)
+  checkmate::assert_number(x0)
+  checkmate::assert_number(y0)
+  x <- numeric(n)
+  y <- numeric(n)
+  x[1] <- x0
+  y[1] <- y0
+  for (i in seq_len(n - 1L)) {
+    t_n <- 0.4 - 6 / (1 + x[i]^2 + y[i]^2)
+    x[i + 1] <- 1 + u * (x[i] * cos(t_n) - y[i] * sin(t_n))
+    y[i + 1] <- u * (x[i] * sin(t_n) + y[i] * cos(t_n))
+  }
+  data.frame(x = x, y = y)
+}
+
 #' Simulate the Arnold cat map
 #'
 #' Generates an orbit for the two-dimensional Arnold cat map:

@@ -377,6 +377,77 @@ DataFrame simulate_lozi_map_cpp(int n, double a = 1.7, double b = 0.5,
   );
 }
 
+//' Fast Chirikov standard map simulation (C++ implementation)
+//'
+//' Efficient C++ implementation of the area-preserving Chirikov-Taylor
+//' map on the torus [0, 2*pi)^2.
+//'
+//' @param n Number of iterations
+//' @param K Kick parameter (default 1.2)
+//' @param p0 Initial momentum
+//' @param theta0 Initial angle
+//' @return DataFrame with columns p and theta
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_standard_map_cpp(int n, double K = 1.2,
+                                     double p0 = 1.0, double theta0 = 1.0) {
+  const double two_pi = 2.0 * M_PI;
+  auto wrap = [&](double v) {
+    double w = std::fmod(v, two_pi);
+    if (w < 0.0) w += two_pi;
+    return w;
+  };
+
+  NumericVector p(n);
+  NumericVector theta(n);
+  p[0]     = wrap(p0);
+  theta[0] = wrap(theta0);
+
+  for (int i = 1; i < n; i++) {
+    double p_new     = wrap(p[i-1] + K * std::sin(theta[i-1]));
+    double theta_new = wrap(theta[i-1] + p_new);
+    p[i]     = p_new;
+    theta[i] = theta_new;
+  }
+
+  return DataFrame::create(
+    Named("p")     = p,
+    Named("theta") = theta
+  );
+}
+
+//' Fast Ikeda map simulation (C++ implementation)
+//'
+//' Efficient C++ implementation of the two-dimensional Ikeda map.
+//'
+//' @param n Number of iterations
+//' @param u Dissipation parameter (default 0.9)
+//' @param x0 Initial x
+//' @param y0 Initial y
+//' @return DataFrame with columns x and y
+//' @export
+// [[Rcpp::export]]
+DataFrame simulate_ikeda_map_cpp(int n, double u = 0.9,
+                                  double x0 = 0.0, double y0 = 0.0) {
+  NumericVector x(n);
+  NumericVector y(n);
+  x[0] = x0;
+  y[0] = y0;
+
+  for (int i = 1; i < n; i++) {
+    double t_n = 0.4 - 6.0 / (1.0 + x[i-1] * x[i-1] + y[i-1] * y[i-1]);
+    double ct  = std::cos(t_n);
+    double st  = std::sin(t_n);
+    x[i] = 1.0 + u * (x[i-1] * ct - y[i-1] * st);
+    y[i] =       u * (x[i-1] * st + y[i-1] * ct);
+  }
+
+  return DataFrame::create(
+    Named("x") = x,
+    Named("y") = y
+  );
+}
+
 //' Fast Arnold cat map simulation (C++ implementation)
 //'
 //' Efficient C++ implementation of the Arnold cat map on the unit torus.

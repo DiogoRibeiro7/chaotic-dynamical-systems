@@ -68,8 +68,10 @@ Systems, and Bifurcations of Vector Fields*. Springer.
 [simulate_lorenz()], [simulate_rossler()].
 
 Other simulation functions: 
+\code{\link{simulate_ikeda_map}()},
 \code{\link{simulate_logistic_map}()},
 \code{\link{simulate_lorenz}()},
-\code{\link{simulate_rossler}()}
+\code{\link{simulate_rossler}()},
+\code{\link{simulate_standard_map}()}
 }
 \concept{simulation functions}

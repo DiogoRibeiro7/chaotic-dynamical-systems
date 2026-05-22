@@ -13,7 +13,7 @@
 #' @return DataFrame with x and y columns
 #' @export
 simulate_henon_map_cpp <- function(n, a = 1.4, b = 0.3, x0 = 0.0, y0 = 0.0) {
-    .Call('_chaoticds_simulate_henon_map_cpp', PACKAGE = 'chaoticds', n, a, b, x0, y0)
+    .Call(`_chaoticds_simulate_henon_map_cpp`, n, a, b, x0, y0)
 }
 
 #' Fast tent map simulation (C++ implementation)
@@ -26,7 +26,7 @@ simulate_henon_map_cpp <- function(n, a = 1.4, b = 0.3, x0 = 0.0, y0 = 0.0) {
 #' @return Numeric vector
 #' @export
 simulate_tent_map_cpp <- function(n, r, x0) {
-    .Call('_chaoticds_simulate_tent_map_cpp', PACKAGE = 'chaoticds', n, r, x0)
+    .Call(`_chaoticds_simulate_tent_map_cpp`, n, r, x0)
 }
 
 #' Fast ACF computation (C++ implementation)
@@ -38,7 +38,7 @@ simulate_tent_map_cpp <- function(n, r, x0) {
 #' @return NumericVector of ACF values
 #' @export
 acf_cpp <- function(x, max_lag) {
-    .Call('_chaoticds_acf_cpp', PACKAGE = 'chaoticds', x, max_lag)
+    .Call(`_chaoticds_acf_cpp`, x, max_lag)
 }
 
 #' Fast exceedances extraction (C++ implementation)
@@ -50,7 +50,7 @@ acf_cpp <- function(x, max_lag) {
 #' @return NumericVector of exceedance values
 #' @export
 exceedances_cpp <- function(x, threshold) {
-    .Call('_chaoticds_exceedances_cpp', PACKAGE = 'chaoticds', x, threshold)
+    .Call(`_chaoticds_exceedances_cpp`, x, threshold)
 }
 
 #' Fast inter-exceedance times (C++ implementation)
@@ -61,7 +61,7 @@ exceedances_cpp <- function(x, threshold) {
 #' @return IntegerVector of inter-exceedance times
 #' @export
 inter_exceedance_times_cpp <- function(exceedance_indices) {
-    .Call('_chaoticds_inter_exceedance_times_cpp', PACKAGE = 'chaoticds', exceedance_indices)
+    .Call(`_chaoticds_inter_exceedance_times_cpp`, exceedance_indices)
 }
 
 #' Fast empirical CDF (C++ implementation)
@@ -73,7 +73,7 @@ inter_exceedance_times_cpp <- function(exceedance_indices) {
 #' @return NumericVector of CDF values
 #' @export
 ecdf_cpp <- function(x, eval_points) {
-    .Call('_chaoticds_ecdf_cpp', PACKAGE = 'chaoticds', x, eval_points)
+    .Call(`_chaoticds_ecdf_cpp`, x, eval_points)
 }
 
 #' Fast return level estimation (C++ implementation)
@@ -85,7 +85,7 @@ ecdf_cpp <- function(x, eval_points) {
 #' @return Numeric scalar return level estimate
 #' @export
 return_level_empirical_cpp <- function(block_maxima, return_period) {
-    .Call('_chaoticds_return_level_empirical_cpp', PACKAGE = 'chaoticds', block_maxima, return_period)
+    .Call(`_chaoticds_return_level_empirical_cpp`, block_maxima, return_period)
 }
 
 #' Fast bootstrap sample generation (C++ implementation)
@@ -97,7 +97,7 @@ return_level_empirical_cpp <- function(block_maxima, return_period) {
 #' @return NumericMatrix with B columns, each a bootstrap sample
 #' @export
 bootstrap_samples_cpp <- function(x, B) {
-    .Call('_chaoticds_bootstrap_samples_cpp', PACKAGE = 'chaoticds', x, B)
+    .Call(`_chaoticds_bootstrap_samples_cpp`, x, B)
 }
 
 #' Fast moving average (C++ implementation)
@@ -109,7 +109,7 @@ bootstrap_samples_cpp <- function(x, B) {
 #' @return NumericVector of moving averages
 #' @export
 moving_average_cpp <- function(x, window_size) {
-    .Call('_chaoticds_moving_average_cpp', PACKAGE = 'chaoticds', x, window_size)
+    .Call(`_chaoticds_moving_average_cpp`, x, window_size)
 }
 
 #' Fast threshold stability diagnostic (C++ implementation)
@@ -121,7 +121,7 @@ moving_average_cpp <- function(x, window_size) {
 #' @return NumericVector of mean excess values
 #' @export
 mean_excess_cpp <- function(x, thresholds) {
-    .Call('_chaoticds_mean_excess_cpp', PACKAGE = 'chaoticds', x, thresholds)
+    .Call(`_chaoticds_mean_excess_cpp`, x, thresholds)
 }
 
 #' Fast extremal index intervals estimator (C++ implementation)
@@ -133,7 +133,7 @@ mean_excess_cpp <- function(x, thresholds) {
 #' @return Numeric extremal index estimate
 #' @export
 extremal_index_intervals_cpp <- function(x, threshold) {
-    .Call('_chaoticds_extremal_index_intervals_cpp', PACKAGE = 'chaoticds', x, threshold)
+    .Call(`_chaoticds_extremal_index_intervals_cpp`, x, threshold)
 }
 
 #' Fast Lozi map simulation (C++ implementation)
@@ -148,7 +148,36 @@ extremal_index_intervals_cpp <- function(x, threshold) {
 #' @return DataFrame with x and y columns
 #' @export
 simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0) {
-    .Call('_chaoticds_simulate_lozi_map_cpp', PACKAGE = 'chaoticds', n, a, b, x0, y0)
+    .Call(`_chaoticds_simulate_lozi_map_cpp`, n, a, b, x0, y0)
+}
+
+#' Fast Chirikov standard map simulation (C++ implementation)
+#'
+#' Efficient C++ implementation of the area-preserving Chirikov-Taylor
+#' map on the torus [0, 2*pi)^2.
+#'
+#' @param n Number of iterations
+#' @param K Kick parameter (default 1.2)
+#' @param p0 Initial momentum
+#' @param theta0 Initial angle
+#' @return DataFrame with columns p and theta
+#' @export
+simulate_standard_map_cpp <- function(n, K = 1.2, p0 = 1.0, theta0 = 1.0) {
+    .Call(`_chaoticds_simulate_standard_map_cpp`, n, K, p0, theta0)
+}
+
+#' Fast Ikeda map simulation (C++ implementation)
+#'
+#' Efficient C++ implementation of the two-dimensional Ikeda map.
+#'
+#' @param n Number of iterations
+#' @param u Dissipation parameter (default 0.9)
+#' @param x0 Initial x
+#' @param y0 Initial y
+#' @return DataFrame with columns x and y
+#' @export
+simulate_ikeda_map_cpp <- function(n, u = 0.9, x0 = 0.0, y0 = 0.0) {
+    .Call(`_chaoticds_simulate_ikeda_map_cpp`, n, u, x0, y0)
 }
 
 #' Fast Arnold cat map simulation (C++ implementation)
@@ -161,7 +190,7 @@ simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0) {
 #' @return DataFrame with x and y columns
 #' @export
 simulate_cat_map_cpp <- function(n, x0 = 0.1, y0 = 0.1) {
-    .Call('_chaoticds_simulate_cat_map_cpp', PACKAGE = 'chaoticds', n, x0, y0)
+    .Call(`_chaoticds_simulate_cat_map_cpp`, n, x0, y0)
 }
 
 #' Fast Lorenz system simulation (C++ implementation)
@@ -176,7 +205,7 @@ simulate_cat_map_cpp <- function(n, x0 = 0.1, y0 = 0.1) {
 #' @return DataFrame with columns t, x, y, z
 #' @export
 simulate_lorenz_cpp <- function(t_max = 50.0, dt = 0.01, x0 = 1.0, y0 = 1.0, z0 = 1.05, sigma = 10.0, rho = 28.0, beta = 8.0 / 3.0, transient = 0.0) {
-    .Call('_chaoticds_simulate_lorenz_cpp', PACKAGE = 'chaoticds', t_max, dt, x0, y0, z0, sigma, rho, beta, transient)
+    .Call(`_chaoticds_simulate_lorenz_cpp`, t_max, dt, x0, y0, z0, sigma, rho, beta, transient)
 }
 
 #' Fast Rossler system simulation (C++ implementation)
@@ -191,7 +220,7 @@ simulate_lorenz_cpp <- function(t_max = 50.0, dt = 0.01, x0 = 1.0, y0 = 1.0, z0 
 #' @return DataFrame with columns t, x, y, z
 #' @export
 simulate_rossler_cpp <- function(t_max = 200.0, dt = 0.05, x0 = 0.0, y0 = 1.0, z0 = 0.0, a = 0.2, b = 0.2, c = 5.7, transient = 0.0) {
-    .Call('_chaoticds_simulate_rossler_cpp', PACKAGE = 'chaoticds', t_max, dt, x0, y0, z0, a, b, c, transient)
+    .Call(`_chaoticds_simulate_rossler_cpp`, t_max, dt, x0, y0, z0, a, b, c, transient)
 }
 
 #' Fast forced Duffing oscillator simulation (C++ implementation)
@@ -209,7 +238,7 @@ simulate_rossler_cpp <- function(t_max = 200.0, dt = 0.05, x0 = 0.0, y0 = 1.0, z
 #' @return DataFrame with columns t, x, v
 #' @export
 simulate_duffing_cpp <- function(t_max = 100.0, dt = 0.05, x0 = 1.0, v0 = 0.0, alpha = -1.0, beta = 1.0, delta = 0.2, gamma = 0.3, omega = 1.0, transient = 0.0) {
-    .Call('_chaoticds_simulate_duffing_cpp', PACKAGE = 'chaoticds', t_max, dt, x0, v0, alpha, beta, delta, gamma, omega, transient)
+    .Call(`_chaoticds_simulate_duffing_cpp`, t_max, dt, x0, v0, alpha, beta, delta, gamma, omega, transient)
 }
 
 #' Fast logistic bifurcation diagram data (C++ implementation)
@@ -223,7 +252,7 @@ simulate_duffing_cpp <- function(t_max = 100.0, dt = 0.05, x0 = 1.0, v0 = 0.0, a
 #' @return DataFrame with r and x columns
 #' @export
 logistic_bifurcation_cpp <- function(r_values, n_iter = 200L, discard = 100L, x0 = 0.2) {
-    .Call('_chaoticds_logistic_bifurcation_cpp', PACKAGE = 'chaoticds', r_values, n_iter, discard, x0)
+    .Call(`_chaoticds_logistic_bifurcation_cpp`, r_values, n_iter, discard, x0)
 }
 
 #' Fast logistic map simulation (C++ implementation)
@@ -237,7 +266,7 @@ logistic_bifurcation_cpp <- function(r_values, n_iter = 200L, discard = 100L, x0
 #' @return Numeric vector of the time series
 #' @export
 simulate_logistic_map_cpp <- function(n, r, x0) {
-    .Call('_chaoticds_simulate_logistic_map_cpp', PACKAGE = 'chaoticds', n, r, x0)
+    .Call(`_chaoticds_simulate_logistic_map_cpp`, n, r, x0)
 }
 
 #' Fast threshold exceedance detection (C++ implementation)
@@ -249,7 +278,7 @@ simulate_logistic_map_cpp <- function(n, r, x0) {
 #' @return IntegerVector of indices where x > threshold
 #' @export
 threshold_exceedances_cpp <- function(x, threshold) {
-    .Call('_chaoticds_threshold_exceedances_cpp', PACKAGE = 'chaoticds', x, threshold)
+    .Call(`_chaoticds_threshold_exceedances_cpp`, x, threshold)
 }
 
 #' Fast cluster size computation (C++ implementation)
@@ -261,7 +290,7 @@ threshold_exceedances_cpp <- function(x, threshold) {
 #' @return IntegerVector of cluster sizes
 #' @export
 cluster_sizes_cpp <- function(exceedance_indices, run_length) {
-    .Call('_chaoticds_cluster_sizes_cpp', PACKAGE = 'chaoticds', exceedance_indices, run_length)
+    .Call(`_chaoticds_cluster_sizes_cpp`, exceedance_indices, run_length)
 }
 
 #' Fast extremal index estimation using runs method (C++ implementation)
@@ -274,7 +303,7 @@ cluster_sizes_cpp <- function(exceedance_indices, run_length) {
 #' @return Numeric scalar of extremal index estimate
 #' @export
 extremal_index_runs_cpp <- function(x, threshold, run_length) {
-    .Call('_chaoticds_extremal_index_runs_cpp', PACKAGE = 'chaoticds', x, threshold, run_length)
+    .Call(`_chaoticds_extremal_index_runs_cpp`, x, threshold, run_length)
 }
 
 #' Fast block maxima computation (C++ implementation)
@@ -286,7 +315,7 @@ extremal_index_runs_cpp <- function(x, threshold, run_length) {
 #' @return NumericVector of block maxima
 #' @export
 block_maxima_cpp <- function(x, block_size) {
-    .Call('_chaoticds_block_maxima_cpp', PACKAGE = 'chaoticds', x, block_size)
+    .Call(`_chaoticds_block_maxima_cpp`, x, block_size)
 }
 
 #' Fast quantile computation (C++ implementation)
@@ -298,6 +327,6 @@ block_maxima_cpp <- function(x, block_size) {
 #' @return Numeric scalar quantile value
 #' @export
 quantile_cpp <- function(x, prob) {
-    .Call('_chaoticds_quantile_cpp', PACKAGE = 'chaoticds', x, prob)
+    .Call(`_chaoticds_quantile_cpp`, x, prob)
 }
 

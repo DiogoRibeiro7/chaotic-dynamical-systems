@@ -17,6 +17,8 @@ reference:
   - simulate_tent_map
   - simulate_lozi_map
   - simulate_cat_map
+  - simulate_standard_map
+  - simulate_ikeda_map
   - simulate_lorenz
   - simulate_rossler
   - simulate_duffing

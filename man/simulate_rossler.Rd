@@ -63,7 +63,9 @@ A*, 57(5), 397-398. \doi{10.1016/0375-9601(76)90101-8}
 
 Other simulation functions: 
 \code{\link{simulate_duffing}()},
+\code{\link{simulate_ikeda_map}()},
 \code{\link{simulate_logistic_map}()},
-\code{\link{simulate_lorenz}()}
+\code{\link{simulate_lorenz}()},
+\code{\link{simulate_standard_map}()}
 }
 \concept{simulation functions}
