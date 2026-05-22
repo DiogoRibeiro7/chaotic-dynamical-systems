@@ -4,7 +4,7 @@
 \alias{simulate_henon_map_cpp}
 \title{Fast Hénon map simulation (C++ implementation)}
 \usage{
-simulate_henon_map_cpp(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0)
+simulate_henon_map_cpp(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Number of iterations}
@@ -16,6 +16,8 @@ simulate_henon_map_cpp(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0)
 \item{x0}{Initial x value}
 
 \item{y0}{Initial y value}
+
+\item{noise_sd}{Additive Gaussian noise SD per iteration (default 0)}
 }
 \value{
 DataFrame with x and y columns

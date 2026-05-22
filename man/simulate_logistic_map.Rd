@@ -4,7 +4,7 @@
 \alias{simulate_logistic_map}
 \title{Simulate Logistic Map Dynamics}
 \usage{
-simulate_logistic_map(n, r, x0)
+simulate_logistic_map(n, r, x0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Integer. Number of iterations to simulate. Must be positive.
@@ -22,6 +22,13 @@ though values outside [2.5, 4] are rarely used. Recommended values:
 The dynamics are typically not sensitive to x0 for chaotic parameter
 values (after a short transient), but periodic regimes may have multiple
 attractors. Default is 0.2.}
+
+\item{noise_sd}{Numeric (\eqn{\ge 0}). Standard deviation of additive
+Gaussian noise applied after each iteration. Defaults to 0
+(deterministic). When positive, an iid N(0, noise_sd) shock is added
+to the iterate; this can push the orbit outside the canonical
+invariant set, which is the intended behaviour for studying noisy
+chaotic systems.}
 }
 \value{
 Numeric vector of length n containing the simulated time series.

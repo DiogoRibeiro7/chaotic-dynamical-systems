@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // simulate_henon_map_cpp
-DataFrame simulate_henon_map_cpp(int n, double a, double b, double x0, double y0);
-RcppExport SEXP _chaoticds_simulate_henon_map_cpp(SEXP nSEXP, SEXP aSEXP, SEXP bSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+DataFrame simulate_henon_map_cpp(int n, double a, double b, double x0, double y0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_henon_map_cpp(SEXP nSEXP, SEXP aSEXP, SEXP bSEXP, SEXP x0SEXP, SEXP y0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,20 +21,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type b(bSEXP);
     Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_henon_map_cpp(n, a, b, x0, y0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_henon_map_cpp(n, a, b, x0, y0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
 // simulate_tent_map_cpp
-NumericVector simulate_tent_map_cpp(int n, double r, double x0);
-RcppExport SEXP _chaoticds_simulate_tent_map_cpp(SEXP nSEXP, SEXP rSEXP, SEXP x0SEXP) {
+NumericVector simulate_tent_map_cpp(int n, double r, double x0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_tent_map_cpp(SEXP nSEXP, SEXP rSEXP, SEXP x0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_tent_map_cpp(n, r, x0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_tent_map_cpp(n, r, x0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -146,8 +148,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // simulate_lozi_map_cpp
-DataFrame simulate_lozi_map_cpp(int n, double a, double b, double x0, double y0);
-RcppExport SEXP _chaoticds_simulate_lozi_map_cpp(SEXP nSEXP, SEXP aSEXP, SEXP bSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+DataFrame simulate_lozi_map_cpp(int n, double a, double b, double x0, double y0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_lozi_map_cpp(SEXP nSEXP, SEXP aSEXP, SEXP bSEXP, SEXP x0SEXP, SEXP y0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -156,13 +158,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type b(bSEXP);
     Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_lozi_map_cpp(n, a, b, x0, y0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_lozi_map_cpp(n, a, b, x0, y0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
 // simulate_standard_map_cpp
-DataFrame simulate_standard_map_cpp(int n, double K, double p0, double theta0);
-RcppExport SEXP _chaoticds_simulate_standard_map_cpp(SEXP nSEXP, SEXP KSEXP, SEXP p0SEXP, SEXP theta0SEXP) {
+DataFrame simulate_standard_map_cpp(int n, double K, double p0, double theta0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_standard_map_cpp(SEXP nSEXP, SEXP KSEXP, SEXP p0SEXP, SEXP theta0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -170,13 +173,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type K(KSEXP);
     Rcpp::traits::input_parameter< double >::type p0(p0SEXP);
     Rcpp::traits::input_parameter< double >::type theta0(theta0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_standard_map_cpp(n, K, p0, theta0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_standard_map_cpp(n, K, p0, theta0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
 // simulate_ikeda_map_cpp
-DataFrame simulate_ikeda_map_cpp(int n, double u, double x0, double y0);
-RcppExport SEXP _chaoticds_simulate_ikeda_map_cpp(SEXP nSEXP, SEXP uSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+DataFrame simulate_ikeda_map_cpp(int n, double u, double x0, double y0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_ikeda_map_cpp(SEXP nSEXP, SEXP uSEXP, SEXP x0SEXP, SEXP y0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -184,20 +188,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type u(uSEXP);
     Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_ikeda_map_cpp(n, u, x0, y0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_ikeda_map_cpp(n, u, x0, y0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
 // simulate_cat_map_cpp
-DataFrame simulate_cat_map_cpp(int n, double x0, double y0);
-RcppExport SEXP _chaoticds_simulate_cat_map_cpp(SEXP nSEXP, SEXP x0SEXP, SEXP y0SEXP) {
+DataFrame simulate_cat_map_cpp(int n, double x0, double y0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_cat_map_cpp(SEXP nSEXP, SEXP x0SEXP, SEXP y0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
     Rcpp::traits::input_parameter< double >::type y0(y0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_cat_map_cpp(n, x0, y0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_cat_map_cpp(n, x0, y0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -274,15 +280,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // simulate_logistic_map_cpp
-NumericVector simulate_logistic_map_cpp(int n, double r, double x0);
-RcppExport SEXP _chaoticds_simulate_logistic_map_cpp(SEXP nSEXP, SEXP rSEXP, SEXP x0SEXP) {
+NumericVector simulate_logistic_map_cpp(int n, double r, double x0, double noise_sd);
+RcppExport SEXP _chaoticds_simulate_logistic_map_cpp(SEXP nSEXP, SEXP rSEXP, SEXP x0SEXP, SEXP noise_sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< double >::type x0(x0SEXP);
-    rcpp_result_gen = Rcpp::wrap(simulate_logistic_map_cpp(n, r, x0));
+    Rcpp::traits::input_parameter< double >::type noise_sd(noise_sdSEXP);
+    rcpp_result_gen = Rcpp::wrap(simulate_logistic_map_cpp(n, r, x0, noise_sd));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -349,8 +356,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_chaoticds_simulate_henon_map_cpp", (DL_FUNC) &_chaoticds_simulate_henon_map_cpp, 5},
-    {"_chaoticds_simulate_tent_map_cpp", (DL_FUNC) &_chaoticds_simulate_tent_map_cpp, 3},
+    {"_chaoticds_simulate_henon_map_cpp", (DL_FUNC) &_chaoticds_simulate_henon_map_cpp, 6},
+    {"_chaoticds_simulate_tent_map_cpp", (DL_FUNC) &_chaoticds_simulate_tent_map_cpp, 4},
     {"_chaoticds_acf_cpp", (DL_FUNC) &_chaoticds_acf_cpp, 2},
     {"_chaoticds_exceedances_cpp", (DL_FUNC) &_chaoticds_exceedances_cpp, 2},
     {"_chaoticds_inter_exceedance_times_cpp", (DL_FUNC) &_chaoticds_inter_exceedance_times_cpp, 1},
@@ -360,15 +367,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_chaoticds_moving_average_cpp", (DL_FUNC) &_chaoticds_moving_average_cpp, 2},
     {"_chaoticds_mean_excess_cpp", (DL_FUNC) &_chaoticds_mean_excess_cpp, 2},
     {"_chaoticds_extremal_index_intervals_cpp", (DL_FUNC) &_chaoticds_extremal_index_intervals_cpp, 2},
-    {"_chaoticds_simulate_lozi_map_cpp", (DL_FUNC) &_chaoticds_simulate_lozi_map_cpp, 5},
-    {"_chaoticds_simulate_standard_map_cpp", (DL_FUNC) &_chaoticds_simulate_standard_map_cpp, 4},
-    {"_chaoticds_simulate_ikeda_map_cpp", (DL_FUNC) &_chaoticds_simulate_ikeda_map_cpp, 4},
-    {"_chaoticds_simulate_cat_map_cpp", (DL_FUNC) &_chaoticds_simulate_cat_map_cpp, 3},
+    {"_chaoticds_simulate_lozi_map_cpp", (DL_FUNC) &_chaoticds_simulate_lozi_map_cpp, 6},
+    {"_chaoticds_simulate_standard_map_cpp", (DL_FUNC) &_chaoticds_simulate_standard_map_cpp, 5},
+    {"_chaoticds_simulate_ikeda_map_cpp", (DL_FUNC) &_chaoticds_simulate_ikeda_map_cpp, 5},
+    {"_chaoticds_simulate_cat_map_cpp", (DL_FUNC) &_chaoticds_simulate_cat_map_cpp, 4},
     {"_chaoticds_simulate_lorenz_cpp", (DL_FUNC) &_chaoticds_simulate_lorenz_cpp, 9},
     {"_chaoticds_simulate_rossler_cpp", (DL_FUNC) &_chaoticds_simulate_rossler_cpp, 9},
     {"_chaoticds_simulate_duffing_cpp", (DL_FUNC) &_chaoticds_simulate_duffing_cpp, 10},
     {"_chaoticds_logistic_bifurcation_cpp", (DL_FUNC) &_chaoticds_logistic_bifurcation_cpp, 4},
-    {"_chaoticds_simulate_logistic_map_cpp", (DL_FUNC) &_chaoticds_simulate_logistic_map_cpp, 3},
+    {"_chaoticds_simulate_logistic_map_cpp", (DL_FUNC) &_chaoticds_simulate_logistic_map_cpp, 4},
     {"_chaoticds_threshold_exceedances_cpp", (DL_FUNC) &_chaoticds_threshold_exceedances_cpp, 2},
     {"_chaoticds_cluster_sizes_cpp", (DL_FUNC) &_chaoticds_cluster_sizes_cpp, 2},
     {"_chaoticds_extremal_index_runs_cpp", (DL_FUNC) &_chaoticds_extremal_index_runs_cpp, 3},

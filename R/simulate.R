@@ -53,6 +53,13 @@
 #'   values (after a short transient), but periodic regimes may have multiple
 #'   attractors. Default is 0.2.
 #'
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied after each iteration. Defaults to 0
+#'   (deterministic). When positive, an iid N(0, noise_sd) shock is added
+#'   to the iterate; this can push the orbit outside the canonical
+#'   invariant set, which is the intended behaviour for studying noisy
+#'   chaotic systems.
+#'
 #' @return
 #' Numeric vector of length n containing the simulated time series.
 #' All values are typically in (0, 1) for standard parameter values.
@@ -124,17 +131,19 @@
 #' }
 #'
 #' @export
-simulate_logistic_map <- function(n, r, x0) {
+simulate_logistic_map <- function(n, r, x0, noise_sd = 0) {
   checkmate::assert_count(n, positive = TRUE)
   checkmate::assert_number(r)
   checkmate::assert_number(x0)
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
   if (x0 <= 0 || x0 >= 1) {
     stop("x0 must be strictly between 0 and 1")
   }
+  noise <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   x <- numeric(n)
   x[1] <- x0
   for (i in seq_len(n - 1L)) {
-    x[i + 1] <- r * x[i] * (1 - x[i])  # logistic iteration
+    x[i + 1] <- r * x[i] * (1 - x[i]) + noise[i]
   }
   x
 }
@@ -150,6 +159,9 @@ simulate_logistic_map <- function(n, r, x0) {
 #' @param b Numeric. Parameter `b` controlling contraction.
 #' @param x0 Numeric. Initial x value.
 #' @param y0 Numeric. Initial y value.
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied to each component after each iteration.
+#'   Defaults to 0 (deterministic).
 #'
 #' @return Data frame with columns `x` and `y` containing the orbit. The
 #'   function stops if `n` is less than one.
@@ -158,19 +170,26 @@ simulate_logistic_map <- function(n, r, x0) {
 #' @examples
 #' orbit <- simulate_henon_map(100, 1.4, 0.3)
 #' @export
-simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0) {
+simulate_henon_map <- function(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0,
+                                noise_sd = 0) {
   checkmate::assert_count(n)
   checkmate::assert_number(a)
   checkmate::assert_number(b)
   checkmate::assert_number(x0)
   checkmate::assert_number(y0)
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
+  nx <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
+  ny <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
   y[1] <- y0
   for (i in seq_len(n - 1L)) {
-    x[i + 1] <- 1 - a * x[i]^2 + y[i]
-    y[i + 1] <- b * x[i]
+    # x[i] * x[i] (not x[i]^2) to stay bit-for-bit consistent with the C++
+    # version; the maps are chaotic so even a one-ulp per-step gap blows up
+    # to attractor scale after a few hundred iterations.
+    x[i + 1] <- 1 - a * x[i] * x[i] + y[i] + nx[i]
+    y[i + 1] <- b * x[i]                   + ny[i]
   }
   data.frame(x = x, y = y)
 }
@@ -232,12 +251,15 @@ logistic_bifurcation <- function(r_seq, n_iter = 200, discard = 100, x0 = 0.2) {
 #' @param n Integer. Number of iterations to generate.
 #' @param r Numeric. Slope parameter (0 < r <= 2). Defaults to 2.
 #' @param x0 Numeric. Initial value in (0, 1). Defaults to 0.1.
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied after each iteration. Defaults to 0
+#'   (deterministic).
 #'
 #' @return Numeric vector containing the orbit of length n.
 #' @examples
 #' series <- simulate_tent_map(100, r = 2, x0 = 0.1)
 #' @export
-simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
+simulate_tent_map <- function(n, r = 2, x0 = 0.1, noise_sd = 0) {
   checkmate::assert_count(n)
   checkmate::assert_number(r, lower = 0, upper = 2)
   if (r <= 0) {
@@ -247,14 +269,13 @@ simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
   if (x0 <= 0 || x0 >= 1) {
     stop("x0 must be strictly between 0 and 1")
   }
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
+  noise <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   x <- numeric(n)
   x[1] <- x0
   for (i in seq_len(n - 1L)) {
-    if (x[i] < 0.5) {
-      x[i + 1] <- r * x[i]
-    } else {
-      x[i + 1] <- r * (1 - x[i])
-    }
+    base <- if (x[i] < 0.5) r * x[i] else r * (1 - x[i])
+    x[i + 1] <- base + noise[i]
   }
   x
 }
@@ -270,24 +291,31 @@ simulate_tent_map <- function(n, r = 2, x0 = 0.1) {
 #' @param b Numeric. Parameter controlling the contraction. Defaults to 0.5.
 #' @param x0 Numeric. Initial x value. Defaults to 0.
 #' @param y0 Numeric. Initial y value. Defaults to 0.
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied to each component after each iteration.
+#'   Defaults to 0 (deterministic).
 #'
 #' @return Data frame with columns `x` and `y` of length `n`.
 #' @examples
 #' orbit <- simulate_lozi_map(100)
 #' @export
-simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
+simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0,
+                               noise_sd = 0) {
   checkmate::assert_count(n)
   checkmate::assert_number(a)
   checkmate::assert_number(b)
   checkmate::assert_number(x0)
   checkmate::assert_number(y0)
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
+  nx <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
+  ny <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
   y[1] <- y0
   for (i in seq_len(n - 1L)) {
-    x[i + 1] <- 1 - a * abs(x[i]) + b * y[i]
-    y[i + 1] <- x[i]
+    x[i + 1] <- 1 - a * abs(x[i]) + b * y[i] + nx[i]
+    y[i + 1] <- x[i]                          + ny[i]
   }
   data.frame(x = x, y = y)
 }
@@ -309,6 +337,10 @@ simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
 #'   regime).
 #' @param p0 Numeric. Initial momentum in \eqn{[0, 2\pi)}. Defaults to 1.
 #' @param theta0 Numeric. Initial angle in \eqn{[0, 2\pi)}. Defaults to 1.
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied to each component after each iteration; the
+#'   modulo is re-applied after perturbation. Defaults to 0
+#'   (deterministic).
 #'
 #' @return Data frame with columns `p` and `theta` of length `n`.
 #'
@@ -327,19 +359,23 @@ simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0) {
 #'      main = "Standard map (K = 1.2)")
 #'
 #' @export
-simulate_standard_map <- function(n, K = 1.2, p0 = 1, theta0 = 1) {
+simulate_standard_map <- function(n, K = 1.2, p0 = 1, theta0 = 1,
+                                   noise_sd = 0) {
   checkmate::assert_count(n, positive = TRUE)
   checkmate::assert_number(K)
   checkmate::assert_number(p0)
   checkmate::assert_number(theta0)
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
+  np <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
+  nt <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   two_pi <- 2 * pi
   p     <- numeric(n)
   theta <- numeric(n)
   p[1]     <- p0     %% two_pi
   theta[1] <- theta0 %% two_pi
   for (i in seq_len(n - 1L)) {
-    p_new     <- (p[i] + K * sin(theta[i])) %% two_pi
-    theta_new <- (theta[i] + p_new)         %% two_pi
+    p_new     <- (p[i] + K * sin(theta[i]) + np[i]) %% two_pi
+    theta_new <- (theta[i] + p_new         + nt[i]) %% two_pi
     p[i + 1]     <- p_new
     theta[i + 1] <- theta_new
   }
@@ -363,6 +399,9 @@ simulate_standard_map <- function(n, K = 1.2, p0 = 1, theta0 = 1) {
 #'   to 0.9 (chaotic regime).
 #' @param x0 Numeric. Initial x. Defaults to 0.
 #' @param y0 Numeric. Initial y. Defaults to 0.
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied to each component after each iteration.
+#'   Defaults to 0 (deterministic).
 #'
 #' @return Data frame with columns `x` and `y` of length `n`.
 #'
@@ -382,19 +421,24 @@ simulate_standard_map <- function(n, K = 1.2, p0 = 1, theta0 = 1) {
 #'      main = "Ikeda map (u = 0.9)")
 #'
 #' @export
-simulate_ikeda_map <- function(n, u = 0.9, x0 = 0, y0 = 0) {
+simulate_ikeda_map <- function(n, u = 0.9, x0 = 0, y0 = 0, noise_sd = 0) {
   checkmate::assert_count(n, positive = TRUE)
   checkmate::assert_number(u)
   checkmate::assert_number(x0)
   checkmate::assert_number(y0)
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
+  nx <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
+  ny <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0
   y[1] <- y0
   for (i in seq_len(n - 1L)) {
-    t_n <- 0.4 - 6 / (1 + x[i]^2 + y[i]^2)
-    x[i + 1] <- 1 + u * (x[i] * cos(t_n) - y[i] * sin(t_n))
-    y[i + 1] <- u * (x[i] * sin(t_n) + y[i] * cos(t_n))
+    # x[i] * x[i] (not x[i]^2) to stay bit-for-bit consistent with the C++
+    # version under chaotic amplification.
+    t_n <- 0.4 - 6 / (1 + x[i] * x[i] + y[i] * y[i])
+    x[i + 1] <- 1 + u * (x[i] * cos(t_n) - y[i] * sin(t_n)) + nx[i]
+    y[i + 1] <-     u * (x[i] * sin(t_n) + y[i] * cos(t_n)) + ny[i]
   }
   data.frame(x = x, y = y)
 }
@@ -408,22 +452,29 @@ simulate_ikeda_map <- function(n, u = 0.9, x0 = 0, y0 = 0) {
 #' @param n Integer. Number of iterations to generate.
 #' @param x0 Numeric. Initial x value. Defaults to 0.1.
 #' @param y0 Numeric. Initial y value. Defaults to 0.1.
+#' @param noise_sd Numeric (\eqn{\ge 0}). Standard deviation of additive
+#'   Gaussian noise applied to each component after each iteration; the
+#'   modulo is re-applied after perturbation. Defaults to 0
+#'   (deterministic).
 #'
 #' @return Data frame with columns `x` and `y` of length `n`.
 #' @examples
 #' orbit <- simulate_cat_map(100)
 #' @export
-simulate_cat_map <- function(n, x0 = 0.1, y0 = 0.1) {
+simulate_cat_map <- function(n, x0 = 0.1, y0 = 0.1, noise_sd = 0) {
   checkmate::assert_count(n)
   checkmate::assert_number(x0)
   checkmate::assert_number(y0)
+  checkmate::assert_number(noise_sd, lower = 0, finite = TRUE)
+  nx <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
+  ny <- if (noise_sd > 0) stats::rnorm(n - 1L, sd = noise_sd) else numeric(n - 1L)
   x <- numeric(n)
   y <- numeric(n)
   x[1] <- x0 %% 1
   y[1] <- y0 %% 1
   for (i in seq_len(n - 1L)) {
-    x_new <- (x[i] + y[i]) %% 1
-    y_new <- (x[i] + 2 * y[i]) %% 1
+    x_new <- (x[i] +     y[i] + nx[i]) %% 1
+    y_new <- (x[i] + 2 * y[i] + ny[i]) %% 1
     x[i + 1] <- x_new
     y[i + 1] <- y_new
   }

@@ -4,7 +4,7 @@
 \alias{simulate_standard_map_cpp}
 \title{Fast Chirikov standard map simulation (C++ implementation)}
 \usage{
-simulate_standard_map_cpp(n, K = 1.2, p0 = 1, theta0 = 1)
+simulate_standard_map_cpp(n, K = 1.2, p0 = 1, theta0 = 1, noise_sd = 0)
 }
 \arguments{
 \item{n}{Number of iterations}

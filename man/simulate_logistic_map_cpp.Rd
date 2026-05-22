@@ -4,7 +4,7 @@
 \alias{simulate_logistic_map_cpp}
 \title{Fast logistic map simulation (C++ implementation)}
 \usage{
-simulate_logistic_map_cpp(n, r, x0)
+simulate_logistic_map_cpp(n, r, x0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Number of iterations}
@@ -12,6 +12,8 @@ simulate_logistic_map_cpp(n, r, x0)
 \item{r}{Parameter r of the logistic map}
 
 \item{x0}{Initial value}
+
+\item{noise_sd}{Additive Gaussian noise SD per iteration (default 0)}
 }
 \value{
 Numeric vector of the time series

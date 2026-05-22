@@ -4,7 +4,7 @@
 \alias{simulate_ikeda_map_cpp}
 \title{Fast Ikeda map simulation (C++ implementation)}
 \usage{
-simulate_ikeda_map_cpp(n, u = 0.9, x0 = 0, y0 = 0)
+simulate_ikeda_map_cpp(n, u = 0.9, x0 = 0, y0 = 0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Number of iterations}

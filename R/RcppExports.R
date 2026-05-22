@@ -10,10 +10,11 @@
 #' @param b Parameter b
 #' @param x0 Initial x value
 #' @param y0 Initial y value
+#' @param noise_sd Additive Gaussian noise SD per iteration (default 0)
 #' @return DataFrame with x and y columns
 #' @export
-simulate_henon_map_cpp <- function(n, a = 1.4, b = 0.3, x0 = 0.0, y0 = 0.0) {
-    .Call(`_chaoticds_simulate_henon_map_cpp`, n, a, b, x0, y0)
+simulate_henon_map_cpp <- function(n, a = 1.4, b = 0.3, x0 = 0.0, y0 = 0.0, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_henon_map_cpp`, n, a, b, x0, y0, noise_sd)
 }
 
 #' Fast tent map simulation (C++ implementation)
@@ -23,10 +24,11 @@ simulate_henon_map_cpp <- function(n, a = 1.4, b = 0.3, x0 = 0.0, y0 = 0.0) {
 #' @param n Number of iterations
 #' @param r Parameter r
 #' @param x0 Initial value
+#' @param noise_sd Additive Gaussian noise SD per iteration (default 0)
 #' @return Numeric vector
 #' @export
-simulate_tent_map_cpp <- function(n, r, x0) {
-    .Call(`_chaoticds_simulate_tent_map_cpp`, n, r, x0)
+simulate_tent_map_cpp <- function(n, r, x0, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_tent_map_cpp`, n, r, x0, noise_sd)
 }
 
 #' Fast ACF computation (C++ implementation)
@@ -147,8 +149,8 @@ extremal_index_intervals_cpp <- function(x, threshold) {
 #' @param y0 Initial y value
 #' @return DataFrame with x and y columns
 #' @export
-simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0) {
-    .Call(`_chaoticds_simulate_lozi_map_cpp`, n, a, b, x0, y0)
+simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_lozi_map_cpp`, n, a, b, x0, y0, noise_sd)
 }
 
 #' Fast Chirikov standard map simulation (C++ implementation)
@@ -162,8 +164,8 @@ simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0) {
 #' @param theta0 Initial angle
 #' @return DataFrame with columns p and theta
 #' @export
-simulate_standard_map_cpp <- function(n, K = 1.2, p0 = 1.0, theta0 = 1.0) {
-    .Call(`_chaoticds_simulate_standard_map_cpp`, n, K, p0, theta0)
+simulate_standard_map_cpp <- function(n, K = 1.2, p0 = 1.0, theta0 = 1.0, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_standard_map_cpp`, n, K, p0, theta0, noise_sd)
 }
 
 #' Fast Ikeda map simulation (C++ implementation)
@@ -176,8 +178,8 @@ simulate_standard_map_cpp <- function(n, K = 1.2, p0 = 1.0, theta0 = 1.0) {
 #' @param y0 Initial y
 #' @return DataFrame with columns x and y
 #' @export
-simulate_ikeda_map_cpp <- function(n, u = 0.9, x0 = 0.0, y0 = 0.0) {
-    .Call(`_chaoticds_simulate_ikeda_map_cpp`, n, u, x0, y0)
+simulate_ikeda_map_cpp <- function(n, u = 0.9, x0 = 0.0, y0 = 0.0, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_ikeda_map_cpp`, n, u, x0, y0, noise_sd)
 }
 
 #' Fast Arnold cat map simulation (C++ implementation)
@@ -189,8 +191,8 @@ simulate_ikeda_map_cpp <- function(n, u = 0.9, x0 = 0.0, y0 = 0.0) {
 #' @param y0 Initial y value
 #' @return DataFrame with x and y columns
 #' @export
-simulate_cat_map_cpp <- function(n, x0 = 0.1, y0 = 0.1) {
-    .Call(`_chaoticds_simulate_cat_map_cpp`, n, x0, y0)
+simulate_cat_map_cpp <- function(n, x0 = 0.1, y0 = 0.1, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_cat_map_cpp`, n, x0, y0, noise_sd)
 }
 
 #' Fast Lorenz system simulation (C++ implementation)
@@ -263,10 +265,11 @@ logistic_bifurcation_cpp <- function(r_values, n_iter = 200L, discard = 100L, x0
 #' @param n Number of iterations
 #' @param r Parameter r of the logistic map
 #' @param x0 Initial value
+#' @param noise_sd Additive Gaussian noise SD per iteration (default 0)
 #' @return Numeric vector of the time series
 #' @export
-simulate_logistic_map_cpp <- function(n, r, x0) {
-    .Call(`_chaoticds_simulate_logistic_map_cpp`, n, r, x0)
+simulate_logistic_map_cpp <- function(n, r, x0, noise_sd = 0.0) {
+    .Call(`_chaoticds_simulate_logistic_map_cpp`, n, r, x0, noise_sd)
 }
 
 #' Fast threshold exceedance detection (C++ implementation)

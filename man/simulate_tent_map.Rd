@@ -4,7 +4,7 @@
 \alias{simulate_tent_map}
 \title{Simulate the tent map}
 \usage{
-simulate_tent_map(n, r = 2, x0 = 0.1)
+simulate_tent_map(n, r = 2, x0 = 0.1, noise_sd = 0)
 }
 \arguments{
 \item{n}{Integer. Number of iterations to generate.}
@@ -12,6 +12,10 @@ simulate_tent_map(n, r = 2, x0 = 0.1)
 \item{r}{Numeric. Slope parameter (0 < r <= 2). Defaults to 2.}
 
 \item{x0}{Numeric. Initial value in (0, 1). Defaults to 0.1.}
+
+\item{noise_sd}{Numeric (\eqn{\ge 0}). Standard deviation of additive
+Gaussian noise applied after each iteration. Defaults to 0
+(deterministic).}
 }
 \value{
 Numeric vector containing the orbit of length n.

@@ -4,7 +4,7 @@
 \alias{simulate_lozi_map_cpp}
 \title{Fast Lozi map simulation (C++ implementation)}
 \usage{
-simulate_lozi_map_cpp(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0)
+simulate_lozi_map_cpp(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Number of iterations}

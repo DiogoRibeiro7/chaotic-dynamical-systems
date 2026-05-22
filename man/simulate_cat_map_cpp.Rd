@@ -4,7 +4,7 @@
 \alias{simulate_cat_map_cpp}
 \title{Fast Arnold cat map simulation (C++ implementation)}
 \usage{
-simulate_cat_map_cpp(n, x0 = 0.1, y0 = 0.1)
+simulate_cat_map_cpp(n, x0 = 0.1, y0 = 0.1, noise_sd = 0)
 }
 \arguments{
 \item{n}{Number of iterations}

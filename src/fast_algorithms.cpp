@@ -9,17 +9,20 @@ using namespace Rcpp;
 //' @param n Number of iterations
 //' @param r Parameter r of the logistic map
 //' @param x0 Initial value
+//' @param noise_sd Additive Gaussian noise SD per iteration (default 0)
 //' @return Numeric vector of the time series
 //' @export
 // [[Rcpp::export]]
-NumericVector simulate_logistic_map_cpp(int n, double r, double x0) {
+NumericVector simulate_logistic_map_cpp(int n, double r, double x0,
+                                         double noise_sd = 0.0) {
+  NumericVector noise = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd)
+    : NumericVector(n - 1);
   NumericVector x(n);
   x[0] = x0;
-  
   for (int i = 1; i < n; i++) {
-    x[i] = r * x[i-1] * (1.0 - x[i-1]);
+    x[i] = r * x[i-1] * (1.0 - x[i-1]) + noise[i-1];
   }
-  
   return x;
 }
 

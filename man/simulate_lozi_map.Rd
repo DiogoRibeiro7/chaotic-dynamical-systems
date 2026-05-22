@@ -4,7 +4,7 @@
 \alias{simulate_lozi_map}
 \title{Simulate the Lozi map}
 \usage{
-simulate_lozi_map(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0)
+simulate_lozi_map(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Integer. Number of iterations to generate.}
@@ -16,6 +16,10 @@ simulate_lozi_map(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0)
 \item{x0}{Numeric. Initial x value. Defaults to 0.}
 
 \item{y0}{Numeric. Initial y value. Defaults to 0.}
+
+\item{noise_sd}{Numeric (\eqn{\ge 0}). Standard deviation of additive
+Gaussian noise applied to each component after each iteration.
+Defaults to 0 (deterministic).}
 }
 \value{
 Data frame with columns `x` and `y` of length `n`.

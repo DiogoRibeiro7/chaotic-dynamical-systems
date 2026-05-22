@@ -4,7 +4,7 @@
 \alias{simulate_ikeda_map}
 \title{Simulate the Ikeda map}
 \usage{
-simulate_ikeda_map(n, u = 0.9, x0 = 0, y0 = 0)
+simulate_ikeda_map(n, u = 0.9, x0 = 0, y0 = 0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Integer. Number of iterations to generate.}
@@ -15,6 +15,10 @@ to 0.9 (chaotic regime).}
 \item{x0}{Numeric. Initial x. Defaults to 0.}
 
 \item{y0}{Numeric. Initial y. Defaults to 0.}
+
+\item{noise_sd}{Numeric (\eqn{\ge 0}). Standard deviation of additive
+Gaussian noise applied to each component after each iteration.
+Defaults to 0 (deterministic).}
 }
 \value{
 Data frame with columns `x` and `y` of length `n`.

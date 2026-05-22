@@ -4,7 +4,7 @@
 \alias{simulate_standard_map}
 \title{Simulate the Chirikov standard map}
 \usage{
-simulate_standard_map(n, K = 1.2, p0 = 1, theta0 = 1)
+simulate_standard_map(n, K = 1.2, p0 = 1, theta0 = 1, noise_sd = 0)
 }
 \arguments{
 \item{n}{Integer. Number of iterations to generate.}
@@ -15,6 +15,11 @@ regime).}
 \item{p0}{Numeric. Initial momentum in \eqn{[0, 2\pi)}. Defaults to 1.}
 
 \item{theta0}{Numeric. Initial angle in \eqn{[0, 2\pi)}. Defaults to 1.}
+
+\item{noise_sd}{Numeric (\eqn{\ge 0}). Standard deviation of additive
+Gaussian noise applied to each component after each iteration; the
+modulo is re-applied after perturbation. Defaults to 0
+(deterministic).}
 }
 \value{
 Data frame with columns `p` and `theta` of length `n`.

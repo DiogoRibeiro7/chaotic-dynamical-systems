@@ -4,7 +4,7 @@
 \alias{simulate_henon_map}
 \title{Simulate the Hénon map}
 \usage{
-simulate_henon_map(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0)
+simulate_henon_map(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0, noise_sd = 0)
 }
 \arguments{
 \item{n}{Integer. Number of iterations to generate.}
@@ -16,6 +16,10 @@ simulate_henon_map(n, a = 1.4, b = 0.3, x0 = 0, y0 = 0)
 \item{x0}{Numeric. Initial x value.}
 
 \item{y0}{Numeric. Initial y value.}
+
+\item{noise_sd}{Numeric (\eqn{\ge 0}). Standard deviation of additive
+Gaussian noise applied to each component after each iteration.
+Defaults to 0 (deterministic).}
 }
 \value{
 Data frame with columns `x` and `y` containing the orbit. The

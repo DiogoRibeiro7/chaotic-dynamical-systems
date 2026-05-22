@@ -12,22 +12,25 @@ using namespace Rcpp;
 //' @param b Parameter b
 //' @param x0 Initial x value
 //' @param y0 Initial y value
+//' @param noise_sd Additive Gaussian noise SD per iteration (default 0)
 //' @return DataFrame with x and y columns
 //' @export
 // [[Rcpp::export]]
 DataFrame simulate_henon_map_cpp(int n, double a = 1.4, double b = 0.3,
-                                  double x0 = 0.0, double y0 = 0.0) {
+                                  double x0 = 0.0, double y0 = 0.0,
+                                  double noise_sd = 0.0) {
+  NumericVector nx = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
+  NumericVector ny = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
   NumericVector x(n);
   NumericVector y(n);
-
   x[0] = x0;
   y[0] = y0;
-
   for (int i = 1; i < n; i++) {
-    x[i] = 1.0 - a * x[i-1] * x[i-1] + y[i-1];
-    y[i] = b * x[i-1];
+    x[i] = 1.0 - a * x[i-1] * x[i-1] + y[i-1] + nx[i-1];
+    y[i] =                    b * x[i-1]      + ny[i-1];
   }
-
   return DataFrame::create(
     Named("x") = x,
     Named("y") = y
@@ -41,21 +44,20 @@ DataFrame simulate_henon_map_cpp(int n, double a = 1.4, double b = 0.3,
 //' @param n Number of iterations
 //' @param r Parameter r
 //' @param x0 Initial value
+//' @param noise_sd Additive Gaussian noise SD per iteration (default 0)
 //' @return Numeric vector
 //' @export
 // [[Rcpp::export]]
-NumericVector simulate_tent_map_cpp(int n, double r, double x0) {
+NumericVector simulate_tent_map_cpp(int n, double r, double x0,
+                                     double noise_sd = 0.0) {
+  NumericVector noise = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
   NumericVector x(n);
   x[0] = x0;
-
   for (int i = 1; i < n; i++) {
-    if (x[i-1] < 0.5) {
-      x[i] = r * x[i-1];
-    } else {
-      x[i] = r * (1.0 - x[i-1]);
-    }
+    double base = (x[i-1] < 0.5) ? r * x[i-1] : r * (1.0 - x[i-1]);
+    x[i] = base + noise[i-1];
   }
-
   return x;
 }
 
@@ -359,18 +361,20 @@ double extremal_index_intervals_cpp(NumericVector x, double threshold) {
 //' @export
 // [[Rcpp::export]]
 DataFrame simulate_lozi_map_cpp(int n, double a = 1.7, double b = 0.5,
-                                 double x0 = 0.0, double y0 = 0.0) {
+                                 double x0 = 0.0, double y0 = 0.0,
+                                 double noise_sd = 0.0) {
+  NumericVector nx = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
+  NumericVector ny = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
   NumericVector x(n);
   NumericVector y(n);
-
   x[0] = x0;
   y[0] = y0;
-
   for (int i = 1; i < n; i++) {
-    x[i] = 1.0 - a * std::fabs(x[i-1]) + b * y[i-1];
-    y[i] = x[i-1];
+    x[i] = 1.0 - a * std::fabs(x[i-1]) + b * y[i-1] + nx[i-1];
+    y[i] = x[i-1]                                    + ny[i-1];
   }
-
   return DataFrame::create(
     Named("x") = x,
     Named("y") = y
@@ -390,7 +394,8 @@ DataFrame simulate_lozi_map_cpp(int n, double a = 1.7, double b = 0.5,
 //' @export
 // [[Rcpp::export]]
 DataFrame simulate_standard_map_cpp(int n, double K = 1.2,
-                                     double p0 = 1.0, double theta0 = 1.0) {
+                                     double p0 = 1.0, double theta0 = 1.0,
+                                     double noise_sd = 0.0) {
   const double two_pi = 2.0 * M_PI;
   auto wrap = [&](double v) {
     double w = std::fmod(v, two_pi);
@@ -398,14 +403,18 @@ DataFrame simulate_standard_map_cpp(int n, double K = 1.2,
     return w;
   };
 
+  NumericVector np = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
+  NumericVector nt = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
   NumericVector p(n);
   NumericVector theta(n);
   p[0]     = wrap(p0);
   theta[0] = wrap(theta0);
 
   for (int i = 1; i < n; i++) {
-    double p_new     = wrap(p[i-1] + K * std::sin(theta[i-1]));
-    double theta_new = wrap(theta[i-1] + p_new);
+    double p_new     = wrap(p[i-1] + K * std::sin(theta[i-1]) + np[i-1]);
+    double theta_new = wrap(theta[i-1] + p_new                 + nt[i-1]);
     p[i]     = p_new;
     theta[i] = theta_new;
   }
@@ -428,7 +437,12 @@ DataFrame simulate_standard_map_cpp(int n, double K = 1.2,
 //' @export
 // [[Rcpp::export]]
 DataFrame simulate_ikeda_map_cpp(int n, double u = 0.9,
-                                  double x0 = 0.0, double y0 = 0.0) {
+                                  double x0 = 0.0, double y0 = 0.0,
+                                  double noise_sd = 0.0) {
+  NumericVector nx = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
+  NumericVector ny = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
   NumericVector x(n);
   NumericVector y(n);
   x[0] = x0;
@@ -438,8 +452,8 @@ DataFrame simulate_ikeda_map_cpp(int n, double u = 0.9,
     double t_n = 0.4 - 6.0 / (1.0 + x[i-1] * x[i-1] + y[i-1] * y[i-1]);
     double ct  = std::cos(t_n);
     double st  = std::sin(t_n);
-    x[i] = 1.0 + u * (x[i-1] * ct - y[i-1] * st);
-    y[i] =       u * (x[i-1] * st + y[i-1] * ct);
+    x[i] = 1.0 + u * (x[i-1] * ct - y[i-1] * st) + nx[i-1];
+    y[i] =       u * (x[i-1] * st + y[i-1] * ct) + ny[i-1];
   }
 
   return DataFrame::create(
@@ -458,11 +472,15 @@ DataFrame simulate_ikeda_map_cpp(int n, double u = 0.9,
 //' @return DataFrame with x and y columns
 //' @export
 // [[Rcpp::export]]
-DataFrame simulate_cat_map_cpp(int n, double x0 = 0.1, double y0 = 0.1) {
+DataFrame simulate_cat_map_cpp(int n, double x0 = 0.1, double y0 = 0.1,
+                                double noise_sd = 0.0) {
+  NumericVector nx = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
+  NumericVector ny = (noise_sd > 0.0)
+    ? Rcpp::rnorm(n - 1, 0.0, noise_sd) : NumericVector(n - 1);
   NumericVector x(n);
   NumericVector y(n);
 
-  // Wrap initial conditions into the unit torus to match the R reference.
   auto wrap_unit = [](double v) {
     double w = std::fmod(v, 1.0);
     if (w < 0.0) w += 1.0;
@@ -473,8 +491,8 @@ DataFrame simulate_cat_map_cpp(int n, double x0 = 0.1, double y0 = 0.1) {
   y[0] = wrap_unit(y0);
 
   for (int i = 1; i < n; i++) {
-    double x_new = wrap_unit(x[i-1] + y[i-1]);
-    double y_new = wrap_unit(x[i-1] + 2.0 * y[i-1]);
+    double x_new = wrap_unit(x[i-1] +       y[i-1] + nx[i-1]);
+    double y_new = wrap_unit(x[i-1] + 2.0 * y[i-1] + ny[i-1]);
     x[i] = x_new;
     y[i] = y_new;
   }
