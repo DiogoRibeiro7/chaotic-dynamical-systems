@@ -169,6 +169,206 @@ lyapunov_spectrum_lozi <- function(n_iter = 5000L, transient = 1000L,
   lyapunov_spectrum(map_fn, jacobian_fn, c(x0, y0), n_iter, transient)
 }
 
+#' Lyapunov spectrum of a continuous-time flow
+#'
+#' @description
+#' Estimates the full Lyapunov spectrum of an autonomous ODE
+#' \eqn{\dot x = f(x)} by integrating the orbit and the variational
+#' equation \eqn{\dot V = J(x) V} jointly with a fixed-step RK4 scheme,
+#' QR-decomposing the tangent basis every `qr_interval` time units, and
+#' accumulating \eqn{\log |\det R_{ii}|}.
+#'
+#' @details
+#' Standard Benettin/Wolf approach for flows. The orbit and the
+#' \eqn{d \times d} tangent matrix \eqn{V} are advanced with the same RK4
+#' step, sharing intermediate evaluations of the Jacobian at the half- and
+#' full-step states. QR re-orthogonalisation prevents \eqn{V} from
+#' collapsing onto the leading expanding direction; the time-averaged
+#' diagonal logs of \eqn{R} give the spectrum.
+#'
+#' Sum check: for Lorenz with the canonical parameters the spectrum is
+#' approximately \eqn{(0.906, 0, -14.572)} with sum
+#' \eqn{-\sigma - 1 - \beta = -13.667}; for Rossler at \eqn{(0.2, 0.2, 5.7)}
+#' it is approximately \eqn{(0.0714, 0, -5.392)}. The middle exponent is
+#' identically zero in the direction of the flow.
+#'
+#' @param deriv_fn Function with signature `function(t, x)` returning the
+#'   length-`d` derivative `dx/dt`.
+#' @param jac_fn Function with signature `function(t, x)` returning the
+#'   \eqn{d \times d} Jacobian.
+#' @param x0 Numeric vector of length `d`. Initial state.
+#' @param t_max Numeric (\eqn{> 0}). Integration time over which the
+#'   spectrum is averaged, after the transient.
+#' @param dt Numeric (\eqn{> 0}). RK4 step size.
+#' @param qr_interval Numeric (\eqn{> 0}). Time between QR
+#'   re-orthogonalisations.
+#' @param transient Numeric (\eqn{\ge 0}). Orbit-only integration time
+#'   discarded from the start.
+#'
+#' @return Numeric vector of length `d` holding the Lyapunov exponents in
+#'   decreasing order.
+#'
+#' @references
+#' Wolf, A., Swift, J. B., Swinney, H. L., & Vastano, J. A. (1985).
+#' Determining Lyapunov exponents from a time series. *Physica D*,
+#' 16(3), 285-317. \doi{10.1016/0167-2789(85)90011-9}
+#'
+#' @seealso [lyapunov_spectrum()] for the discrete-map version,
+#'   [lyapunov_spectrum_lorenz()] and [lyapunov_spectrum_rossler()] for
+#'   hard-coded presets.
+#'
+#' @examples
+#' \donttest{
+#' # Lorenz spectrum at canonical (10, 28, 8/3).
+#' lyapunov_spectrum_lorenz(t_max = 200)
+#' }
+#'
+#' @export
+lyapunov_spectrum_continuous <- function(deriv_fn, jac_fn, x0,
+                                          t_max = 1000, dt = 0.01,
+                                          qr_interval = 1.0,
+                                          transient = 100) {
+  checkmate::assert_function(deriv_fn)
+  checkmate::assert_function(jac_fn)
+  checkmate::assert_numeric(x0, any.missing = FALSE, min.len = 1L)
+  checkmate::assert_number(t_max,       lower = 1e-6, finite = TRUE)
+  checkmate::assert_number(dt,          lower = 1e-9, finite = TRUE)
+  checkmate::assert_number(qr_interval, lower = dt,   finite = TRUE)
+  checkmate::assert_number(transient,   lower = 0,    finite = TRUE)
+
+  d <- length(x0)
+  x <- as.numeric(x0)
+
+  rk4_orbit <- function(x, t) {
+    k1 <- deriv_fn(t,          x)
+    k2 <- deriv_fn(t + dt / 2, x + dt / 2 * k1)
+    k3 <- deriv_fn(t + dt / 2, x + dt / 2 * k2)
+    k4 <- deriv_fn(t + dt,     x + dt     * k3)
+    x + dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+  }
+
+  t_cur <- 0
+  n_trans_steps <- as.integer(round(transient / dt))
+  for (k in seq_len(n_trans_steps)) {
+    x <- rk4_orbit(x, t_cur)
+    t_cur <- t_cur + dt
+  }
+
+  V          <- diag(1, nrow = d, ncol = d)
+  lambda_sum <- numeric(d)
+  n_steps    <- as.integer(round(t_max / dt))
+  qr_every   <- as.integer(round(qr_interval / dt))
+
+  for (k in seq_len(n_steps)) {
+    # Joint RK4 for (x, V).
+    k1x <- deriv_fn(t_cur,            x);  k1V <- jac_fn(t_cur,            x)  %*% V
+    x2  <- x + dt / 2 * k1x;               V2  <- V + dt / 2 * k1V
+    t2  <- t_cur + dt / 2
+    k2x <- deriv_fn(t2, x2);               k2V <- jac_fn(t2, x2)               %*% V2
+    x3  <- x + dt / 2 * k2x;               V3  <- V + dt / 2 * k2V
+    k3x <- deriv_fn(t2, x3);               k3V <- jac_fn(t2, x3)               %*% V3
+    x4  <- x + dt     * k3x;               V4  <- V + dt     * k3V
+    t4  <- t_cur + dt
+    k4x <- deriv_fn(t4, x4);               k4V <- jac_fn(t4, x4)               %*% V4
+
+    x <- x + dt / 6 * (k1x + 2 * k2x + 2 * k3x + k4x)
+    V <- V + dt / 6 * (k1V + 2 * k2V + 2 * k3V + k4V)
+    t_cur <- t4
+
+    if (k %% qr_every == 0L) {
+      qd <- qr(V)
+      Q  <- qr.Q(qd)
+      R  <- qr.R(qd)
+      signs <- sign(diag(R))
+      signs[signs == 0] <- 1
+      Q  <- Q %*% diag(signs, nrow = d, ncol = d)
+      R  <- diag(signs, nrow = d, ncol = d) %*% R
+      lambda_sum <- lambda_sum + log(abs(diag(R)))
+      V <- Q
+    }
+  }
+
+  lambda_sum / t_max
+}
+
+#' Lyapunov spectrum of the Lorenz system
+#'
+#' Convenience wrapper around [lyapunov_spectrum_continuous()]. At the
+#' canonical parameters (\eqn{\sigma = 10}, \eqn{\rho = 28},
+#' \eqn{\beta = 8/3}) the spectrum is approximately
+#' \eqn{(0.906, 0, -14.572)}, summing to \eqn{-\sigma - 1 - \beta}.
+#'
+#' @param t_max,dt,qr_interval,transient As in
+#'   [lyapunov_spectrum_continuous()].
+#' @param sigma,rho,beta Lorenz parameters.
+#' @param x0,y0,z0 Initial condition.
+#'
+#' @return Length-3 numeric vector of Lyapunov exponents.
+#' @seealso [lyapunov_spectrum_continuous()], [simulate_lorenz()].
+#' @examples
+#' \donttest{
+#' lyapunov_spectrum_lorenz(t_max = 200)
+#' }
+#' @export
+lyapunov_spectrum_lorenz <- function(t_max = 1000, dt = 0.01,
+                                      qr_interval = 1.0, transient = 50,
+                                      sigma = 10, rho = 28, beta = 8 / 3,
+                                      x0 = 1, y0 = 1, z0 = 1.05) {
+  deriv_fn <- function(t, s) {
+    c(sigma * (s[2L] - s[1L]),
+      s[1L] * (rho - s[3L]) - s[2L],
+      s[1L] * s[2L] - beta * s[3L])
+  }
+  jac_fn <- function(t, s) {
+    matrix(c(-sigma,     sigma, 0,
+              rho - s[3L], -1,  -s[1L],
+              s[2L],     s[1L], -beta),
+           nrow = 3, byrow = TRUE)
+  }
+  lyapunov_spectrum_continuous(deriv_fn, jac_fn,
+                                c(x0, y0, z0), t_max, dt,
+                                qr_interval, transient)
+}
+
+#' Lyapunov spectrum of the Rossler system
+#'
+#' Convenience wrapper around [lyapunov_spectrum_continuous()]. At the
+#' canonical parameters (\eqn{a = 0.2}, \eqn{b = 0.2}, \eqn{c = 5.7}) the
+#' spectrum is approximately \eqn{(0.0714, 0, -5.392)}; the small positive
+#' exponent makes Rossler a low-entropy chaotic flow relative to Lorenz.
+#'
+#' @param t_max,dt,qr_interval,transient As in
+#'   [lyapunov_spectrum_continuous()].
+#' @param a,b,c Rossler parameters.
+#' @param x0,y0,z0 Initial condition.
+#'
+#' @return Length-3 numeric vector of Lyapunov exponents.
+#' @seealso [lyapunov_spectrum_continuous()], [simulate_rossler()].
+#' @examples
+#' \donttest{
+#' lyapunov_spectrum_rossler(t_max = 400)
+#' }
+#' @export
+lyapunov_spectrum_rossler <- function(t_max = 2000, dt = 0.05,
+                                       qr_interval = 1.0, transient = 100,
+                                       a = 0.2, b = 0.2, c = 5.7,
+                                       x0 = 0, y0 = 1, z0 = 0) {
+  deriv_fn <- function(t, s) {
+    c(-(s[2L] + s[3L]),
+       s[1L] + a * s[2L],
+       b + s[3L] * (s[1L] - c))
+  }
+  jac_fn <- function(t, s) {
+    matrix(c(0,     -1,   -1,
+             1,      a,    0,
+             s[3L], 0,     s[1L] - c),
+           nrow = 3, byrow = TRUE)
+  }
+  lyapunov_spectrum_continuous(deriv_fn, jac_fn,
+                                c(x0, y0, z0), t_max, dt,
+                                qr_interval, transient)
+}
+
 #' Lyapunov exponent of the logistic map
 #'
 #' One-dimensional special case of [lyapunov_spectrum()] for the logistic

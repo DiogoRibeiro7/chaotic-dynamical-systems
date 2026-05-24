@@ -76,7 +76,17 @@ reference:
   - lyapunov_spectrum_henon
   - lyapunov_spectrum_lozi
   - lyapunov_spectrum_logistic
+  - lyapunov_spectrum_continuous
+  - lyapunov_spectrum_lorenz
+  - lyapunov_spectrum_rossler
   - rqa
+
+- title: "Symbolic Dynamics"
+  desc: "Partition encoders and information-theoretic summaries"
+  contents:
+  - symbolize
+  - block_entropy
+  - source_entropy
 
 - title: "Bootstrap Methods"
   desc: "Uncertainty quantification for extremal index"

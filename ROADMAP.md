@@ -95,13 +95,18 @@ genuine simulation catalog.
   replicate, so random sub-expressions like `runif(1)` give per-replicate
   draws automatically. Returns a long-format data frame keyed by
   `replicate`.
-- **Lyapunov spectrum.** ✅ `lyapunov_spectrum()` via Benettin's QR
-  algorithm, plus hard-coded presets for Henon, Lozi, and the logistic
-  map. Recovers the published spectra within ~0.05 over 8000 iterations.
-  Continuous-time spectra (Lorenz, Rossler, ...) still need the
-  variational equation integrated alongside the orbit.
-- **Symbolic dynamics.** Outstanding. Markov-partition encoders for the
-  tent / logistic / Henon maps, plus entropy estimation.
+- **Lyapunov spectrum.** ✅ Discrete maps via Benettin's QR algorithm
+  (`lyapunov_spectrum()` + presets for Henon, Lozi, logistic) and
+  continuous flows via the variational equation
+  (`lyapunov_spectrum_continuous()` + presets for Lorenz, Rossler). The
+  Lorenz preset recovers the textbook (0.906, 0, -14.572) and the trace
+  identity \eqn{\sum \lambda = -\sigma - 1 - \beta} holds to 1e-3.
+- **Symbolic dynamics.** ✅ `symbolize()` partitions an orbit into a
+  symbol sequence (equiprobable or user-supplied breaks); `block_entropy()`
+  reports \eqn{H_k} of the resulting word distribution; `source_entropy()`
+  estimates the per-symbol entropy via the empirical conditional entropy
+  with an automatic undersampling guard. Recovers \eqn{\log 2} for the
+  logistic map at \eqn{r = 4} with the generating partition.
 - **Recurrence quantification analysis.** ✅ `rqa()` ships the standard
   measures (RR, DET, LAM, L, L_max, TT, V_max, ENT) with a Theiler
   window. The lighter `recurrence_analysis()` (RR + DET only) stays for
