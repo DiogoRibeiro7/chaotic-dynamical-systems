@@ -72,6 +72,10 @@ reference:
   - d_check
   - estimate_lyapunov_exponent
   - estimate_correlation_dimension
+  - lyapunov_spectrum
+  - lyapunov_spectrum_henon
+  - lyapunov_spectrum_lozi
+  - lyapunov_spectrum_logistic
 
 - title: "Bootstrap Methods"
   desc: "Uncertainty quantification for extremal index"
