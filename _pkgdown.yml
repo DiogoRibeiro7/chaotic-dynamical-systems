@@ -76,6 +76,7 @@ reference:
   - lyapunov_spectrum_henon
   - lyapunov_spectrum_lozi
   - lyapunov_spectrum_logistic
+  - rqa
 
 - title: "Bootstrap Methods"
   desc: "Uncertainty quantification for extremal index"

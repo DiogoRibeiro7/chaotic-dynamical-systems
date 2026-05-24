@@ -95,14 +95,17 @@ genuine simulation catalog.
   replicate, so random sub-expressions like `runif(1)` give per-replicate
   draws automatically. Returns a long-format data frame keyed by
   `replicate`.
-- **Lyapunov spectrum.** Outstanding. Largest exponent already exists
-  via `estimate_lyapunov_exponent()`; the full spectrum needs the
-  variational equation + QR re-orthogonalisation each step.
+- **Lyapunov spectrum.** ✅ `lyapunov_spectrum()` via Benettin's QR
+  algorithm, plus hard-coded presets for Henon, Lozi, and the logistic
+  map. Recovers the published spectra within ~0.05 over 8000 iterations.
+  Continuous-time spectra (Lorenz, Rossler, ...) still need the
+  variational equation integrated alongside the orbit.
 - **Symbolic dynamics.** Outstanding. Markov-partition encoders for the
   tent / logistic / Henon maps, plus entropy estimation.
-- **Recurrence quantification analysis.** Outstanding. `recurrence_analysis`
-  ships a handful of statistics; the standard RQA suite (RR, DET, LAM,
-  L, ENT, TT, ...) is still to come.
+- **Recurrence quantification analysis.** ✅ `rqa()` ships the standard
+  measures (RR, DET, LAM, L, L_max, TT, V_max, ENT) with a Theiler
+  window. The lighter `recurrence_analysis()` (RR + DET only) stays for
+  backwards compatibility.
 
 ---
 
