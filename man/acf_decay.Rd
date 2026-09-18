@@ -10,8 +10,6 @@ acf_decay(x, lags)
 \item{x}{Numeric vector containing the time series.}
 
 \item{lags}{Integer vector of lags for correlation or mixing calculations.}
-
-\item{threshold}{Numeric threshold for exceedance-based tests.}
 }
 \value{
 Depends on the function. For `acf_decay` this is a numeric vector of
