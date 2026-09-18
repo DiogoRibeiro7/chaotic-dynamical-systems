@@ -147,6 +147,7 @@ extremal_index_intervals_cpp <- function(x, threshold) {
 #' @param b Parameter b
 #' @param x0 Initial x value
 #' @param y0 Initial y value
+#' @param noise_sd Standard deviation of additive Gaussian noise. Defaults to 0.
 #' @return DataFrame with x and y columns
 #' @export
 simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0, noise_sd = 0.0) {
@@ -162,6 +163,7 @@ simulate_lozi_map_cpp <- function(n, a = 1.7, b = 0.5, x0 = 0.0, y0 = 0.0, noise
 #' @param K Kick parameter (default 1.2)
 #' @param p0 Initial momentum
 #' @param theta0 Initial angle
+#' @param noise_sd Standard deviation of additive Gaussian noise. Defaults to 0.
 #' @return DataFrame with columns p and theta
 #' @export
 simulate_standard_map_cpp <- function(n, K = 1.2, p0 = 1.0, theta0 = 1.0, noise_sd = 0.0) {
@@ -176,6 +178,7 @@ simulate_standard_map_cpp <- function(n, K = 1.2, p0 = 1.0, theta0 = 1.0, noise_
 #' @param u Dissipation parameter (default 0.9)
 #' @param x0 Initial x
 #' @param y0 Initial y
+#' @param noise_sd Standard deviation of additive Gaussian noise. Defaults to 0.
 #' @return DataFrame with columns x and y
 #' @export
 simulate_ikeda_map_cpp <- function(n, u = 0.9, x0 = 0.0, y0 = 0.0, noise_sd = 0.0) {
@@ -189,6 +192,7 @@ simulate_ikeda_map_cpp <- function(n, u = 0.9, x0 = 0.0, y0 = 0.0, noise_sd = 0.
 #' @param n Number of iterations
 #' @param x0 Initial x value
 #' @param y0 Initial y value
+#' @param noise_sd Standard deviation of additive Gaussian noise. Defaults to 0.
 #' @return DataFrame with x and y columns
 #' @export
 simulate_cat_map_cpp <- function(n, x0 = 0.1, y0 = 0.1, noise_sd = 0.0) {
