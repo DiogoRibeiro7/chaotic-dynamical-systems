@@ -41,7 +41,7 @@ One-command reporting utility that runs a complete univariate extremes
 workflow and renders an HTML report with key diagnostics and model outputs.
 }
 \examples{
-\donttest{
+\dontrun{
 report_extremes(output_file = "extremes-report.html")
 }
 }
