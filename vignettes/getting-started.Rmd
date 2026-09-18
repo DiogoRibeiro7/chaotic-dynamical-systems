@@ -171,8 +171,10 @@ lines(density(bm), col = "darkblue", lwd = 2)
 ### Fitting the Generalized Extreme Value (GEV) Distribution
 
 ```{r fit-gev, eval = requireNamespace("evd", quietly = TRUE)}
-# Fit GEV distribution to block maxima
-gev_fit <- fit_gev(bm)
+# Fit GEV on a longer deterministic sample so the observed information
+# matrix is stable across R/evd versions used by CRAN and CI builders.
+gev_series <- simulate_logistic_map(n = 5000, r = 3.8, x0 = 0.2)
+gev_fit <- fit_gev(block_maxima(gev_series, block_size = 50))
 
 # Display results
 print(gev_fit)
