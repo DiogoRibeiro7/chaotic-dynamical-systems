@@ -6,7 +6,6 @@
 #'
 #' @param x Numeric vector containing the time series.
 #' @param lags Integer vector of lags for correlation or mixing calculations.
-#' @param threshold Numeric threshold for exceedance-based tests.
 #'
 #' @return Depends on the function. For `acf_decay` this is a numeric vector of
 #'   autocorrelation values. Returns `NA` when `lags` contains values larger than
