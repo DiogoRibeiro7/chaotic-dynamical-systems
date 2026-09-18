@@ -215,7 +215,7 @@
 #'   on the level set while staying cheap to compute.
 #' @param span Numeric. Half-width of the grid in units of the parameter's
 #'   standard error around the MLE. Defaults to 4 (a span of 4 standard
-#'   errors typically brackets a 95% profile interval comfortably).
+#'   errors typically brackets a 95\\% profile interval comfortably).
 #'
 #' @return An object of class `profile_likelihood`, a list with:
 #'   \describe{
@@ -295,12 +295,14 @@ profile_likelihood <- function(fit, parameter,
     gev = function(par) .gev_loglik(par, data),
     gev_rlargest = function(par) .gev_rlargest_loglik(par, data),
     gpd = function(par) .gpd_loglik(par, data),
-    ppp = function(par) .ppp_loglik(
-      par,
-      data,
-      threshold = data_info$threshold,
-      n_per_block = data_info$n_per_block
-    )
+    ppp = function(par) {
+      .ppp_loglik(
+        par,
+        data,
+        threshold = data_info$threshold,
+        n_per_block = data_info$n_per_block
+      )
+    }
   )
 
   fit_at_fixed <- function(fixed_value) {
@@ -524,12 +526,14 @@ profile_return_level <- function(fit, m, level = 0.95, n_per_year = 1,
       model,
       gev = function(par) .gev_loglik(par, data),
       gev_rlargest = function(par) .gev_rlargest_loglik(par, data),
-      ppp = function(par) .ppp_loglik(
-        par,
-        data,
-        threshold = data_info$threshold,
-        n_per_block = data_info$n_per_block
-      )
+      ppp = function(par) {
+        .ppp_loglik(
+          par,
+          data,
+          threshold = data_info$threshold,
+          n_per_block = data_info$n_per_block
+        )
+      }
     )
 
     z_m_hat <- if (abs(xi_hat) < 1e-8) {
