@@ -48,32 +48,80 @@ adaptive_threshold_selection <- function(x, window_size = 100L, prob = 0.95) {
 #' fit_nonstationary_gev(x)
 #' @export
 fit_nonstationary_gev <- function(x, trend = TRUE) {
-  checkmate::assert_numeric(x, min.len = 2)
+  checkmate::assert_numeric(x, any.missing = FALSE, min.len = 2L)
   checkmate::assert_flag(trend)
-  time <- seq_along(x)
-  if (requireNamespace("ismev", quietly = TRUE)) {
-    locform <- if (trend) ~ time else ~ 1
-    fit <- ismev::gev.fit(x, ydat = data.frame(time = time), mul = locform, show = FALSE)
-    list(location = fit$mle[1], scale = fit$mle[2], shape = fit$mle[3])
-  } else {
-    loglik <- function(par) {
-      mu <- if (trend) par[1] + par[4] * time else par[1]
-      sigma <- abs(par[2])
-      xi <- par[3]
-      if (sigma <= 0) return(Inf)
-      z <- (x - mu) / sigma
-      if (abs(xi) < 1e-6) {
-        ll <- -sum(log(sigma)) - sum(z) - sum(exp(-z))
-      } else {
-        t <- 1 + xi * z
-        if (any(t <= 0)) return(Inf)
-        ll <- -sum(log(sigma)) - (1/xi + 1) * sum(log(t)) - sum(t^(-1/xi))
-      }
-      -ll
+
+  # Centre and scale time so the location intercept and slope are numerically
+  # well conditioned even for long series.
+  time <- seq(-0.5, 0.5, length.out = length(x))
+
+  objective <- function(par) {
+    if (trend) {
+      mu <- par[1L] + par[2L] * time
+      sigma <- exp(par[3L])
+      xi <- par[4L]
+    } else {
+      mu <- rep(par[1L], length(x))
+      sigma <- exp(par[2L])
+      xi <- par[3L]
     }
-    p0 <- c(mean(x), sd(x), 0.1, 0)  # initial values
-    fit <- stats::optim(p0, loglik)
-    list(location = fit$par[1], scale = abs(fit$par[2]), shape = fit$par[3])
+
+    z <- (x - mu) / sigma
+    if (abs(xi) < 1e-8) {
+      return(length(x) * log(sigma) + sum(z) + sum(exp(-z)))
+    }
+
+    support <- 1 + xi * z
+    if (any(!is.finite(support)) || any(support <= 0)) {
+      return(Inf)
+    }
+
+    length(x) * log(sigma) +
+      (1 + 1 / xi) * sum(log(support)) +
+      sum(support^(-1 / xi))
+  }
+
+  sigma0 <- stats::sd(x)
+  if (!is.finite(sigma0) || sigma0 <= 0) {
+    sigma0 <- max(abs(mean(x)), 1) * 0.1
+  }
+
+  start <- if (trend) {
+    c(mean(x), 0, log(sigma0), 0.05)
+  } else {
+    c(mean(x), log(sigma0), 0.05)
+  }
+
+  fit <- stats::optim(
+    start,
+    objective,
+    method = "Nelder-Mead",
+    control = list(reltol = 1e-8, maxit = 2000L)
+  )
+
+  if (fit$convergence != 0L) {
+    warning(
+      "optim() reported non-zero convergence code (",
+      fit$convergence,
+      ") in fit_nonstationary_gev()"
+    )
+  }
+
+  if (trend) {
+    list(
+      location = unname(fit$par[1L]),
+      location_trend = unname(fit$par[2L]),
+      scale = unname(exp(fit$par[3L])),
+      shape = unname(fit$par[4L]),
+      convergence = fit$convergence
+    )
+  } else {
+    list(
+      location = unname(fit$par[1L]),
+      scale = unname(exp(fit$par[2L])),
+      shape = unname(fit$par[3L]),
+      convergence = fit$convergence
+    )
   }
 }
 
