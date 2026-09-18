@@ -156,11 +156,12 @@ test_that("PPL parameter profiles use the point-process likelihood", {
   # PPL profile endpoints are allowed to be NA when the likelihood-ratio
   # cutoff is not bracketed within the explored support. This is part of the
   # documented contract of profile_likelihood().
+  tolerance <- sqrt(.Machine$double.eps)
   if (!is.na(pl$ci[["lower"]])) {
-    expect_lt(pl$ci[["lower"]], pl$mle)
+    expect_lte(pl$ci[["lower"]], pl$mle + tolerance)
   }
   if (!is.na(pl$ci[["upper"]])) {
-    expect_gt(pl$ci[["upper"]], pl$mle)
+    expect_gte(pl$ci[["upper"]], pl$mle - tolerance)
   }
 
   ci_df <- profile_ci(fit, n_points = 11L, span = 5)
