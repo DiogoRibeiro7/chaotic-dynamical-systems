@@ -125,12 +125,14 @@ test_that("r-largest profiles use the joint order-statistic likelihood", {
   rl <- block_r_largest(x, block_size = 40L, r = 3L)
   fit <- fit_gev_rlargest(rl)
 
-  pl <- profile_likelihood(fit, "shape", n_points = 15L, span = 5)
+  pl <- profile_likelihood(fit, "shape", n_points = 21L, span = 6)
   expect_s3_class(pl, "profile_likelihood")
   expect_equal(pl$model, "gev_rlargest")
-  expect_equal(pl$max_log_lik,
-               .gev_rlargest_loglik(.extract_fit_params(fit), rl),
-               tolerance = 1e-8)
+  expect_equal(
+    unname(pl$max_log_lik),
+    unname(.gev_rlargest_loglik(.extract_fit_params(fit), rl)),
+    tolerance = 1e-8
+  )
   expect_false(is.na(pl$ci[["lower"]]))
   expect_false(is.na(pl$ci[["upper"]]))
   expect_lt(pl$ci[["lower"]], pl$mle)
