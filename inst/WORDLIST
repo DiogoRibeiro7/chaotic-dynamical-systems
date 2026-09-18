@@ -1,6 +1,8 @@
 acf
 al
 analyse
+antiferro
+antikink
 AOT
 assertthat
 asymptotics
@@ -36,6 +38,7 @@ Declustering
 DET
 detectCores
 df
+diffusively
 discretisation
 Discretisation
 dt
@@ -46,6 +49,7 @@ ENT
 entrypoint
 EOT
 eps
+eqn
 equiprobable
 ergodic
 ESMAD
@@ -92,6 +96,7 @@ ismev
 iter
 Jenkinson
 KAM
+Kaneko
 Klüppelberg
 knitr
 Kuramoto
@@ -134,6 +139,7 @@ msg
 nats
 ncol
 nd
+neighbour
 nonlinearTseries
 nonperiodic
 nP
@@ -156,6 +162,7 @@ probs
 Procaccia
 qchisq
 qq
+quasiperiodicity
 Rcpp
 reparametrise
 REPP
