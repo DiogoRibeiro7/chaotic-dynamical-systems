@@ -2,16 +2,18 @@
 % Please edit documentation in R/profile-likelihood.R
 \name{profile_likelihood}
 \alias{profile_likelihood}
-\title{Profile-likelihood inference for a GEV or GPD fit}
+\title{Profile-likelihood inference for an extreme-value fit}
 \usage{
 profile_likelihood(fit, parameter, level = 0.95, n_points = 41L, span = 4)
 }
 \arguments{
-\item{fit}{A `chaotic_model` returned by [fit_gev()] or [fit_gpd()].}
+\item{fit}{A `chaotic_model` returned by [fit_gev()],
+[fit_gev_rlargest()], [fit_gpd()], or [fit_ppp()].}
 
-\item{parameter}{Character. Which parameter to profile. For GEV:
-`"location"` / `"scale"` / `"shape"` (aliases `"mu"`, `"sigma"`,
-`"xi"`). For GPD: `"scale"` / `"shape"`.}
+\item{parameter}{Character. Which parameter to profile. For GEV,
+r-largest GEV, and PPL: `"location"` / `"scale"` / `"shape"`
+(aliases `"mu"`, `"sigma"`, `"xi"`). For GPD: `"scale"` /
+`"shape"`.}
 
 \item{level}{Confidence level for the CI. Defaults to 0.95.}
 
@@ -41,20 +43,21 @@ An object of class `profile_likelihood`, a list with:
 }
 \description{
 Compute the profile log-likelihood curve for one parameter of a fitted
-GEV or GPD model, plus its likelihood-ratio confidence interval. Wald
-(standard-error) intervals on the shape parameter \eqn{\xi} are
-notoriously asymmetric and miscalibrated; profile-likelihood intervals
-are the standard fix.
+GEV, r-largest GEV, GPD, or Poisson point-process (PPL) model, plus its
+likelihood-ratio confidence interval. Wald (standard-error) intervals on
+the shape parameter \eqn{\xi} are notoriously asymmetric and
+miscalibrated; profile-likelihood intervals are the standard fix.
 }
 \details{
-At each fixed value of the target parameter we maximise the GEV (resp.
-GPD) log-likelihood over the remaining parameters via [stats::optim()]
-(Nelder-Mead) and record the profile log-likelihood. The CI is then
+At each fixed value of the target parameter we maximise the corresponding
+model log-likelihood over the remaining parameters via [stats::optim()]
+(BFGS) and record the profile log-likelihood. The CI is then
 \deqn{\{\theta : 2(\hat{\ell} - \ell_{\text{profile}}(\theta)) \le
 \chi^2_{1, \alpha}\}}
 with the endpoints read off the grid by linear interpolation. The
-implementation is independent of the fitting backend (`evd`, `ismev`,
-`evir`) so any [fit_gev()] or [fit_gpd()] result works.
+implementation uses the native likelihood for each supported model, so
+[fit_gev()], [fit_gev_rlargest()], [fit_gpd()], and [fit_ppp()] results
+are profiled on the likelihood that produced their fitted parameters.
 }
 \examples{
 set.seed(1)
