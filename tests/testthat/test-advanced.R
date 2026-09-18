@@ -35,22 +35,24 @@ test_that('tail dependence analysis', {
 })
 
 test_that('advanced diagnostic methods', {
-  # TODO: recurrence_analysis(logistic_ts) is O(n^2) in series length and
-  # blows past the local-test budget on the bundled dataset (>2 minutes
-  # wall, no termination observed). Skipping on CRAN keeps devtools::test()
-  # responsive; we should either down-sample logistic_ts inside the test
-  # or add a max_n cap to recurrence_analysis itself.
-  skip_on_cran()
-
   set.seed(123)
   data(logistic_ts)
-  spectral_props <- spectral_analysis_extremes(logistic_ts, threshold = quantile(logistic_ts, 0.95))
+
+  # recurrence_analysis() is quadratic in series length. A bounded prefix
+  # exercises the same code path without turning the unit suite into a
+  # performance benchmark.
+  diagnostic_series <- logistic_ts[seq_len(300L)]
+
+  spectral_props <- spectral_analysis_extremes(
+    diagnostic_series,
+    threshold = quantile(diagnostic_series, 0.95)
+  )
   expect_true(is.list(spectral_props))
 
-  recurrence_props <- recurrence_analysis(logistic_ts)
+  recurrence_props <- recurrence_analysis(diagnostic_series)
   expect_true(is.list(recurrence_props))
 
-  lyapunov <- estimate_lyapunov_exponent(logistic_ts)
+  lyapunov <- estimate_lyapunov_exponent(diagnostic_series)
   expect_true(is.numeric(lyapunov))
 })
 
