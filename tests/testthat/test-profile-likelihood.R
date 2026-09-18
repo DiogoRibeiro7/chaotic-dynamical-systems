@@ -118,6 +118,25 @@ test_that("profile_return_level returns a CI bracketing the MLE for GPD", {
   expect_gt(pr$ci[["upper"]], pr$mle)
 })
 
+test_that("r-largest profiles use the joint order-statistic likelihood", {
+  skip_if_not_installed("evd")
+  set.seed(15L)
+  x <- evd::rgev(3000, loc = 0, scale = 1, shape = 0.1)
+  rl <- block_r_largest(x, block_size = 50L, r = 3L)
+  fit <- fit_gev_rlargest(rl)
+
+  pl <- profile_likelihood(fit, "shape", n_points = 31L, span = 5)
+  expect_s3_class(pl, "profile_likelihood")
+  expect_equal(pl$model, "gev_rlargest")
+  expect_equal(pl$max_log_lik,
+               .gev_rlargest_loglik(.extract_fit_params(fit), rl),
+               tolerance = 1e-8)
+  expect_false(is.na(pl$ci[["lower"]]))
+  expect_false(is.na(pl$ci[["upper"]]))
+  expect_lt(pl$ci[["lower"]], pl$mle)
+  expect_gt(pl$ci[["upper"]], pl$mle)
+})
+
 test_that("PPL parameter profiles use the point-process likelihood", {
   skip_if_not_installed("evd")
   set.seed(13L)
