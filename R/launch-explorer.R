@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' launch_explorer()
 #' }
 launch_explorer <- function(...) {
