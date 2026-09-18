@@ -17,6 +17,7 @@ reference:
   - simulate_tent_map
   - simulate_lozi_map
   - simulate_cat_map
+  - simulate_coupled_map_lattice
   - simulate_standard_map
   - simulate_ikeda_map
   - simulate_lorenz
