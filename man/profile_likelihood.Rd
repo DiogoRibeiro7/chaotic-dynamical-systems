@@ -23,7 +23,7 @@ on the level set while staying cheap to compute.}
 
 \item{span}{Numeric. Half-width of the grid in units of the parameter's
 standard error around the MLE. Defaults to 4 (a span of 4 standard
-errors typically brackets a 95\\% profile interval comfortably).}
+errors typically brackets a 95 percent profile interval comfortably).}
 }
 \value{
 An object of class `profile_likelihood`, a list with:
