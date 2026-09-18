@@ -22,10 +22,12 @@ when `r > 1` because each block contributes `r` informative values
 instead of just one.
 }
 \details{
-Maximum-likelihood fit by [stats::optim()] with BFGS, starting from a
-standard GEV fit on the block maxima (the leftmost column of `rl`).
-Standard errors are computed from the observed information matrix
-via numerical Hessian inversion. The returned object inherits from
+Maximum-likelihood fit by [stats::optim()] with Nelder-Mead on
+location, log-scale, and shape, starting from a standard GEV fit on the
+block maxima (the leftmost column of `rl`). The log-scale
+parameterisation keeps scale positive while Nelder-Mead avoids
+finite-difference failures near the GEV support boundary. Standard errors
+are computed from a numerical Hessian when it is well conditioned. The returned object inherits from
 `chaotic_model` so the existing [print()], [summary()], [tidy()],
 [glance()], [augment()], and [profile_likelihood()] machinery all
 work.

@@ -6,7 +6,7 @@
 #'
 #' @format A numeric vector with 5000 observations
 #' @details 
-#' Generated using the logistic map equation: \\eqn{x_{n+1} = r x_n (1 - x_n)}
+#' Generated using the logistic map equation x[n+1] = r * x[n] * (1 - x[n]).
 #' with r = 3.8 and initial condition x_0 = 0.2. This parameter value
 #' produces chaotic dynamics with interesting extreme value properties.
 #' 
@@ -29,8 +29,8 @@
 #' }
 #' @details 
 #' Generated using the Hénon map equations:
-#' \\eqn{x_{n+1} = 1 - a x_n^2 + y_n}
-#' \\eqn{y_{n+1} = b x_n}
+#' x[n+1] = 1 - a * x[n]^2 + y[n]
+#' y[n+1] = b * x[n]
 #' with a = 1.4, b = 0.3, and initial conditions (x_0, y_0) = (0.1, 0.1).
 #' 
 #' @source Generated using \code{simulate_henon_map(n = 3000, a = 1.4, b = 0.3, x0 = 0.1, y0 = 0.1)}
@@ -47,8 +47,8 @@
 #'
 #' @format A numeric vector with 4000 observations
 #' @details 
-#' Generated using the AR(1) model: \\eqn{x_t = 0.7 x_{t-1} + \\epsilon_t}
-#' where \\eqn{\\epsilon_t} are independent normal random variables with mean 0 and variance 1.
+#' Generated using the AR(1) model x[t] = 0.7 * x[t-1] + epsilon[t],
+#' where epsilon[t] are independent normal random variables with mean 0 and variance 1.
 #' This provides a reference for non-chaotic behavior in extreme value analysis.
 #' 
 #' @source Generated using \code{arima.sim(model = list(ar = 0.7), n = 4000)}

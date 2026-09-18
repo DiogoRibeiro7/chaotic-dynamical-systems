@@ -1,0 +1,38 @@
+name: preflight
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Parse package metadata and R sources
+        shell: Rscript {0}
+        run: |
+          read.dcf("DESCRIPTION")
+          r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
+          invisible(lapply(r_files, parse))
+          cat("Parsed", length(r_files), "R files successfully.\n")
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: any::Rcpp
+
+      - name: Install package
+        run: R CMD INSTALL --no-multiarch --with-keep.source .

@@ -23,8 +23,8 @@ a = 1.4 and b = 0.3, demonstrating chaotic attractor behavior.
 }
 \details{
 Generated using the Hénon map equations:
-\\eqn{x_{n+1} = 1 - a x_n^2 + y_n}
-\\eqn{y_{n+1} = b x_n}
+x[n+1] = 1 - a * x[n]^2 + y[n]
+y[n+1] = b * x[n]
 with a = 1.4, b = 0.3, and initial conditions (x_0, y_0) = (0.1, 0.1).
 }
 \examples{

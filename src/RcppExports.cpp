@@ -389,7 +389,25 @@ BEGIN_RCPP
 END_RCPP
 }
 
+// kuramoto_simulate_cpp_impl
+NumericMatrix kuramoto_simulate_cpp_impl(int n_keep, int n_transient, double dt, double coupling, NumericVector omega, NumericVector theta0);
+RcppExport SEXP _chaoticds_kuramoto_simulate_cpp_impl(SEXP n_keepSEXP, SEXP n_transientSEXP, SEXP dtSEXP, SEXP couplingSEXP, SEXP omegaSEXP, SEXP theta0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_keep(n_keepSEXP);
+    Rcpp::traits::input_parameter< int >::type n_transient(n_transientSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< double >::type coupling(couplingSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type omega(omegaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type theta0(theta0SEXP);
+    rcpp_result_gen = Rcpp::wrap(kuramoto_simulate_cpp_impl(n_keep, n_transient, dt, coupling, omega, theta0));
+    return rcpp_result_gen;
+END_RCPP
+}
+
 static const R_CallMethodDef CallEntries[] = {
+    {"_chaoticds_kuramoto_simulate_cpp_impl", (DL_FUNC) &_chaoticds_kuramoto_simulate_cpp_impl, 6},
     {"_chaoticds_cml_simulate_cpp_impl", (DL_FUNC) &_chaoticds_cml_simulate_cpp_impl, 5},
     {"_chaoticds_simulate_henon_map_cpp", (DL_FUNC) &_chaoticds_simulate_henon_map_cpp, 6},
     {"_chaoticds_simulate_tent_map_cpp", (DL_FUNC) &_chaoticds_simulate_tent_map_cpp, 4},

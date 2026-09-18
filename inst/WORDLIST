@@ -4,6 +4,7 @@ analyse
 antiferro
 antikink
 AOT
+Araki
 assertthat
 asymptotics
 attractor
@@ -37,6 +38,7 @@ declustering
 Declustering
 DET
 detectCores
+deterministically
 df
 diffusively
 discretisation
@@ -46,6 +48,7 @@ dx
 ei
 Embrechts
 ENT
+entrainment
 entrypoint
 EOT
 eps
@@ -99,8 +102,10 @@ KAM
 Kaneko
 Klüppelberg
 knitr
+kuramoto
 Kuramoto
 Kurths
+Kutta
 laminarity
 Leadbetter
 Leadbetter's
@@ -140,6 +145,7 @@ nats
 ncol
 nd
 neighbour
+Nelder
 nonlinearTseries
 nonperiodic
 nP
@@ -178,6 +184,7 @@ Rossler
 roxygen
 RQA
 rstats
+Runge
 runif
 runnable
 Scalable
