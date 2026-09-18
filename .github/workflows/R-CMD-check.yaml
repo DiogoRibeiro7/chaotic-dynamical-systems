@@ -6,8 +6,13 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   R-CMD-check:
+    timeout-minutes: 30
     runs-on: ${{ matrix.config.os }}
     
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
