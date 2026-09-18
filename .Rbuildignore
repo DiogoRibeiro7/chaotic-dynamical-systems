@@ -35,3 +35,6 @@
 ^performance_analysis\.R$
 ^simple_doc\.R$
 ^test_results\.txt$
+^\.lintr$
+^\.styler\.R$
+^examples$
