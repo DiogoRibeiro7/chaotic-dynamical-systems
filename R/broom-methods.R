@@ -72,7 +72,7 @@
 #' @examples
 #' set.seed(1)
 #' fit <- fit_gev(evd::rgev(500, 0, 1, 0.1))
-#' tidy(fit)
+#' generics::tidy(fit)
 #'
 #' @importFrom generics tidy
 #' @exportS3Method generics::tidy chaotic_model
@@ -126,7 +126,7 @@ tidy.chaotic_model <- function(x, conf.int = FALSE, conf.level = 0.95, ...) {
 #' @examples
 #' set.seed(1)
 #' fit <- fit_gev(evd::rgev(500, 0, 1, 0.1))
-#' glance(fit)
+#' generics::glance(fit)
 #'
 #' @importFrom generics glance
 #' @exportS3Method generics::glance chaotic_model
@@ -172,7 +172,7 @@ glance.chaotic_model <- function(x, ...) {
 #' @examples
 #' set.seed(1)
 #' fit <- fit_gev(evd::rgev(500, 0, 1, 0.1))
-#' head(augment(fit))
+#' head(generics::augment(fit))
 #'
 #' @importFrom generics augment
 #' @exportS3Method generics::augment chaotic_model
