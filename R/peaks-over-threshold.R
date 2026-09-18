@@ -45,8 +45,21 @@ fit_gpd <- function(x, threshold) {
   checkmate::assert_numeric(x, any.missing = FALSE)
   checkmate::assert_number(threshold)
   if (requireNamespace("evd", quietly = TRUE)) {
-    wrap_chaotic_model(
+    fit <- tryCatch(
       evd::fpot(x, threshold),
+      error = function(e) {
+        if (grepl(
+          "observed information matrix is singular",
+          conditionMessage(e),
+          fixed = TRUE
+        )) {
+          return(evd::fpot(x, threshold, std.err = FALSE))
+        }
+        stop(e)
+      }
+    )
+    wrap_chaotic_model(
+      fit,
       model = "gpd",
       method = "evd::fpot",
       threshold = threshold
