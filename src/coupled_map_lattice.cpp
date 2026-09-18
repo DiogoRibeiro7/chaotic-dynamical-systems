@@ -1,4 +1,6 @@
 #include <Rcpp.h>
+#include <algorithm>
+#include <vector>
 using namespace Rcpp;
 
 // Coupled logistic-map lattice update.
