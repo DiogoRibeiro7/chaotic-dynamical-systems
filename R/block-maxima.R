@@ -290,8 +290,21 @@ block_maxima <- function(x, block_size) {
 fit_gev <- function(block_maxima) {
   checkmate::assert_numeric(block_maxima, any.missing = FALSE, min.len = 2)
   if (requireNamespace("evd", quietly = TRUE)) {
-    wrap_chaotic_model(
+    fit <- tryCatch(
       evd::fgev(block_maxima),
+      error = function(e) {
+        if (grepl(
+          "observed information matrix is singular",
+          conditionMessage(e),
+          fixed = TRUE
+        )) {
+          return(evd::fgev(block_maxima, std.err = FALSE))
+        }
+        stop(e)
+      }
+    )
+    wrap_chaotic_model(
+      fit,
       model = "gev",
       method = "evd::fgev"
     )
