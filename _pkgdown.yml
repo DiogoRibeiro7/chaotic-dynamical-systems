@@ -18,6 +18,7 @@ reference:
   - simulate_lozi_map
   - simulate_cat_map
   - simulate_coupled_map_lattice
+  - simulate_kuramoto
   - simulate_standard_map
   - simulate_ikeda_map
   - simulate_lorenz
@@ -26,6 +27,7 @@ reference:
   - simulate_mackey_glass
   - logistic_bifurcation
   - ensemble_simulate
+  - kuramoto_order_parameter
 
 - title: "Extreme Value Analysis"
   desc: "Core extreme value theory functions"
