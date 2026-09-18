@@ -37,7 +37,7 @@ Suggests:
     shiny,
     shinydashboard,
     plotly,
-    microbenchmark
+    microbenchmark,
+    MASS
 VignetteBuilder: knitr
-SystemRequirements: C++11
 RoxygenNote: 7.3.3
