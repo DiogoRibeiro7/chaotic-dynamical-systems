@@ -8,7 +8,7 @@
 #' @param theta0 Initial phases.
 #' @return Numeric matrix of retained phases.
 kuramoto_simulate_cpp_impl <- function(n_keep, n_transient, dt, coupling, omega, theta0) {
-    .Call(\`_chaoticds_kuramoto_simulate_cpp_impl\`, n_keep, n_transient, dt, coupling, omega, theta0)
+    .Call(`_chaoticds_kuramoto_simulate_cpp_impl`, n_keep, n_transient, dt, coupling, omega, theta0)
 }
 
 #' Internal coupled map lattice C++ kernel
