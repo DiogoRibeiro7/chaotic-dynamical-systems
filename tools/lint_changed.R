@@ -23,7 +23,8 @@ parse_added_lines <- function(diff_lines) {
 
     match <- regexec(
       "^@@ -[0-9]+(?:,[0-9]+)? \\+([0-9]+)(?:,([0-9]+))? @@",
-      line
+      line,
+      perl = TRUE
     )
     groups <- regmatches(line, match)[[1L]]
 
@@ -67,10 +68,7 @@ diff_lines <- system2(
     "--unified=0",
     "--no-color",
     base_sha,
-    head_sha,
-    "--",
-    "*.R",
-    "*.Rmd"
+    head_sha
   ),
   stdout = TRUE,
   stderr = TRUE
@@ -78,10 +76,16 @@ diff_lines <- system2(
 
 added_lines <- parse_added_lines(diff_lines)
 candidate_files <- names(added_lines)
+
+if (is.null(candidate_files) || length(candidate_files) == 0L) {
+  cat("No changed files found to lint.\n")
+  quit(status = 0L)
+}
+
 candidate_files <- candidate_files[
-  file.exists(candidate_files) &
-    grepl("\\.(R|Rmd)$", candidate_files, ignore.case = TRUE)
+  grepl("\\.(R|Rmd)$", candidate_files, ignore.case = TRUE)
 ]
+candidate_files <- candidate_files[file.exists(candidate_files)]
 
 if (length(candidate_files) == 0L) {
   cat("No added R/Rmd lines to lint.\n")
