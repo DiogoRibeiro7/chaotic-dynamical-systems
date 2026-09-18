@@ -319,12 +319,18 @@ profile_likelihood <- function(fit, parameter,
       -ll_full(par)
     }
     start <- as.numeric(par_mle[-idx])
-    # BFGS handles both 1D (the inner optimisation when profiling a GPD
-    # parameter) and >=2D (every GEV profile) without warnings; Nelder-Mead
-    # emits "one-dimensional optimization is unreliable" in the GPD case.
+    # GPD profiles have one nuisance parameter, where BFGS is stable.
+    # GEV-family profiles have two nuisance parameters and hard support
+    # boundaries; Nelder-Mead is more robust because it does not require
+    # finite-difference gradients outside the admissible support.
+    method <- if (model == "gpd") "BFGS" else "Nelder-Mead"
     out <- tryCatch(
-      stats::optim(start, objective, method = "BFGS",
-                   control = list(reltol = 1e-8, maxit = 500L)),
+      stats::optim(
+        start,
+        objective,
+        method = method,
+        control = list(reltol = 1e-8, maxit = 1000L)
+      ),
       error = function(e) NULL
     )
     if (is.null(out) || !is.finite(out$value)) return(NA_real_)
