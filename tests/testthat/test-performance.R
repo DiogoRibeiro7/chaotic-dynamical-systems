@@ -49,9 +49,8 @@ test_that('memory usage is reasonable', {
   # Test memory efficiency with larger datasets
   n_large <- 50000
   
-  # Check memory before
+  # Trigger garbage collection before allocating the test object.
   gc()
-  mem_before <- memory.size() # This may not work on all systems
   
   # Generate large dataset
   large_sim <- simulate_logistic_map(n_large, r = 3.8, x0 = 0.2)

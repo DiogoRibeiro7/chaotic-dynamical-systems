@@ -288,7 +288,13 @@ profile_likelihood <- function(fit, parameter,
     # the MLE itself is near zero) when the fit failed to report SEs.
     se <- max(abs(mle_value), 0.1) * 0.1
   }
-  grid <- mle_value + seq(-span * se, span * se, length.out = n_points)
+  grid_for_span <- function(current_span) {
+    mle_value + seq(
+      -current_span * se,
+      current_span * se,
+      length.out = n_points
+    )
+  }
 
   ll_full <- switch(
     model,
@@ -325,10 +331,26 @@ profile_likelihood <- function(fit, parameter,
     -out$value
   }
 
-  ll_max <- ll_full(as.numeric(par_mle))
-  profile_ll  <- vapply(grid, fit_at_fixed, numeric(1L))
+  ll_max <- unname(ll_full(as.numeric(par_mle)))
   threshold_ll <- ll_max - stats::qchisq(level, df = 1L) / 2
+
+  current_span <- span
+  grid <- grid_for_span(current_span)
+  profile_ll <- vapply(grid, fit_at_fixed, numeric(1L))
   ci <- .invert_profile(grid, profile_ll, threshold_ll, mle_value)
+
+  # If the requested span does not bracket the LRT cutoff, expand the grid
+  # geometrically. This is especially important for PPL fits, where Wald
+  # standard errors may be unavailable or poor proxies for profile curvature.
+  for (attempt in seq_len(4L)) {
+    if (!anyNA(ci)) {
+      break
+    }
+    current_span <- current_span * 2
+    grid <- grid_for_span(current_span)
+    profile_ll <- vapply(grid, fit_at_fixed, numeric(1L))
+    ci <- .invert_profile(grid, profile_ll, threshold_ll, mle_value)
+  }
 
   structure(
     list(

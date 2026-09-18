@@ -83,9 +83,10 @@ Broaden the chaotic-systems side from "canonical maps + 3 ODEs" to a
 genuine simulation catalog.
 
 - **More dynamical systems.** Partial. ✅ Chirikov standard map, Ikeda
-  map, and Mackey-Glass delay-differential equation are in (R + C++
-  fast paths). Coupled map lattices, Kuramoto oscillators, Belousov-
-  Zhabotinsky, and Burgers / KdV PDE surrogates remain.
+  map, Mackey-Glass delay-differential equation, and a periodic
+  nearest-neighbour coupled logistic-map lattice are in (R + C++ fast
+  paths). Kuramoto oscillators, Belousov-Zhabotinsky, and Burgers / KdV
+  PDE surrogates remain.
 - **Stochastic perturbations.** ✅ Every discrete simulator now takes a
   `noise_sd` argument (R + C++); under the same RNG seed the two
   implementations are bit-identical, which made R-vs-C++ parity tests

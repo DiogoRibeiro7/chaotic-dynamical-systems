@@ -53,9 +53,9 @@ block_r_largest <- function(x, block_size, r) {
 # Joint log-likelihood for the r-largest method (Coles 2001 eq. 3.27).
 # rl is a matrix with rows = blocks, columns = top-r values (sorted decreasing).
 .gev_rlargest_loglik <- function(par, rl) {
-  mu    <- par[1L]
-  sigma <- par[2L]
-  xi    <- par[3L]
+  mu    <- unname(par[1L])
+  sigma <- unname(par[2L])
+  xi    <- unname(par[3L])
   if (!is.finite(sigma) || sigma <= 0) return(-Inf)
   n_b <- nrow(rl)
   r   <- ncol(rl)
