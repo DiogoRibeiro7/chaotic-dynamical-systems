@@ -350,10 +350,13 @@ abline(h = c(-1.96/sqrt(length(series)), 1.96/sqrt(length(series))),
 Test if extremes satisfy mixing conditions:
 
 ```{r mixing}
-# Check D(u_n) condition
-d_result <- d_check(series, threshold, lags = 1:10)
-cat("D(u_n) condition satisfied:",
-    ifelse(max(abs(d_result)) < 0.1, "YES", "Possibly NO"), "\n")
+# Check D(u_n) condition at a representative separation lag
+d_result <- d_check(series, threshold, r = 10L)
+cat(
+  "D(u_n) condition satisfied:",
+  ifelse(d_result, "YES", "Possibly NO"),
+  "\n"
+)
 ```
 
 ---
