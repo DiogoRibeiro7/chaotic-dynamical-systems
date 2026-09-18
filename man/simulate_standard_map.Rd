@@ -32,7 +32,7 @@ Iterates the area-preserving Chirikov-Taylor map on the torus
 
 The parameter `K` controls the strength of the nonlinear kick. The map
 is integrable at `K = 0`, the last invariant KAM torus disappears near
-the Chirikov value `K \approx 0.971635`, and the dynamics are
+the Chirikov value `K \\simeq 0.971635`, and the dynamics are
 progressively more chaotic for larger `K`.
 }
 \examples{
