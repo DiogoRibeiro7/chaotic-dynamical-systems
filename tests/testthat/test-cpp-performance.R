@@ -162,31 +162,31 @@ test_that('C++ continuous simulators reject invalid arguments', {
   expect_error(simulate_rossler_cpp(transient = -1))
 })
 
-test_that('C++ implementations are faster for large data', {
+test_that('C++ implementations agree and remain performance-competitive', {
   skip_on_cran()
   skip_if_not_installed("microbenchmark")
-  
-  # Only test if C++ functions are actually available
+
   if (!exists("simulate_logistic_map_cpp")) {
     skip("C++ functions not compiled")
   }
-  
-  n_large <- 5000
-  
-  # Time R implementation
-  r_time <- system.time({
+
+  n_large <- 5000L
+
+  r_time <- unname(system.time({
     r_result <- simulate_logistic_map(n_large, r = 3.8, x0 = 0.2)
-  })[3]
-  
-  # Time C++ implementation
-  cpp_time <- system.time({
+  })[["elapsed"]])
+
+  cpp_time <- unname(system.time({
     cpp_result <- simulate_logistic_map_cpp(n_large, 3.8, 0.2)
-  })[3]
-  
-  # C++ should be faster or at least comparable
-  speedup <- r_time / cpp_time
-  expect_true(speedup >= 0.5)  # Allow for some overhead
-  
-  # Results should be identical
+  })[["elapsed"]])
+
+  # Numerical parity is the invariant. Wall-clock timing on shared CI runners
+  # is advisory only because sub-millisecond calls may be reported as zero.
   expect_equal(cpp_result, r_result, tolerance = 1e-10)
+
+  if (is.finite(r_time) && is.finite(cpp_time) &&
+      r_time > 0 && cpp_time > 0) {
+    speedup <- r_time / cpp_time
+    expect_gte(speedup, 0.5)
+  }
 })
