@@ -373,7 +373,24 @@ BEGIN_RCPP
 END_RCPP
 }
 
+// cml_simulate_cpp_impl
+NumericMatrix cml_simulate_cpp_impl(int n, double r, double coupling, NumericVector x0, NumericMatrix noise);
+RcppExport SEXP _chaoticds_cml_simulate_cpp_impl(SEXP nSEXP, SEXP rSEXP, SEXP couplingSEXP, SEXP x0SEXP, SEXP noiseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< double >::type coupling(couplingSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type x0(x0SEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type noise(noiseSEXP);
+    rcpp_result_gen = Rcpp::wrap(cml_simulate_cpp_impl(n, r, coupling, x0, noise));
+    return rcpp_result_gen;
+END_RCPP
+}
+
 static const R_CallMethodDef CallEntries[] = {
+    {"_chaoticds_cml_simulate_cpp_impl", (DL_FUNC) &_chaoticds_cml_simulate_cpp_impl, 5},
     {"_chaoticds_simulate_henon_map_cpp", (DL_FUNC) &_chaoticds_simulate_henon_map_cpp, 6},
     {"_chaoticds_simulate_tent_map_cpp", (DL_FUNC) &_chaoticds_simulate_tent_map_cpp, 4},
     {"_chaoticds_acf_cpp", (DL_FUNC) &_chaoticds_acf_cpp, 2},
