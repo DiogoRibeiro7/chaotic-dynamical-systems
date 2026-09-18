@@ -83,10 +83,12 @@ block_r_largest <- function(x, block_size, r) {
 #' instead of just one.
 #'
 #' @details
-#' Maximum-likelihood fit by [stats::optim()] with BFGS, starting from a
-#' standard GEV fit on the block maxima (the leftmost column of `rl`).
-#' Standard errors are computed from the observed information matrix
-#' via numerical Hessian inversion. The returned object inherits from
+#' Maximum-likelihood fit by [stats::optim()] with Nelder-Mead on
+#' location, log-scale, and shape, starting from a standard GEV fit on the
+#' block maxima (the leftmost column of `rl`). The log-scale
+#' parameterisation keeps scale positive while Nelder-Mead avoids
+#' finite-difference failures near the GEV support boundary. Standard errors
+#' are computed from a numerical Hessian when it is well conditioned. The returned object inherits from
 #' `chaotic_model` so the existing [print()], [summary()], [tidy()],
 #' [glance()], [augment()], and [profile_likelihood()] machinery all
 #' work.
@@ -131,21 +133,35 @@ fit_gev_rlargest <- function(rl) {
     c(mean(bm), stats::sd(bm), 0.1)
   })
 
-  objective <- function(par) -.gev_rlargest_loglik(par, rl)
+  start_transformed <- c(start[1L], log(start[2L]), start[3L])
+  objective_transformed <- function(par) {
+    candidate <- c(par[1L], exp(par[2L]), par[3L])
+    value <- -.gev_rlargest_loglik(candidate, rl)
+    if (is.finite(value)) value else 1e100
+  }
 
-  out <- stats::optim(start, objective, method = "BFGS",
-                      hessian = TRUE,
-                      control = list(reltol = 1e-8, maxit = 1000L))
+  out <- stats::optim(
+    start_transformed,
+    objective_transformed,
+    method = "Nelder-Mead",
+    control = list(reltol = 1e-8, maxit = 2000L)
+  )
 
   if (out$convergence != 0L) {
     warning("optim() reported non-zero convergence code (",
             out$convergence, ") in fit_gev_rlargest()")
   }
 
-  estimate <- out$par
+  estimate <- c(out$par[1L], exp(out$par[2L]), out$par[3L])
   names(estimate) <- c("loc", "scale", "shape")
-  se <- tryCatch(sqrt(diag(solve(out$hessian))),
-                 error = function(e) rep(NA_real_, 3L))
+
+  se <- tryCatch({
+    hessian <- stats::optimHess(out$par, objective_transformed)
+    covariance_transformed <- solve(hessian)
+    jacobian <- diag(c(1, estimate[["scale"]], 1))
+    covariance <- jacobian %*% covariance_transformed %*% jacobian
+    sqrt(diag(covariance))
+  }, error = function(e) rep(NA_real_, 3L))
   names(se) <- names(estimate)
 
   fit <- list(
