@@ -77,7 +77,11 @@ A crucial step in extreme value analysis is selecting an appropriate threshold. 
 
 ```{r threshold-diagnostics}
 # Mean Residual Life plot for threshold selection
-mrl_plot(logistic_data)
+diagnostic_thresholds <- quantile(
+  logistic_data,
+  seq(0.85, 0.99, by = 0.01)
+)
+mrl_plot(mean_residual_life(logistic_data, diagnostic_thresholds))
 ```
 
 ```{r threshold-selection}
