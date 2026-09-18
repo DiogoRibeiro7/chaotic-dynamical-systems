@@ -1,5 +1,9 @@
 # chaoticds (development version)
 
+## Dynamics Expansion
+
+* Added a periodic nearest-neighbour coupled logistic-map lattice with matching R and C++ implementations, deterministic initialization, optional Gaussian perturbations, and parity tests.
+
 ## Statistical Inference
 
 * Added native profile-likelihood confidence intervals for Poisson point-process fits from `fit_ppp()`.
