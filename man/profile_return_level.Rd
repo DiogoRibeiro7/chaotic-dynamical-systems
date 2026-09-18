@@ -2,7 +2,7 @@
 % Please edit documentation in R/profile-likelihood.R
 \name{profile_return_level}
 \alias{profile_return_level}
-\title{Profile-likelihood interval for a GEV or GPD return level}
+\title{Profile-likelihood interval for an extreme-value return level}
 \usage{
 profile_return_level(
   fit,
@@ -16,7 +16,7 @@ profile_return_level(
 }
 \arguments{
 \item{fit}{A `chaotic_model` returned by [fit_gev()], [fit_gev_rlargest()],
-or [fit_gpd()].}
+[fit_gpd()], or [fit_ppp()].}
 
 \item{m}{Numeric. The return period (in blocks for GEV, in years for
 GPD when `n_per_year > 1`). Must be greater than 1.}

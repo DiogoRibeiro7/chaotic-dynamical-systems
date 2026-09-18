@@ -22,6 +22,6 @@ produces for ordinary `lm`/`glm` fits.
 \examples{
 set.seed(1)
 fit <- fit_gev(evd::rgev(500, 0, 1, 0.1))
-glance(fit)
+generics::glance(fit)
 
 }

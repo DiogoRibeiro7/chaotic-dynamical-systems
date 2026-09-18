@@ -16,10 +16,10 @@ estimate_lyapunov_exponent <- function(x, r = NULL) {
   checkmate::assert_numeric(x, min.len = 2)
   checkmate::assert_number(r, null.ok = TRUE)
   if (is.null(r)) {
-    x_prev <- head(x, -1)
-    x_next <- tail(x, -1)
+    x_prev <- utils::head(x, -1)
+    x_next <- utils::tail(x, -1)
     r <- mean(x_next / (x_prev * (1 - x_prev)))
   }
-  deriv <- r * (1 - 2 * head(x, -1))
+  deriv <- r * (1 - 2 * utils::head(x, -1))
   mean(log(abs(deriv)))
 }

@@ -1,5 +1,11 @@
 # chaoticds (development version)
 
+## Statistical Inference
+
+* Added native profile-likelihood confidence intervals for Poisson point-process fits from `fit_ppp()`.
+* Added PPL return-level profiling on the fitted block-maximum GEV scale.
+* Fixed profile-likelihood support for `fit_gev_rlargest()` so it uses the joint r-largest likelihood instead of a block-maxima approximation.
+
 ## Repository and Consistency Cleanup
 
 * Moved `extRemes` from `Suggests` to `Imports` to match mandatory runtime use.

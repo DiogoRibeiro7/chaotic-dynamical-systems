@@ -171,8 +171,10 @@ lines(density(bm), col = "darkblue", lwd = 2)
 ### Fitting the Generalized Extreme Value (GEV) Distribution
 
 ```{r fit-gev, eval = requireNamespace("evd", quietly = TRUE)}
-# Fit GEV distribution to block maxima
-gev_fit <- fit_gev(bm)
+# Fit GEV on a longer deterministic sample so the observed information
+# matrix is stable across R/evd versions used by CRAN and CI builders.
+gev_series <- simulate_logistic_map(n = 5000, r = 3.8, x0 = 0.2)
+gev_fit <- fit_gev(block_maxima(gev_series, block_size = 50))
 
 # Display results
 print(gev_fit)
@@ -348,10 +350,13 @@ abline(h = c(-1.96/sqrt(length(series)), 1.96/sqrt(length(series))),
 Test if extremes satisfy mixing conditions:
 
 ```{r mixing}
-# Check D(u_n) condition
-d_result <- d_check(series, threshold, lags = 1:10)
-cat("D(u_n) condition satisfied:",
-    ifelse(max(abs(d_result)) < 0.1, "YES", "Possibly NO"), "\n")
+# Check D(u_n) condition at a representative separation lag
+d_result <- d_check(series, threshold, r = 10L)
+cat(
+  "D(u_n) condition satisfied:",
+  ifelse(d_result, "YES", "Possibly NO"),
+  "\n"
+)
 ```
 
 ---

@@ -43,23 +43,57 @@
   }
 }
 
+.ppp_loglik <- function(par, x, threshold, n_per_block) {
+  mu    <- par[1L]
+  sigma <- par[2L]
+  xi    <- par[3L]
+  if (!is.finite(sigma) || sigma <= 0) return(-Inf)
+
+  exceedances <- x[x > threshold]
+  n_blocks <- length(x) / n_per_block
+  z_u <- (threshold - mu) / sigma
+  z_exc <- (exceedances - mu) / sigma
+
+  if (abs(xi) < 1e-8) {
+    if (!is.finite(z_u) || any(!is.finite(z_exc))) return(-Inf)
+    return(
+      -n_blocks * exp(-z_u) -
+        length(exceedances) * log(sigma) -
+        sum(z_exc)
+    )
+  }
+
+  s_u <- 1 + xi * z_u
+  s_exc <- 1 + xi * z_exc
+  if (!is.finite(s_u) || s_u <= 0 ||
+      any(!is.finite(s_exc)) || any(s_exc <= 0)) {
+    return(-Inf)
+  }
+
+  -n_blocks * s_u^(-1 / xi) -
+    length(exceedances) * log(sigma) -
+    (1 + 1 / xi) * sum(log(s_exc))
+}
+
 # Extraction helpers -------------------------------------------------------
 
 .extract_fit_data <- function(fit) {
   model <- attr(fit, "chaotic_model")
-  if (identical(model, "gev") || identical(model, "gev_rlargest")) {
+
+  if (identical(model, "gev")) {
     raw <- fit$data %||% fit$xdata
-    if (!is.null(raw)) {
-      if (is.matrix(raw)) {
-        # r-largest fits store an n_blocks x r matrix; the GEV log-lik
-        # extractor is for vector data, so flatten using the column-1
-        # block maxima as a safe stand-in.
-        return(list(data = as.numeric(raw[, 1L]), threshold = NULL))
-      }
-      return(list(data = as.numeric(raw), threshold = NULL))
-    }
-    stop("Could not extract block-maxima data from GEV fit")
+    if (is.null(raw)) stop("Could not extract block-maxima data from GEV fit")
+    return(list(data = as.numeric(raw), threshold = NULL))
   }
+
+  if (identical(model, "gev_rlargest")) {
+    raw <- fit$data %||% fit$xdata
+    if (is.null(raw) || !is.matrix(raw)) {
+      stop("Could not extract r-largest matrix from GEV fit")
+    }
+    return(list(data = raw, threshold = NULL))
+  }
+
   if (identical(model, "gpd")) {
     threshold <- attr(fit, "chaotic_threshold")
     if (is.null(threshold)) stop("GPD fit is missing its threshold attribute")
@@ -72,7 +106,30 @@
     excs <- raw[raw > threshold] - threshold
     return(list(data = excs, threshold = threshold))
   }
-  stop("Profile likelihood is only implemented for GEV and GPD chaotic_model fits")
+
+  if (identical(model, "ppp")) {
+    threshold <- attr(fit, "chaotic_threshold")
+    if (is.null(threshold)) stop("PPL fit is missing its threshold attribute")
+
+    raw <- attr(fit, "chaotic_data") %||% fit$data %||% fit$xdata
+    if (is.null(raw)) stop("Could not extract raw input data from PPL fit")
+
+    n_per_block <- attr(fit, "chaotic_n_per_block")
+    if (is.null(n_per_block) || !is.finite(n_per_block) || n_per_block <= 0) {
+      stop("PPL fit is missing a valid n_per_block attribute")
+    }
+
+    return(list(
+      data = as.numeric(raw),
+      threshold = threshold,
+      n_per_block = as.numeric(n_per_block)
+    ))
+  }
+
+  stop(
+    "Profile likelihood is only implemented for GEV, r-largest GEV, GPD, ",
+    "and PPL chaotic_model fits"
+  )
 }
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
@@ -80,7 +137,7 @@
 .extract_fit_params <- function(fit) {
   model <- attr(fit, "chaotic_model")
   v <- .extract_param_vector(fit)
-  if (identical(model, "gev")) {
+  if (model %in% c("gev", "gev_rlargest", "ppp")) {
     if (!is.null(names(v)) && all(c("loc", "scale", "shape") %in% names(v))) {
       return(c(mu    = unname(v[["loc"]]),
                sigma = unname(v[["scale"]]),
@@ -89,7 +146,7 @@
     if (length(v) == 3L) {
       return(c(mu = v[1L], sigma = v[2L], xi = v[3L]))
     }
-    stop("Could not extract GEV (mu, sigma, xi) from fit")
+    stop("Could not extract GEV-scale (mu, sigma, xi) parameters from fit")
   }
   if (identical(model, "gpd")) {
     if (!is.null(names(v)) && all(c("scale", "shape") %in% names(v))) {
@@ -116,40 +173,49 @@
   gev = c(location = "mu", loc = "mu", mu = "mu",
           scale    = "sigma", sigma = "sigma",
           shape    = "xi", xi = "xi"),
+  gev_rlargest = c(location = "mu", loc = "mu", mu = "mu",
+                   scale    = "sigma", sigma = "sigma",
+                   shape    = "xi", xi = "xi"),
   gpd = c(scale = "sigma", sigma = "sigma",
-          shape = "xi",    xi = "xi")
+          shape = "xi",    xi = "xi"),
+  ppp = c(location = "mu", loc = "mu", mu = "mu",
+          scale    = "sigma", sigma = "sigma",
+          shape    = "xi", xi = "xi")
 )
 
-#' Profile-likelihood inference for a GEV or GPD fit
+#' Profile-likelihood inference for an extreme-value fit
 #'
 #' @description
 #' Compute the profile log-likelihood curve for one parameter of a fitted
-#' GEV or GPD model, plus its likelihood-ratio confidence interval. Wald
-#' (standard-error) intervals on the shape parameter \eqn{\xi} are
-#' notoriously asymmetric and miscalibrated; profile-likelihood intervals
-#' are the standard fix.
+#' GEV, r-largest GEV, GPD, or Poisson point-process (PPL) model, plus its
+#' likelihood-ratio confidence interval. Wald (standard-error) intervals on
+#' the shape parameter \eqn{\xi} are notoriously asymmetric and
+#' miscalibrated; profile-likelihood intervals are the standard fix.
 #'
 #' @details
-#' At each fixed value of the target parameter we maximise the GEV (resp.
-#' GPD) log-likelihood over the remaining parameters via [stats::optim()]
-#' (Nelder-Mead) and record the profile log-likelihood. The CI is then
+#' At each fixed value of the target parameter we maximise the corresponding
+#' model log-likelihood over the remaining parameters via [stats::optim()]
+#' (BFGS) and record the profile log-likelihood. The CI is then
 #' \deqn{\{\theta : 2(\hat{\ell} - \ell_{\text{profile}}(\theta)) \le
 #' \chi^2_{1, \alpha}\}}
 #' with the endpoints read off the grid by linear interpolation. The
-#' implementation is independent of the fitting backend (`evd`, `ismev`,
-#' `evir`) so any [fit_gev()] or [fit_gpd()] result works.
+#' implementation uses the native likelihood for each supported model, so
+#' [fit_gev()], [fit_gev_rlargest()], [fit_gpd()], and [fit_ppp()] results
+#' are profiled on the likelihood that produced their fitted parameters.
 #'
-#' @param fit A `chaotic_model` returned by [fit_gev()] or [fit_gpd()].
-#' @param parameter Character. Which parameter to profile. For GEV:
-#'   `"location"` / `"scale"` / `"shape"` (aliases `"mu"`, `"sigma"`,
-#'   `"xi"`). For GPD: `"scale"` / `"shape"`.
+#' @param fit A `chaotic_model` returned by [fit_gev()],
+#'   [fit_gev_rlargest()], [fit_gpd()], or [fit_ppp()].
+#' @param parameter Character. Which parameter to profile. For GEV,
+#'   r-largest GEV, and PPL: `"location"` / `"scale"` / `"shape"`
+#'   (aliases `"mu"`, `"sigma"`, `"xi"`). For GPD: `"scale"` /
+#'   `"shape"`.
 #' @param level Confidence level for the CI. Defaults to 0.95.
 #' @param n_points Integer. Number of grid points across the profile.
 #'   Defaults to 41, which is dense enough for stable linear interpolation
 #'   on the level set while staying cheap to compute.
 #' @param span Numeric. Half-width of the grid in units of the parameter's
 #'   standard error around the MLE. Defaults to 4 (a span of 4 standard
-#'   errors typically brackets a 95% profile interval comfortably).
+#'   errors typically brackets a 95 percent profile interval comfortably).
 #'
 #' @return An object of class `profile_likelihood`, a list with:
 #'   \describe{
@@ -194,8 +260,8 @@ profile_likelihood <- function(fit, parameter,
   checkmate::assert_number(span, lower = 0.1, finite = TRUE)
 
   model <- attr(fit, "chaotic_model")
-  if (!model %in% c("gev", "gpd")) {
-    stop("Profile likelihood is only implemented for GEV and GPD fits")
+  if (!model %in% c("gev", "gev_rlargest", "gpd", "ppp")) {
+    stop("Profile likelihood is only implemented for GEV, r-largest GEV, GPD, and PPL fits")
   }
 
   aliases <- .param_aliases[[model]]
@@ -224,14 +290,27 @@ profile_likelihood <- function(fit, parameter,
   }
   grid <- mle_value + seq(-span * se, span * se, length.out = n_points)
 
-  ll_full <- if (model == "gev") .gev_loglik else .gpd_loglik
+  ll_full <- switch(
+    model,
+    gev = function(par) .gev_loglik(par, data),
+    gev_rlargest = function(par) .gev_rlargest_loglik(par, data),
+    gpd = function(par) .gpd_loglik(par, data),
+    ppp = function(par) {
+      .ppp_loglik(
+        par,
+        data,
+        threshold = data_info$threshold,
+        n_per_block = data_info$n_per_block
+      )
+    }
+  )
 
   fit_at_fixed <- function(fixed_value) {
     objective <- function(other_par) {
       par <- numeric(length(par_mle))
       par[idx]  <- fixed_value
       par[-idx] <- other_par
-      -ll_full(par, data)
+      -ll_full(par)
     }
     start <- as.numeric(par_mle[-idx])
     # BFGS handles both 1D (the inner optimisation when profiling a GPD
@@ -246,7 +325,7 @@ profile_likelihood <- function(fit, parameter,
     -out$value
   }
 
-  ll_max <- ll_full(as.numeric(par_mle), data)
+  ll_max <- ll_full(as.numeric(par_mle))
   profile_ll  <- vapply(grid, fit_at_fixed, numeric(1L))
   threshold_ll <- ll_max - stats::qchisq(level, df = 1L) / 2
   ci <- .invert_profile(grid, profile_ll, threshold_ll, mle_value)
@@ -360,7 +439,7 @@ plot.profile_likelihood <- function(x, ...) {
   p
 }
 
-#' Profile-likelihood interval for a GEV or GPD return level
+#' Profile-likelihood interval for an extreme-value return level
 #'
 #' @description
 #' Returns the profile-likelihood confidence interval for the m-period
@@ -391,7 +470,7 @@ plot.profile_likelihood <- function(x, ...) {
 #' CI is read off the LRT level set just like [profile_likelihood()].
 #'
 #' @param fit A `chaotic_model` returned by [fit_gev()], [fit_gev_rlargest()],
-#'   or [fit_gpd()].
+#'   [fit_gpd()], or [fit_ppp()].
 #' @param m Numeric. The return period (in blocks for GEV, in years for
 #'   GPD when `n_per_year > 1`). Must be greater than 1.
 #' @param level Confidence level. Defaults to 0.95.
@@ -429,26 +508,40 @@ profile_return_level <- function(fit, m, level = 0.95, n_per_year = 1,
   checkmate::assert_number(span, lower = 1e-6, finite = TRUE)
 
   model <- attr(fit, "chaotic_model")
-  if (!model %in% c("gev", "gev_rlargest", "gpd")) {
-    stop("Return-level profile is only implemented for GEV/GPD fits")
+  if (!model %in% c("gev", "gev_rlargest", "gpd", "ppp")) {
+    stop("Return-level profile is only implemented for GEV, r-largest GEV, GPD, and PPL fits")
   }
 
   par_mle <- .extract_fit_params(fit)
   data_info <- .extract_fit_data(fit)
   data <- data_info$data
 
-  if (model %in% c("gev", "gev_rlargest")) {
+  if (model %in% c("gev", "gev_rlargest", "ppp")) {
     mu_hat    <- par_mle[["mu"]]
     sigma_hat <- par_mle[["sigma"]]
     xi_hat    <- par_mle[["xi"]]
     y_m <- -log(1 - 1 / m)
+
+    gev_scale_loglik <- switch(
+      model,
+      gev = function(par) .gev_loglik(par, data),
+      gev_rlargest = function(par) .gev_rlargest_loglik(par, data),
+      ppp = function(par) {
+        .ppp_loglik(
+          par,
+          data,
+          threshold = data_info$threshold,
+          n_per_block = data_info$n_per_block
+        )
+      }
+    )
 
     z_m_hat <- if (abs(xi_hat) < 1e-8) {
       mu_hat - sigma_hat * log(y_m)
     } else {
       mu_hat - sigma_hat / xi_hat * (1 - y_m^(-xi_hat))
     }
-    ll_max <- .gev_loglik(c(mu_hat, sigma_hat, xi_hat), data)
+    ll_max <- gev_scale_loglik(c(mu_hat, sigma_hat, xi_hat))
 
     fit_at_z <- function(z_m) {
       objective <- function(par) {
@@ -460,7 +553,7 @@ profile_return_level <- function(fit, m, level = 0.95, n_per_year = 1,
         } else {
           z_m + sigma / xi * (1 - y_m^(-xi))
         }
-        -.gev_loglik(c(mu, sigma, xi), data)
+        -gev_scale_loglik(c(mu, sigma, xi))
       }
       out <- tryCatch(
         stats::optim(c(sigma_hat, xi_hat), objective, method = "BFGS",
@@ -540,12 +633,13 @@ profile_return_level <- function(fit, m, level = 0.95, n_per_year = 1,
   )
 }
 
-#' Profile-likelihood confidence intervals for a GEV or GPD fit
+#' Profile-likelihood confidence intervals for an extreme-value fit
 #'
 #' Convenience wrapper that calls [profile_likelihood()] for each parameter
 #' (or a chosen subset) and returns a tidy data frame.
 #'
-#' @param fit A `chaotic_model` returned by [fit_gev()] or [fit_gpd()].
+#' @param fit A `chaotic_model` returned by [fit_gev()],
+#'   [fit_gev_rlargest()], [fit_gpd()], or [fit_ppp()].
 #' @param parameter Character vector of parameter names. If `NULL`
 #'   (default), all model parameters are profiled.
 #' @param level Confidence level. Defaults to 0.95.
@@ -565,8 +659,12 @@ profile_return_level <- function(fit, m, level = 0.95, n_per_year = 1,
 profile_ci <- function(fit, parameter = NULL, level = 0.95, ...) {
   checkmate::assert_class(fit, "chaotic_model")
   model <- attr(fit, "chaotic_model")
-  defaults <- list(gev = c("location", "scale", "shape"),
-                   gpd = c("scale", "shape"))
+  defaults <- list(
+    gev = c("location", "scale", "shape"),
+    gev_rlargest = c("location", "scale", "shape"),
+    gpd = c("scale", "shape"),
+    ppp = c("location", "scale", "shape")
+  )
   if (is.null(parameter)) parameter <- defaults[[model]]
   res <- lapply(parameter, function(p) {
     pl <- profile_likelihood(fit, p, level = level, ...)

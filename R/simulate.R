@@ -329,7 +329,7 @@ simulate_lozi_map <- function(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0,
 #'
 #' The parameter `K` controls the strength of the nonlinear kick. The map
 #' is integrable at `K = 0`, the last invariant KAM torus disappears near
-#' the Chirikov value `K \approx 0.971635`, and the dynamics are
+#' the Chirikov value `K \\simeq 0.971635`, and the dynamics are
 #' progressively more chaotic for larger `K`.
 #'
 #' @param n Integer. Number of iterations to generate.

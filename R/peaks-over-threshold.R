@@ -45,8 +45,21 @@ fit_gpd <- function(x, threshold) {
   checkmate::assert_numeric(x, any.missing = FALSE)
   checkmate::assert_number(threshold)
   if (requireNamespace("evd", quietly = TRUE)) {
-    wrap_chaotic_model(
+    fit <- tryCatch(
       evd::fpot(x, threshold),
+      error = function(e) {
+        if (grepl(
+          "observed information matrix is singular",
+          conditionMessage(e),
+          fixed = TRUE
+        )) {
+          return(evd::fpot(x, threshold, std.err = FALSE))
+        }
+        stop(e)
+      }
+    )
+    wrap_chaotic_model(
+      fit,
       model = "gpd",
       method = "evd::fpot",
       threshold = threshold
@@ -130,12 +143,15 @@ fit_ppp <- function(x, threshold, n_per_block = 365) {
     stop("Package 'evd' is required for fit_ppp()")
   }
   fit <- evd::fpot(x, threshold, model = "pp", npp = n_per_block)
-  wrap_chaotic_model(
+  fit <- wrap_chaotic_model(
     fit,
     model     = "ppp",
     method    = "evd::fpot(model = \"pp\")",
     threshold = threshold
   )
+  attr(fit, "chaotic_data") <- as.numeric(x)
+  attr(fit, "chaotic_n_per_block") <- as.numeric(n_per_block)
+  fit
 }
 
 #' Mean Residual Life (MRL) values

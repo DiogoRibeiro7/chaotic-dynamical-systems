@@ -216,10 +216,17 @@ plot_exceedance_clusters <- function(df, thresholds, run_length = 3L) {
   ce <- cluster_exceedances(exc_any, run_length)
   cluster_id <- rep(NA_integer_, nrow(df))
   for (i in seq_along(ce$clusters)) cluster_id[ce$clusters[[i]]] <- i
-  ggplot2::ggplot(df, ggplot2::aes(x = df[[1]], y = df[[2]])) +
+  plot_df <- data.frame(
+    x = df[[1]],
+    y = df[[2]],
+    cluster = factor(cluster_id)
+  )
+  ggplot2::ggplot(plot_df, ggplot2::aes(x = x, y = y)) +
     ggplot2::geom_point(alpha = 0.4) +
-    ggplot2::geom_point(data = df[exc_any, ],
-               ggplot2::aes(color = factor(cluster_id[exc_any]))) +
+    ggplot2::geom_point(
+      data = plot_df[exc_any, , drop = FALSE],
+      ggplot2::aes(color = cluster)
+    ) +
     ggplot2::geom_vline(xintercept = thresholds[1], linetype = "dashed") +
     ggplot2::geom_hline(yintercept = thresholds[2], linetype = "dashed") +
     ggplot2::labs(x = names(df)[1], y = names(df)[2], color = "Cluster",

@@ -12,6 +12,8 @@ simulate_cat_map_cpp(n, x0 = 0.1, y0 = 0.1, noise_sd = 0)
 \item{x0}{Initial x value}
 
 \item{y0}{Initial y value}
+
+\item{noise_sd}{Standard deviation of additive Gaussian noise. Defaults to 0.}
 }
 \value{
 DataFrame with x and y columns

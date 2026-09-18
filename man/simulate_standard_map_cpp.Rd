@@ -14,6 +14,8 @@ simulate_standard_map_cpp(n, K = 1.2, p0 = 1, theta0 = 1, noise_sd = 0)
 \item{p0}{Initial momentum}
 
 \item{theta0}{Initial angle}
+
+\item{noise_sd}{Standard deviation of additive Gaussian noise. Defaults to 0.}
 }
 \value{
 DataFrame with columns p and theta

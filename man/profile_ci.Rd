@@ -2,12 +2,13 @@
 % Please edit documentation in R/profile-likelihood.R
 \name{profile_ci}
 \alias{profile_ci}
-\title{Profile-likelihood confidence intervals for a GEV or GPD fit}
+\title{Profile-likelihood confidence intervals for an extreme-value fit}
 \usage{
 profile_ci(fit, parameter = NULL, level = 0.95, ...)
 }
 \arguments{
-\item{fit}{A `chaotic_model` returned by [fit_gev()] or [fit_gpd()].}
+\item{fit}{A `chaotic_model` returned by [fit_gev()],
+[fit_gev_rlargest()], [fit_gpd()], or [fit_ppp()].}
 
 \item{parameter}{Character vector of parameter names. If `NULL`
 (default), all model parameters are profiled.}

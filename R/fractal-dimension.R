@@ -34,5 +34,5 @@ estimate_correlation_dimension <- function(x, m = 2L, tau = 1L, r_vals = NULL) {
   lr <- log(r_vals)
   lc <- log(corr)
   fit <- stats::lm(lc ~ lr)
-  list(r = r_vals, C = corr, dimension = unname(coef(fit)[2]))
+  list(r = r_vals, C = corr, dimension = unname(stats::coef(fit)[2]))
 }

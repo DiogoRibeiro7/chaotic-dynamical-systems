@@ -18,8 +18,8 @@ A time series generated from an autoregressive model of order 1 with
 coefficient 0.7, useful for comparison with chaotic time series.
 }
 \details{
-Generated using the AR(1) model: x_t = 0.7 * x_{t-1} + ε_t
-where ε_t are independent normal random variables with mean 0 and variance 1.
+Generated using the AR(1) model: \\eqn{x_t = 0.7 x_{t-1} + \\epsilon_t}
+where \\eqn{\\epsilon_t} are independent normal random variables with mean 0 and variance 1.
 This provides a reference for non-chaotic behavior in extreme value analysis.
 }
 \examples{

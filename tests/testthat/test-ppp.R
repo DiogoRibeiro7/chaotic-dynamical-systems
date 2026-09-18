@@ -31,6 +31,17 @@ test_that("tidy() and glance() work on PPL fits", {
   expect_equal(gl$model, "ppp")
 })
 
+test_that("PPL fits retain likelihood metadata for profiling", {
+  skip_if_not_installed("evd")
+  set.seed(3L)
+  x <- evd::rgev(600, 0, 1, 0.1)
+  u <- quantile(x, 0.9)
+  fit <- fit_ppp(x, threshold = u, n_per_block = 30)
+
+  expect_equal(attr(fit, "chaotic_data"), as.numeric(x))
+  expect_equal(attr(fit, "chaotic_n_per_block"), 30)
+})
+
 test_that("fit_ppp validates its arguments", {
   skip_if_not_installed("evd")
   expect_error(fit_ppp(1:5, threshold = 0))             # too few obs

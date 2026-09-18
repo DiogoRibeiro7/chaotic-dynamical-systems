@@ -27,6 +27,6 @@ PP / QQ-style diagnostic plots.
 \examples{
 set.seed(1)
 fit <- fit_gev(evd::rgev(500, 0, 1, 0.1))
-head(augment(fit))
+head(generics::augment(fit))
 
 }

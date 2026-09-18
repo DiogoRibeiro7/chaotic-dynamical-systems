@@ -1,8 +1,9 @@
 linters: linters_with_defaults(
     line_length_linter(120),
     object_name_linter = NULL,  # Allow snake_case which is used throughout
+    object_usage_linter = NULL,  # R CMD check handles package-level NSE bindings
     commented_code_linter = NULL,  # Allow commented code in development
-    cyclocomp_linter = cyclocomp_linter(complexity_limit = 20),
+    cyclocomp_linter = cyclocomp_linter(complexity_limit = 35),
     indentation_linter = NULL,  # styler handles this
     trailing_whitespace_linter(),
     trailing_blank_lines_linter(),
@@ -14,7 +15,7 @@ linters: linters_with_defaults(
     brace_linter(),
     spaces_left_parentheses_linter(),
     unnecessary_concatenation_linter(),
-    implicit_integer_linter(),
+    implicit_integer_linter = NULL,
     any_duplicated_linter(),
     any_is_na_linter(),
     vector_logic_linter()

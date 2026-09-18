@@ -101,7 +101,7 @@ print.summary.chaotic_model <- function(x, ...) {
 #' @return The result of the delegated plotting method.
 #' @export
 plot.chaotic_model <- function(x, ...) {
-  plot_func <- getS3method("plot", class(x)[2], optional = TRUE)
+  plot_func <- utils::getS3method("plot", class(x)[2], optional = TRUE)
   if (!is.null(plot_func)) {
     return(plot_func(x, ...))
   }

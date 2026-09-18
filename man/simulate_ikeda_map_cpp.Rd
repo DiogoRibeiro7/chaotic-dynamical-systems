@@ -14,6 +14,8 @@ simulate_ikeda_map_cpp(n, u = 0.9, x0 = 0, y0 = 0, noise_sd = 0)
 \item{x0}{Initial x}
 
 \item{y0}{Initial y}
+
+\item{noise_sd}{Standard deviation of additive Gaussian noise. Defaults to 0.}
 }
 \value{
 DataFrame with columns x and y

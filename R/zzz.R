@@ -11,6 +11,8 @@
 .onLoad <- function(libname, pkgname) {
   utils::globalVariables(c(
     "hill", "k", "threshold", "mean_excess",
-    "emp_surv", "theo_surv", "Freq"
+    "emp_surv", "theo_surv", "Freq",
+    "value", "log_lik", "x", "y", "cluster",
+    "Var1", "Var2", "lambda", "size"
   ))
 }
