@@ -15,7 +15,7 @@
 #'
 #' @return Invisibly returns the output report path.
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' report_extremes(output_file = "extremes-report.html")
 #' }
 #' @export
