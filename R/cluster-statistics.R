@@ -40,7 +40,7 @@ cluster_sizes <- function(x, threshold, run_length) {
 #' @export
 cluster_summary <- function(sizes) {
   checkmate::assert_numeric(sizes, any.missing = FALSE)
-  c(mean_size = mean(sizes), var_size = var(sizes))
+  c(mean_size = mean(sizes), var_size = stats::var(sizes))
 }
 
 #' Decluster threshold exceedances
