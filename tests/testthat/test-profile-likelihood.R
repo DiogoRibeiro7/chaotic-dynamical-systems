@@ -118,6 +118,45 @@ test_that("profile_return_level returns a CI bracketing the MLE for GPD", {
   expect_gt(pr$ci[["upper"]], pr$mle)
 })
 
+test_that("PPL parameter profiles use the point-process likelihood", {
+  skip_if_not_installed("evd")
+  set.seed(13L)
+  x <- evd::rgev(2500, loc = 0, scale = 1, shape = 0.1)
+  u <- quantile(x, 0.9)
+  fit <- fit_ppp(x, threshold = u, n_per_block = 50)
+
+  pl <- profile_likelihood(fit, "shape", n_points = 31L, span = 5)
+  expect_s3_class(pl, "profile_likelihood")
+  expect_equal(pl$model, "ppp")
+  expect_equal(pl$parameter_key, "xi")
+  expect_true(is.finite(pl$max_log_lik))
+  expect_false(is.na(pl$ci[["lower"]]))
+  expect_false(is.na(pl$ci[["upper"]]))
+  expect_lt(pl$ci[["lower"]], pl$mle)
+  expect_gt(pl$ci[["upper"]], pl$mle)
+
+  ci_df <- profile_ci(fit, n_points = 21L, span = 5)
+  expect_setequal(ci_df$parameter, c("location", "scale", "shape"))
+  expect_true(all(is.finite(ci_df$estimate)))
+})
+
+test_that("profile_return_level supports PPL fits", {
+  skip_if_not_installed("evd")
+  set.seed(14L)
+  x <- evd::rgev(2500, loc = 0, scale = 1, shape = 0.1)
+  u <- quantile(x, 0.9)
+  fit <- fit_ppp(x, threshold = u, n_per_block = 50)
+
+  pr <- profile_return_level(fit, m = 100, n_points = 31L, span = 0.75)
+  expect_s3_class(pr, "profile_likelihood")
+  expect_equal(pr$model, "ppp_return_level")
+  expect_true(is.finite(pr$mle))
+  expect_false(is.na(pr$ci[["lower"]]))
+  expect_false(is.na(pr$ci[["upper"]]))
+  expect_lt(pr$ci[["lower"]], pr$mle)
+  expect_gt(pr$ci[["upper"]], pr$mle)
+})
+
 test_that("profile_return_level errors when GPD exceedance_rate is needed but missing", {
   skip_if_not_installed("evd")
   set.seed(12L)
