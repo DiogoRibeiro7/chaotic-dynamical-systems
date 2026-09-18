@@ -2,6 +2,10 @@
 
 ## Dynamics Expansion
 
+* Added globally coupled Kuramoto oscillators with matching R and C++ RK4 implementations, linear-time order-parameter coupling, transient handling, and synchronization diagnostics.
+
+## Dynamics Expansion
+
 * Added a periodic nearest-neighbour coupled logistic-map lattice with matching R and C++ implementations, deterministic initialization, optional Gaussian perturbations, and parity tests.
 
 ## Statistical Inference
