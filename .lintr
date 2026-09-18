@@ -1,6 +1,7 @@
 linters: linters_with_defaults(
     line_length_linter(120),
     object_name_linter = NULL,  # Allow snake_case which is used throughout
+    object_length_linter = NULL,  # Public scientific APIs may be descriptive
     object_usage_linter = NULL,  # R CMD check handles package-level NSE bindings
     commented_code_linter = NULL,  # Allow commented code in development
     cyclocomp_linter = cyclocomp_linter(complexity_limit = 35),
