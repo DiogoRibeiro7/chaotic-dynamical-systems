@@ -84,7 +84,7 @@ threshold u with exceedance probability p, the mean cluster size is
 }
 \section{Mathematical Background}{
 
-For a stationary sequence {X_n}, the extremal index is defined as:
+For a stationary sequence X_n, the extremal index is defined as:
 \deqn{\theta = \lim_{n \to \infty} \frac{P(M_n \le u_n)^n}{P(X_1 \le u_n)}}
 where \eqn{M_n = \max(X_1, \ldots, X_n)} and \eqn{u_n} is a high threshold
 satisfying nP(X_1 > u_n) → τ for some τ > 0.
