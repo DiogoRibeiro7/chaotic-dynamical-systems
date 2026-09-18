@@ -130,12 +130,15 @@ fit_ppp <- function(x, threshold, n_per_block = 365) {
     stop("Package 'evd' is required for fit_ppp()")
   }
   fit <- evd::fpot(x, threshold, model = "pp", npp = n_per_block)
-  wrap_chaotic_model(
+  fit <- wrap_chaotic_model(
     fit,
     model     = "ppp",
     method    = "evd::fpot(model = \"pp\")",
     threshold = threshold
   )
+  attr(fit, "chaotic_data") <- as.numeric(x)
+  attr(fit, "chaotic_n_per_block") <- as.numeric(n_per_block)
+  fit
 }
 
 #' Mean Residual Life (MRL) values
