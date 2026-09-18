@@ -11,43 +11,71 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  R-CMD-check:
-    if: ${{ github.event_name == 'push' || matrix.config.pr }}
+  pr-check:
+    if: ${{ github.event_name == 'pull_request' }}
+    name: ubuntu-latest (release)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual")'
+          upload-snapshots: true
+
+  main-matrix:
+    if: ${{ github.event_name == 'push' }}
     timeout-minutes: 30
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-latest, r: 'release', pr: true}
-          - {os: ubuntu-latest, r: 'devel', pr: false}
-          - {os: windows-latest, r: 'release', pr: false}
-          - {os: macOS-latest, r: 'release', pr: false}
-    
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: ubuntu-latest, r: 'devel'}
+          - {os: windows-latest, r: 'release'}
+          - {os: macOS-latest, r: 'release'}
+
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      
+
     steps:
       - uses: actions/checkout@v6
-      
+
       - uses: r-lib/actions/setup-pandoc@v2
-      
+
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-          
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
-          
+
       - uses: r-lib/actions/check-r-package@v2
         with:
+          args: 'c("--no-manual")'
           upload-snapshots: true
-          

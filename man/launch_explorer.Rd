@@ -17,7 +17,7 @@ Launches a Shiny application for interactive exploration of extreme value
 analysis in chaotic dynamical systems.
 }
 \examples{
-\donttest{
+\dontrun{
 launch_explorer()
 }
 }

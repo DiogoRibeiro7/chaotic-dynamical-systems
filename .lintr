@@ -16,7 +16,6 @@ linters: linters_with_defaults(
     brace_linter(),
     spaces_left_parentheses_linter(),
     unnecessary_concatenation_linter(),
-    implicit_integer_linter = NULL,
     any_duplicated_linter(),
     any_is_na_linter(),
     vector_logic_linter()
