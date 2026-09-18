@@ -34,12 +34,12 @@ test_that("tidy() and glance() work on PPL fits", {
 test_that("PPL fits retain likelihood metadata for profiling", {
   skip_if_not_installed("evd")
   set.seed(3L)
-  x <- evd::rgev(1500, 0, 1, 0.1)
+  x <- evd::rgev(600, 0, 1, 0.1)
   u <- quantile(x, 0.9)
-  fit <- fit_ppp(x, threshold = u, n_per_block = 25)
+  fit <- fit_ppp(x, threshold = u, n_per_block = 30)
 
   expect_equal(attr(fit, "chaotic_data"), as.numeric(x))
-  expect_equal(attr(fit, "chaotic_n_per_block"), 25)
+  expect_equal(attr(fit, "chaotic_n_per_block"), 30)
 })
 
 test_that("fit_ppp validates its arguments", {
