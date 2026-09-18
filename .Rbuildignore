@@ -27,3 +27,11 @@
 ^roadmap\.md$
 ^pyproject\.toml$
 ^renv\.lock$
+^check_output\.txt$
+^document\.R$
+^examples/$
+^gen_docs\.R$
+^install_deps\.R$
+^performance_analysis\.R$
+^simple_doc\.R$
+^test_results\.txt$
