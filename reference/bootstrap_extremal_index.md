@@ -1,0 +1,96 @@
+# Bootstrap confidence intervals for the extremal index
+
+Implements a simple block bootstrap for the extremal index using either
+the runs or intervals estimator.
+
+## Usage
+
+``` r
+bootstrap_extremal_index(
+  x,
+  threshold,
+  estimator = c("runs", "intervals"),
+  method = NULL,
+  run_length = 5L,
+  block_size = 50L,
+  bootstrap_type = c("moving_block", "stationary"),
+  B = 1000L,
+  n_bootstrap = NULL,
+  parallel = FALSE,
+  n_cores = NULL,
+  seed = NULL
+)
+```
+
+## Arguments
+
+- x:
+
+  Numeric vector of observations.
+
+- threshold:
+
+  Numeric threshold for exceedances.
+
+- estimator:
+
+  Character string, either "runs" or "intervals".
+
+- method:
+
+  Deprecated alias for \`estimator\` kept for compatibility.
+
+- run_length:
+
+  Integer run parameter for the runs estimator.
+
+- block_size:
+
+  Integer block length for resampling.
+
+- bootstrap_type:
+
+  Character string, either \`"moving_block"\` (default) or
+  \`"stationary"\`.
+
+- B:
+
+  Integer number of bootstrap replicates.
+
+- n_bootstrap:
+
+  Deprecated alias for \`B\` kept for compatibility.
+
+- parallel:
+
+  Logical. If TRUE use parallel processing via \[parallel::mclapply()\]
+  where available, otherwise sequential evaluation.
+
+- n_cores:
+
+  Integer number of cores when \`parallel = TRUE\`. Defaults to \`max(1,
+  detectCores() - 1)\`.
+
+- seed:
+
+  Optional integer seed for reproducible bootstrap replicates.
+
+## Value
+
+A list with elements \`theta_hat\`, the point estimate; \`replicates\`,
+the bootstrap sample of extremal index estimates; and \`ci\`, the 95
+percentile confidence interval. Returns \`NA\` values in the replicates
+if the estimator fails on a resampled series.
+
+## Examples
+
+``` r
+set.seed(123)
+x <- arima.sim(model = list(ar = 0.7), n = 2000)
+thr <- quantile(x, 0.95)
+boot <- bootstrap_extremal_index(x, thr, estimator = "runs",
+                                 run_length = 5, block_size = 50, B = 200)
+boot$ci
+#>      2.5%     97.5% 
+#> 0.4419631 0.6253125 
+```

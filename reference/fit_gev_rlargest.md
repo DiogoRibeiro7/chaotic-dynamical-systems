@@ -1,0 +1,64 @@
+# Fit GEV via the r-largest order statistics method
+
+Fits the GEV location / scale / shape parameters using the joint
+likelihood for the top \`r\` values in each block (Coles 2001 §3.5).
+Equivalent to \[fit_gev()\] when \`ncol(rl) == 1\`, and lower-variance
+when \`r \> 1\` because each block contributes \`r\` informative values
+instead of just one.
+
+## Usage
+
+``` r
+fit_gev_rlargest(rl)
+```
+
+## Arguments
+
+- rl:
+
+  Numeric matrix from \[block_r_largest()\].
+
+## Value
+
+A \`chaotic_model\` with \`model = "gev_rlargest"\`, with elements
+\`estimate\`, \`std.err\`, \`loglik\`, \`data\` (the input matrix), and
+\`r\` (the number of columns).
+
+## Details
+
+Maximum-likelihood fit by \[stats::optim()\] with Nelder-Mead on
+location, log-scale, and shape, starting from a standard GEV fit on the
+block maxima (the leftmost column of \`rl\`). The log-scale
+parameterisation keeps scale positive while Nelder-Mead avoids
+finite-difference failures near the GEV support boundary. Standard
+errors are computed from a numerical Hessian when it is well
+conditioned. The returned object inherits from \`chaotic_model\` so the
+existing \[print()\], \[summary()\], \[tidy()\], \[glance()\],
+\[augment()\], and \[profile_likelihood()\] machinery all work.
+
+## References
+
+Coles, S. (2001). \*An Introduction to Statistical Modeling of Extreme
+Values\*. Springer, §3.5.
+
+Smith, R. L. (1986). Extreme value theory based on the r largest annual
+events. \*Journal of Hydrology\*, 86(1-2), 27-43.
+
+## See also
+
+\[block_r_largest()\], \[fit_gev()\] for the classical r = 1 fit.
+
+## Examples
+
+``` r
+x  <- simulate_logistic_map(2000, r = 3.8, x0 = 0.2)
+rl <- block_r_largest(x, block_size = 50, r = 3)
+fit_gev_rlargest(rl)
+#> Warning: optim() reported non-zero convergence code (10) in fit_gev_rlargest()
+#> <chaotic_model>
+#>   Model:  gev_rlargest
+#>   Method: chaoticds::fit_gev_rlargest
+#>   Parameters:
+#>       loc     scale     shape 
+#>  0.948716  0.002030 -1.581201 
+```

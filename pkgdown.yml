@@ -1,0 +1,14 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  block-maxima-vs-pot-henon: block-maxima-vs-pot-henon.html
+  estimating-theta-logistic: estimating-theta-logistic.html
+  getting-started-interactive: getting-started-interactive.html
+  getting-started: getting-started.html
+  multivariate-analysis: multivariate-analysis.html
+  performance-optimization: performance-optimization.html
+last_built: 2026-09-18T23:19Z
+urls:
+  reference: https://diogoribeiro7.github.io/chaotic-dynamical-systems/reference
+  article: https://diogoribeiro7.github.io/chaotic-dynamical-systems/articles

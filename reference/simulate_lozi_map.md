@@ -1,0 +1,48 @@
+# Simulate the Lozi map
+
+Generates an orbit for the two-dimensional Lozi map: x\[n+1\] = 1 - a \*
+abs(x\[n\]) + b \* y\[n\] y\[n+1\] = x\[n\]
+
+## Usage
+
+``` r
+simulate_lozi_map(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0, noise_sd = 0)
+```
+
+## Arguments
+
+- n:
+
+  Integer. Number of iterations to generate.
+
+- a:
+
+  Numeric. Parameter controlling the nonlinearity. Defaults to 1.7.
+
+- b:
+
+  Numeric. Parameter controlling the contraction. Defaults to 0.5.
+
+- x0:
+
+  Numeric. Initial x value. Defaults to 0.
+
+- y0:
+
+  Numeric. Initial y value. Defaults to 0.
+
+- noise_sd:
+
+  Numeric (\\\ge 0\\). Standard deviation of additive Gaussian noise
+  applied to each component after each iteration. Defaults to 0
+  (deterministic).
+
+## Value
+
+Data frame with columns \`x\` and \`y\` of length \`n\`.
+
+## Examples
+
+``` r
+orbit <- simulate_lozi_map(100)
+```
