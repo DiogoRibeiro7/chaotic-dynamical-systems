@@ -55,9 +55,9 @@ each correct a known weakness in the current fits.
   profile-likelihood is the standard fix.
 - **Point-process likelihood (PPL).** ✅ `fit_ppp()` wraps the Poisson
   point-process MLE (Coles 2001 §7.4), parameterising directly in
-  block-maximum GEV coordinates. PPL profile-likelihood support is a
-  follow-up (different likelihood structure than GEV/GPD; needs its own
-  log-lik + extractors).
+  block-maximum GEV coordinates. `profile_likelihood()`, `profile_ci()`,
+  and `profile_return_level()` now use the native PPL likelihood rather
+  than treating the fit as a GEV approximation.
 - **r-largest order statistics.** ✅ `block_r_largest()` extracts the
   top r values per block and `fit_gev_rlargest()` fits the joint
   Poisson-process likelihood (Coles 2001 §3.5). Inherits from
