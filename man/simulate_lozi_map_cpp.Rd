@@ -16,6 +16,8 @@ simulate_lozi_map_cpp(n, a = 1.7, b = 0.5, x0 = 0, y0 = 0, noise_sd = 0)
 \item{x0}{Initial x value}
 
 \item{y0}{Initial y value}
+
+\item{noise_sd}{Standard deviation of additive Gaussian noise. Defaults to 0.}
 }
 \value{
 DataFrame with x and y columns
