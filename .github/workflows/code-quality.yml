@@ -20,7 +20,7 @@ jobs:
           
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::lintr, any::styler
+          extra-packages: any::lintr, any::styler, any::cyclocomp
           needs: check
           
       - name: Lint R code
