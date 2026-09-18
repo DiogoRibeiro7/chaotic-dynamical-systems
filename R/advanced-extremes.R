@@ -143,7 +143,7 @@ calculate_return_levels <- function(x, threshold, return_periods) {
   if (length(exc) < 1) stop("No exceedances above threshold")
   # simple GPD fit via method of moments
   scale <- mean(exc)
-  shape <- -scale^2 / (var(exc) - scale^2)
+  shape <- -scale^2 / (stats::var(exc) - scale^2)
   rate <- length(exc) / length(x)
   sapply(return_periods, function(T) {
     threshold + scale / shape * ((T * rate)^shape - 1)
@@ -168,7 +168,7 @@ validate_extreme_model <- function(x, threshold, method = "qq") {
   exc <- x[x > threshold] - threshold
   if (length(exc) < 1) stop("No exceedances above threshold")
   exc <- sort(exc)
-  p <- ppoints(length(exc))
+  p <- stats::ppoints(length(exc))
   q <- quantile(exc, p, type = 8)
   list(p = p, q = q, data = exc)
 }
@@ -190,7 +190,7 @@ goodness_of_fit_test <- function(x, threshold) {
   exc <- x[x > threshold] - threshold
   if (length(exc) < 1) stop("No exceedances above threshold")
   scale <- mean(exc)
-  shape <- -scale^2 / (var(exc) - scale^2)
+  shape <- -scale^2 / (stats::var(exc) - scale^2)
   pgpd <- function(z) 1 - (1 + shape * z / scale)^(-1/shape)
   ks <- stats::ks.test(exc, pgpd)
   list(statistic = ks$statistic, p_value = ks$p.value)
