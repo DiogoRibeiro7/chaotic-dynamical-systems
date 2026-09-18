@@ -279,7 +279,7 @@ select_threshold_adaptive <- function(x, quantile_range = c(0.9, 0.99),
     # Check if all values are non-NA
     if (all(!is.na(window_me))) {
       # Compute correlation (linearity measure)
-      linearity_scores[i] <- abs(cor(window_thresh, window_me))
+      linearity_scores[i] <- abs(stats::cor(window_thresh, window_me))
     } else {
       linearity_scores[i] <- 0
     }
