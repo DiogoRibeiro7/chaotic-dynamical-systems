@@ -95,7 +95,7 @@ reference:
   - block_bootstrap
 
 - title: "Profile-Likelihood Inference"
-  desc: "Likelihood-ratio confidence intervals for GEV and GPD parameters"
+  desc: "Likelihood-ratio confidence intervals for GEV, r-largest, GPD, and PPL fits"
   contents:
   - profile_likelihood
   - profile_ci
