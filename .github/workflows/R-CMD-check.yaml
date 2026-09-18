@@ -50,9 +50,3 @@ jobs:
         with:
           upload-snapshots: true
           
-      - name: Test coverage
-        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
-        run: |
-          install.packages("covr")
-          covr::codecov(quiet = FALSE)
-        shell: Rscript {0}
