@@ -19,7 +19,7 @@ demonstrating chaotic behavior. This dataset is useful for extreme value
 analysis and testing extremal index estimation methods.
 }
 \details{
-Generated using the logistic map equation: x_{n+1} = r * x_n * (1 - x_n)
+Generated using the logistic map equation: \\eqn{x_{n+1} = r x_n (1 - x_n)}
 with r = 3.8 and initial condition x_0 = 0.2. This parameter value
 produces chaotic dynamics with interesting extreme value properties.
 }
