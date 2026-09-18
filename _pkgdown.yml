@@ -148,6 +148,11 @@ reference:
   - henon_ts
   - ar1_ts
 
+- title: "Other API"
+  desc: "Additional exported helpers and low-level interfaces"
+  contents:
+  - everything()
+
 articles:
 - title: "Vignettes"
   navbar: ~
