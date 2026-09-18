@@ -162,7 +162,7 @@ test_that('C++ continuous simulators reject invalid arguments', {
   expect_error(simulate_rossler_cpp(transient = -1))
 })
 
-test_that('C++ implementations agree and remain performance-competitive', {
+test_that("C++ implementations agree and remain performance-competitive", {
   skip_on_cran()
   skip_if_not_installed("microbenchmark")
 
