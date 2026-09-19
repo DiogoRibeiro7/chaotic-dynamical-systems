@@ -1,6 +1,6 @@
 bibentry(
   bibtype = "Manual",
-  title = "chaoticds: Chaotic Dynamical Systems Utilities",
+  title = "chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems",
   author = person(
     given = "Diogo",
     family = "Ribeiro",
@@ -8,9 +8,8 @@ bibentry(
     role = c("aut", "cre"),
     comment = c(ORCID = "0009-0001-2022-7072")
   ),
-  year = "2025",
-  note = "R package version 0.1.0",
+  year = "2026",
+  note = "R package version 0.2.0",
   url = "https://github.com/DiogoRibeiro7/chaotic-dynamical-systems",
-  header = "To cite chaoticds in publications use:",
-  footer = "For questions, contact Diogo Ribeiro at dfr@esmad.ipp.pt or diogo.debastos.ribeiro@gmail.com."
+  header = "To cite chaoticds in publications use:"
 )
