@@ -10,10 +10,11 @@
 # Package infrastructure
 /DESCRIPTION @DiogoRibeiro7
 /NAMESPACE @DiogoRibeiro7
-/_pkgdown.yml @DiogoRibeiro7
 
 # Documentation
 /README.md @DiogoRibeiro7
+/docs/ @DiogoRibeiro7
+/mkdocs.yml @DiogoRibeiro7
 /NEWS.md @DiogoRibeiro7
 /CODE_OF_CONDUCT.md @DiogoRibeiro7
 /CONTRIBUTING.md @DiogoRibeiro7
@@ -21,11 +22,8 @@
 # CI/CD and GitHub configuration
 /.github/ @DiogoRibeiro7
 
-# Analysis scripts and benchmarks
-/analysis/ @DiogoRibeiro7
+# Benchmarks
 /benchmarks/ @DiogoRibeiro7
-/simulations/ @DiogoRibeiro7
-/extremal-index/ @DiogoRibeiro7
 
 # Data and examples
 /data/ @DiogoRibeiro7
