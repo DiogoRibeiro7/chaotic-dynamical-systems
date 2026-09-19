@@ -98,7 +98,7 @@ test_that('auto-detection of C++ availability works', {
   expect_true(is.numeric(small_bm))
 })
 
-test_that('C++ discrete simulators match R over a short deterministic horizon', {
+test_that("C++ discrete simulators match R over a short deterministic horizon", {
   skip_if_not_installed("Rcpp")
   if (!exists("simulate_lozi_map_cpp")) skip("C++ Lozi simulator not available")
   if (!exists("simulate_cat_map_cpp"))  skip("C++ cat-map simulator not available")
