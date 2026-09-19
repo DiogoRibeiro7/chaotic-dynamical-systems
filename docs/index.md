@@ -140,7 +140,7 @@ summary(gpd)
 
 That example is intentionally small. A defensible analysis should also examine threshold sensitivity, cluster stability, goodness of fit, and uncertainty.
 
-[:octicons-arrow-right-24: Follow the full workflow](getting-started.md)
+[:octicons-arrow-right-24: Follow the full workflow](tutorials/logistic-workflow.md)
 
 ## Method map
 
@@ -157,4 +157,4 @@ That example is intentionally small. A defensible analysis should also examine t
 
 ## Where to go next
 
-If you are new to the package, start with [Getting started](getting-started.md). If you already know EVT, the most package-specific material is [Why extremes in chaotic systems?](concepts/why-chaos-extremes.md), [Extremal index and clustering](extremal-index.md), and the [engineering architecture](reference.md).
+If you are new to the package, start with [Getting started](getting-started.md). If you already know EVT, the most package-specific material is [Why extremes in chaotic systems?](concepts/why-chaos-extremes.md), [Extremal index and clustering](extremal-index.md), and the [engineering architecture](engineering/architecture.md).
