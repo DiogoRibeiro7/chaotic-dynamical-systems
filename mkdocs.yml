@@ -22,13 +22,10 @@ theme:
     - navigation.path
     - navigation.top
     - navigation.footer
-    - navigation.indexes
     - search.suggest
     - search.highlight
     - content.code.copy
-    - content.code.annotate
     - content.tabs.link
-    - content.tooltips
     - toc.follow
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -54,24 +51,16 @@ nav:
   - Learn:
       - Getting started: getting-started.md
       - Why extremes in chaotic systems?: concepts/why-chaos-extremes.md
-      - Dynamical systems catalogue: models/dynamical-systems.md
   - Methods:
-      - Block maxima and POT: methods/block-maxima-pot.md
-      - Extremal index and clustering: methods/extremal-index.md
-      - Profile likelihood and return levels: methods/profile-likelihood.md
-      - Diagnostics: methods/diagnostics.md
-      - Multivariate extremes: methods/multivariate.md
-  - Tutorials:
-      - Logistic map end-to-end: tutorials/logistic-workflow.md
-      - Hénon map — BM vs POT: tutorials/henon-evt.md
+      - Dynamical systems: dynamical-systems.md
+      - Extreme value analysis: extreme-value-analysis.md
+      - Extremal index: extremal-index.md
+      - Diagnostics: diagnostics.md
   - Engineering:
-      - Architecture: engineering/architecture.md
-      - Performance and C++: engineering/performance.md
-  - API:
+      - Performance: performance.md
       - Function reference: reference.md
   - Project:
       - Roadmap: project-roadmap.md
-      - Scope and limitations: scope.md
 
 markdown_extensions:
   - admonition
@@ -87,10 +76,7 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -98,8 +84,6 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
-  - pymdownx.tasklist:
-      custom_checkbox: true
 
 extra_css:
   - stylesheets/extra.css
