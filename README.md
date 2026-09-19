@@ -7,7 +7,7 @@
 [![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CRAN status](https://www.r-pkg.org/badges/version/chaoticds)](https://CRAN.R-project.org/package=chaoticds)
+[![GitHub release](https://img.shields.io/github/v/release/DiogoRibeiro7/chaotic-dynamical-systems?display_name=tag)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/releases)
 <!-- badges: end -->
 
 ---
@@ -45,10 +45,10 @@ install.packages("devtools")
 devtools::install_github("DiogoRibeiro7/chaotic-dynamical-systems")
 ```
 
-### From CRAN (Stable Release)
+### From CRAN (planned)
 
 ```r
-# Coming soon!
+# Available after CRAN publication
 install.packages("chaoticds")
 ```
 
@@ -188,7 +188,7 @@ system.time({
   cpp_version <- simulate_logistic_map_cpp(100000, 3.8, 0.2)
 })
 
-# C++ is ~3-5x faster!
+# Compare timings; speed depends on workload and platform.
 ```
 
 See `vignette("performance-optimization")` for benchmarks.
@@ -201,16 +201,16 @@ See `vignette("performance-optimization")` for benchmarks.
 
 | Vignette | Description | Level |
 |----------|-------------|-------|
-| [Getting Started](articles/getting-started.html) | Introduction and basic workflows | Beginner |
-| [Extremal Index Estimation](articles/estimating-theta-logistic.html) | Detailed guide to θ estimation | Intermediate |
-| [Block Maxima vs POT](articles/block-maxima-vs-pot-henon.html) | Comparing extreme value methods | Intermediate |
-| [Interactive Analysis](articles/getting-started-interactive.html) | Using the Shiny app | Beginner |
-| [Performance Guide](articles/performance-optimization.html) | Optimization techniques | Advanced |
-| [Multivariate Analysis](articles/multivariate-analysis.html) | Multi-dimensional systems | Advanced |
+| [Getting Started](https://diogoribeiro7.github.io/chaotic-dynamical-systems/getting-started/) | Introduction and basic workflows | Beginner |
+| [Extremal Index Estimation](https://diogoribeiro7.github.io/chaotic-dynamical-systems/extremal-index/) | Detailed guide to θ estimation | Intermediate |
+| [Block Maxima vs POT](https://diogoribeiro7.github.io/chaotic-dynamical-systems/tutorials/henon-evt/) | Comparing extreme value methods | Intermediate |
+| [Interactive Analysis](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/blob/main/vignettes/getting-started-interactive.Rmd) | Using the Shiny app | Beginner |
+| [Performance Guide](https://diogoribeiro7.github.io/chaotic-dynamical-systems/engineering/performance/) | Optimization techniques | Advanced |
+| [Multivariate Analysis](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/blob/main/vignettes/multivariate-analysis.Rmd) | Multi-dimensional systems | Advanced |
 
 ### 📖 Function Reference
 
-Browse all functions: [Reference](reference/index.html)
+Browse all functions: [Reference](https://diogoribeiro7.github.io/chaotic-dynamical-systems/reference/)
 
 **Core Functions by Category:**
 
@@ -277,7 +277,7 @@ docker pull ghcr.io/diogoribeiro7/chaoticds:latest
 docker run --rm -it ghcr.io/diogoribeiro7/chaoticds:latest
 ```
 
-The image starts an R session with `chaoticds` already installed. Version tags such as `v0.1.0` publish matching container tags and an R source tarball attached to the GitHub Release.
+The image starts an R session with `chaoticds` already installed. Version tags such as `v0.2.0` publish matching container tags and an R source tarball attached to the GitHub Release.
 
 ---
 
@@ -312,17 +312,17 @@ citation("chaoticds")
 ```
 To cite chaoticds in publications use:
 
-  Ribeiro, D. (2025). chaoticds: Chaotic Dynamical Systems Utilities.
-  R package version 0.1.0.
+  Ribeiro, D. (2026). chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems.
+  R package version 0.2.0.
   https://github.com/DiogoRibeiro7/chaotic-dynamical-systems
 
 A BibTeX entry for LaTeX users is:
 
   @Manual{,
-    title = {chaoticds: Chaotic Dynamical Systems Utilities},
+    title = {chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems},
     author = {Diogo Ribeiro},
-    year = {2025},
-    note = {R package version 0.1.0},
+    year = {2026},
+    note = {R package version 0.2.0},
     url = {https://github.com/DiogoRibeiro7/chaotic-dynamical-systems},
   }
 ```
@@ -365,7 +365,7 @@ MIT © [Diogo Ribeiro](https://orcid.org/0009-0001-2022-7072)
 
 ## Acknowledgments
 
-Development supported by ESMAD – Instituto Politécnico do Porto.
+Diogo Ribeiro is affiliated with the Faculty of Media Arts and Design, Technical University of Porto.
 
 Special thanks to the R community and contributors to the extreme value analysis literature.
 

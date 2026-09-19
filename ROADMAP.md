@@ -25,7 +25,7 @@ Two design commitments stay constant:
 
 ---
 
-## Where we are (v0.1)
+## Where we are (v0.2)
 
 - **Simulation** — 5 discrete maps (logistic, Hénon, tent, Lozi, cat) and 3
   continuous flows (Lorenz, Rössler, Duffing), all with `_cpp` fast paths.
@@ -39,11 +39,11 @@ Two design commitments stay constant:
 - **Modelling extras** — non-stationary GEV, tail dependence, return levels,
   goodness-of-fit, compound Poisson MPPs.
 - **Surface** — Shiny explorer, 6 vignettes, one-call HTML report,
-  `examples/walkthrough.Rmd`, pkgdown site, 20 test files green.
+  `examples/walkthrough.Rmd`, MkDocs documentation site, and automated CI.
 
 ---
 
-## Phase 2 — Statistical maturity (target v0.2)
+## Phase 2 — Statistical maturity (v0.2)
 
 Close the gap between `chaoticds` and a textbook EVT toolbox. These items
 each correct a known weakness in the current fits.
@@ -184,8 +184,7 @@ Not phase-bound — keep these healthy throughout.
 
 ## Community and dissemination
 
-- **CRAN submission.** First release once Phase 2 lands and `R CMD check
-  --as-cran` is clean on all platforms.
+- **CRAN submission.** Submit after the v0.2 release is hardened and `R CMD check --as-cran` is clean on all target platforms.
 - **JOSS paper.** Concise software paper once we have a non-trivial set of
   unique methods (decluster + profile CIs + non-stationary + multivariate).
 - **Quarto Book.** A full open-access textbook ("EVT for Chaotic Systems")
