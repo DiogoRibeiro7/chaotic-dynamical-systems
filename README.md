@@ -268,6 +268,19 @@ cat("Correlation dimension:", cd$dimension, "\n")
 
 ---
 
+## GitHub Packages
+
+Versioned releases are also published as a container package in GitHub Container Registry.
+
+```bash
+docker pull ghcr.io/diogoribeiro7/chaoticds:latest
+docker run --rm -it ghcr.io/diogoribeiro7/chaoticds:latest
+```
+
+The image starts an R session with `chaoticds` already installed. Version tags such as `v0.1.0` publish matching container tags and an R source tarball attached to the GitHub Release.
+
+---
+
 ## Getting Help
 
 ### 📝 Documentation
