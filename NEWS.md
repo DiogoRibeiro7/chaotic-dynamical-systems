@@ -1,11 +1,8 @@
-# chaoticds (development version)
+# chaoticds 0.2.0
 
 ## Dynamics Expansion
 
 * Added globally coupled Kuramoto oscillators with matching R and C++ RK4 implementations, linear-time order-parameter coupling, transient handling, and synchronization diagnostics.
-
-## Dynamics Expansion
-
 * Added a periodic nearest-neighbour coupled logistic-map lattice with matching R and C++ implementations, deterministic initialization, optional Gaussian perturbations, and parity tests.
 
 ## Statistical Inference
@@ -13,6 +10,12 @@
 * Added native profile-likelihood confidence intervals for Poisson point-process fits from `fit_ppp()`.
 * Added PPL return-level profiling on the fitted block-maximum GEV scale.
 * Fixed profile-likelihood support for `fit_gev_rlargest()` so it uses the joint r-largest likelihood instead of a block-maxima approximation.
+
+## Documentation and Distribution
+
+* Replaced the retired pkgdown deployment with a curated MkDocs Material documentation site on GitHub Pages.
+* Added long-form guides for dynamical systems, EVT methodology, extremal clustering, diagnostics, package architecture, and worked logistic/Hénon workflows.
+* Added GitHub Container Registry publishing for versioned `chaoticds` images and automated R source-package assets on GitHub Releases.
 
 ## Repository and Consistency Cleanup
 
