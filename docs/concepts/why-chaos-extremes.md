@@ -127,11 +127,11 @@ A more defensible workflow is
 
 ## Suggested reading path
 
-1. [Dynamical systems catalogue](../models/dynamical-systems.md)
-2. [Block maxima and POT](../methods/block-maxima-pot.md)
-3. [Extremal index and clustering](../methods/extremal-index.md)
-4. [Diagnostics](../methods/diagnostics.md)
-5. [Logistic-map tutorial](../tutorials/logistic-workflow.md)
+1. [Dynamical systems catalogue](../dynamical-systems.md)
+2. [Block maxima and POT](../extreme-value-analysis.md)
+3. [Extremal index and clustering](../extremal-index.md)
+4. [Diagnostics](../diagnostics.md)
+5. [Logistic-map tutorial](../getting-started.md)
 
 ## References
 
