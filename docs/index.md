@@ -60,37 +60,37 @@ where \(\theta\) is the **extremal index**. The package is built around this int
 
     Logistic, Hénon, tent, Lozi, Arnold cat, standard and Ikeda maps; Lorenz, Rössler and Duffing flows; Mackey–Glass delay dynamics; coupled logistic-map lattices; Kuramoto oscillators.
 
-    [:octicons-arrow-right-24: Dynamical systems](models/dynamical-systems.md)
+    [:octicons-arrow-right-24: Dynamical systems](dynamical-systems.md)
 
 -   **Extreme-value inference**
 
     Block maxima + GEV, peaks over threshold + GPD, Poisson point-process likelihood, r-largest order statistics, non-stationary GEV, return levels, and profile likelihood.
 
-    [:octicons-arrow-right-24: EVT methods](methods/block-maxima-pot.md)
+    [:octicons-arrow-right-24: EVT methods](extreme-value-analysis.md)
 
 -   **Clustering and dependence**
 
     Runs and intervals extremal-index estimators, cluster extraction, declustering, block-bootstrap uncertainty, multivariate extremal indices, and upper/lower tail dependence.
 
-    [:octicons-arrow-right-24: Extremal clustering](methods/extremal-index.md)
+    [:octicons-arrow-right-24: Extremal clustering](extremal-index.md)
 
 -   **Dynamics diagnostics**
 
     Lyapunov exponents and spectra, correlation dimension, recurrence plots and RQA, symbolic dynamics, block entropy, source entropy, ACF decay, and mixing diagnostics.
 
-    [:octicons-arrow-right-24: Diagnostics](methods/diagnostics.md)
+    [:octicons-arrow-right-24: Diagnostics](diagnostics.md)
 
 -   **Performance**
 
     The readable R implementation is the specification. Expensive operations have C++ counterparts where useful, with parity tests and workload-aware wrappers.
 
-    [:octicons-arrow-right-24: Engineering](engineering/performance.md)
+    [:octicons-arrow-right-24: Engineering](performance.md)
 
 -   **End-to-end workflows**
 
     The package includes bundled example datasets, vignettes, a Shiny explorer, reporting helpers, and high-level workflows for reproducible analyses.
 
-    [:octicons-arrow-right-24: Logistic-map tutorial](tutorials/logistic-workflow.md)
+    [:octicons-arrow-right-24: Logistic-map tutorial](getting-started.md)
 
 </div>
 
@@ -140,7 +140,7 @@ summary(gpd)
 
 That example is intentionally small. A defensible analysis should also examine threshold sensitivity, cluster stability, goodness of fit, and uncertainty.
 
-[:octicons-arrow-right-24: Follow the full workflow](tutorials/logistic-workflow.md)
+[:octicons-arrow-right-24: Follow the full workflow](getting-started.md)
 
 ## Method map
 
@@ -157,4 +157,4 @@ That example is intentionally small. A defensible analysis should also examine t
 
 ## Where to go next
 
-If you are new to the package, start with [Getting started](getting-started.md). If you already know EVT, the most package-specific material is [Why extremes in chaotic systems?](concepts/why-chaos-extremes.md), [Extremal index and clustering](methods/extremal-index.md), and the [engineering architecture](engineering/architecture.md).
+If you are new to the package, start with [Getting started](getting-started.md). If you already know EVT, the most package-specific material is [Why extremes in chaotic systems?](concepts/why-chaos-extremes.md), [Extremal index and clustering](extremal-index.md), and the [engineering architecture](reference.md).
