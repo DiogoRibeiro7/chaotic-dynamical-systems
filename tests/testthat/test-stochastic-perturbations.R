@@ -90,16 +90,27 @@ test_that("noisy R and C++ simulators agree over a short horizon", {
 test_that("noisy C++ simulators are reproducible under the same seed", {
   skip_if_not_installed("Rcpp")
 
-  for (fn in list(
-    simulate_logistic_map_cpp,
-    simulate_henon_map_cpp,
-    simulate_standard_map_cpp
-  )) {
+  cases <- list(
+    list(
+      fn = simulate_logistic_map_cpp,
+      args = list(n = 200L, r = 3.8, x0 = 0.2, noise_sd = 0.02)
+    ),
+    list(
+      fn = simulate_henon_map_cpp,
+      args = list(n = 200L, noise_sd = 0.02)
+    ),
+    list(
+      fn = simulate_standard_map_cpp,
+      args = list(n = 200L, noise_sd = 0.02)
+    )
+  )
+
+  for (case in cases) {
     set.seed(123L)
-    a <- fn(200, noise_sd = 0.02)
+    a <- do.call(case$fn, case$args)
 
     set.seed(123L)
-    b <- fn(200, noise_sd = 0.02)
+    b <- do.call(case$fn, case$args)
 
     expect_identical(a, b)
   }
