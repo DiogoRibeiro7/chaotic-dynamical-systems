@@ -1,0 +1,79 @@
+:root {
+  --md-text-font-size: 0.96rem;
+}
+
+.md-grid {
+  max-width: 78rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(180px, 0.6fr);
+  gap: 2.5rem;
+  align-items: center;
+  padding: 2.2rem 0 1.4rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  margin-bottom: 0.7rem;
+}
+
+.hero .lead {
+  font-size: 1.18rem;
+  max-width: 48rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.hero img {
+  width: min(100%, 250px);
+  margin-inline: auto;
+}
+
+.metric-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin: 1rem 0 2rem;
+}
+
+.metric-strip > div {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.6rem;
+  padding: 0.9rem 1rem;
+  background: var(--md-code-bg-color);
+}
+
+.metric-strip strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.method-table td:first-child {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.workflow {
+  margin: 1.5rem 0;
+}
+
+.api-group code {
+  white-space: nowrap;
+}
+
+@media screen and (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero img {
+    display: none;
+  }
+
+  .metric-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
