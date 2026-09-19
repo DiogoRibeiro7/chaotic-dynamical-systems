@@ -17,31 +17,91 @@ test_that("noise_sd = 0 leaves all discrete simulators deterministic", {
 })
 
 test_that("noise_sd > 0 produces different orbits under different RNG seeds", {
-  set.seed(1L); a <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
-  set.seed(2L); b <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
+  set.seed(1L)
+  a <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
+
+  set.seed(2L)
+  b <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
+
   expect_false(isTRUE(all.equal(a, b)))
 })
 
 test_that("noise_sd > 0 produces identical orbits under the same RNG seed", {
-  set.seed(1L); a <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
-  set.seed(1L); b <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
+  set.seed(1L)
+  a <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
+
+  set.seed(1L)
+  b <- simulate_logistic_map(100, r = 3.8, x0 = 0.2, noise_sd = 0.01)
+
   expect_identical(a, b)
 })
 
-test_that("noisy R and C++ simulators agree under the same RNG seed", {
+test_that("noisy R and C++ simulators agree over a short horizon", {
   skip_if_not_installed("Rcpp")
+
+  # The noise stream should agree under the same R seed, but a chaotic map
+  # amplifies tiny architecture/compiler floating-point differences. Compare
+  # before that exponential separation becomes the quantity being tested.
+  n_parity <- 12L
+
   for (sd in c(0, 0.005, 0.02)) {
-    set.seed(42L); r_  <- simulate_logistic_map    (200, r = 3.8, x0 = 0.2, noise_sd = sd)
-    set.seed(42L); cpp_ <- simulate_logistic_map_cpp(200, r = 3.8, x0 = 0.2, noise_sd = sd)
-    expect_equal(cpp_, r_, tolerance = 1e-12)
+    set.seed(42L)
+    r_ <- simulate_logistic_map(
+      n_parity,
+      r = 3.8,
+      x0 = 0.2,
+      noise_sd = sd
+    )
+    set.seed(42L)
+    cpp_ <- simulate_logistic_map_cpp(
+      n_parity,
+      r = 3.8,
+      x0 = 0.2,
+      noise_sd = sd
+    )
+    expect_equal(cpp_, r_, tolerance = 1e-10)
 
-    set.seed(42L); r_  <- simulate_henon_map    (200, noise_sd = sd)
-    set.seed(42L); cpp_ <- simulate_henon_map_cpp(200, noise_sd = sd)
-    expect_equal(cpp_, r_, tolerance = 1e-12)
+    set.seed(42L)
+    r_ <- simulate_henon_map(
+      n_parity,
+      noise_sd = sd
+    )
+    set.seed(42L)
+    cpp_ <- simulate_henon_map_cpp(
+      n_parity,
+      noise_sd = sd
+    )
+    expect_equal(cpp_, r_, tolerance = 1e-10)
 
-    set.seed(42L); r_  <- simulate_standard_map    (200, noise_sd = sd)
-    set.seed(42L); cpp_ <- simulate_standard_map_cpp(200, noise_sd = sd)
-    expect_equal(cpp_, r_, tolerance = 1e-12)
+    set.seed(42L)
+    r_ <- simulate_standard_map(
+      n_parity,
+      noise_sd = sd
+    )
+    set.seed(42L)
+    cpp_ <- simulate_standard_map_cpp(
+      n_parity,
+      noise_sd = sd
+    )
+    expect_equal(cpp_, r_, tolerance = 1e-10)
+  }
+})
+
+test_that("noisy C++ simulators are reproducible under the same seed", {
+  skip_if_not_installed("Rcpp")
+
+  for (fn in list(
+    simulate_logistic_map_cpp,
+    simulate_henon_map_cpp,
+    simulate_standard_map_cpp
+  )) {
+    set.seed(123L)
+    a <- fn(200, noise_sd = 0.02)
+
+    set.seed(123L)
+    b <- fn(200, noise_sd = 0.02)
+
+    expect_identical(a, b)
   }
 })
 
