@@ -51,13 +51,17 @@ nav:
   - Learn:
       - Getting started: getting-started.md
       - Why extremes in chaotic systems?: concepts/why-chaos-extremes.md
+      - Dynamical systems catalogue: models/dynamical-systems.md
   - Methods:
-      - Dynamical systems: dynamical-systems.md
       - Extreme value analysis: extreme-value-analysis.md
       - Extremal index: extremal-index.md
       - Diagnostics: diagnostics.md
+  - Tutorials:
+      - Logistic map workflow: tutorials/logistic-workflow.md
+      - Hénon map — BM vs POT: tutorials/henon-evt.md
   - Engineering:
-      - Performance: performance.md
+      - Architecture: engineering/architecture.md
+      - Performance and C++: engineering/performance.md
       - Function reference: reference.md
   - Project:
       - Roadmap: project-roadmap.md
