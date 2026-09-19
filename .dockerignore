@@ -1,0 +1,12 @@
+.git
+.github
+.Rproj.user
+site
+docs
+vignettes
+tests
+benchmarks
+archive
+check_output.txt
+*.Rcheck
+*.tar.gz
