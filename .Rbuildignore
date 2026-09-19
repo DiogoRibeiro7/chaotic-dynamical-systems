@@ -12,12 +12,9 @@
 ^chaoticds\.Rproj$
 ^\.github$
 ^benchmarks/
-^_pkgdown\.yml$
-^pkgdown/
 ^data-raw/
 ^\.pytest_cache/
 ^chaoticds/
-^setup\.sh$
 ^setup-all\.sh$
 ^CITATION\.cff$
 ^CONTRIBUTING\.md$
@@ -25,7 +22,6 @@
 ^NEWS\.md$
 ^PERFORMANCE\.md$
 ^roadmap\.md$
-^pyproject\.toml$
 ^renv\.lock$
 ^check_output\.txt$
 ^document\.R$
