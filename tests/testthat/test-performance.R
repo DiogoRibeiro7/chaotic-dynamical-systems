@@ -55,7 +55,7 @@ test_that('memory usage is reasonable', {
   gc()
 })
 
-test_that('larger inputs complete and return valid results', {
+test_that("larger inputs complete and return valid results", {
   skip_on_cran()
 
   sizes <- c(1000L, 5000L, 10000L)
