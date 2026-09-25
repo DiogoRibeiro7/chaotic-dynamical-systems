@@ -223,29 +223,16 @@ test_that("functions handle moderately large data efficiently", {
   }, 1)  # Should complete in < 1 second
 })
 
-test_that("C++ functions provide performance benefit", {
-  skip_on_cran()
-  skip_if_not_installed("microbenchmark")
-
+test_that("C++ logistic-map implementation matches the R implementation", {
   n <- 5000
   r <- 3.8
   x0 <- 0.2
 
-  # Just verify both work and C++ is faster (on average)
-  r_time <- system.time({
-    simulate_logistic_map(n, r, x0)
-  })[["elapsed"]]
+  r_result <- simulate_logistic_map(n, r, x0)
+  cpp_result <- simulate_logistic_map_cpp(n, r, x0)
 
-  cpp_time <- system.time({
-    simulate_logistic_map_cpp(n, r, x0)
-  })[["elapsed"]]
-
-  # Functional CI should not fail on noisy microbenchmark timing.
-  # Performance regressions are enforced in the dedicated benchmark workflow.
-  expect_true(is.finite(cpp_time))
-  expect_true(is.finite(r_time))
-  expect_gt(cpp_time, 0)
-  expect_gt(r_time, 0)
+  expect_length(cpp_result, length(r_result))
+  expect_equal(cpp_result, r_result, tolerance = 1e-12)
 })
 
 # =============================================================================
