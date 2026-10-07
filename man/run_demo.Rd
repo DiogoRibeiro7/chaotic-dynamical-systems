@@ -67,7 +67,7 @@ The function simulates chaotic dynamics and then performs:
 - Peaks-over-threshold analysis and GPD fitting
 - Extremal index estimation (runs and intervals methods)
 - Cluster analysis
-- Autocorrelation and mixing diagnostics
+- Autocorrelation and exceedance-event dependence diagnostics
 - Threshold selection diagnostics
 
 ## Workflow Steps
@@ -78,7 +78,7 @@ The function simulates chaotic dynamics and then performs:
 5. **Fit GPD** distribution to exceedances
 6. **Estimate θ** using runs and intervals methods
 7. **Analyze clusters** of extreme events
-8. **Compute diagnostics** (ACF, mixing coefficients)
+8. **Compute diagnostics** (ACF, exceedance-event dependence)
 9. **Generate report** (optional PDF output)
 
 ## When to Use
@@ -139,7 +139,7 @@ The returned list contains 11 components organized by analysis type:
 
 **Diagnostics**:
 - `acf`: Autocorrelation function values
-- `mixing`: Mixing coefficient estimates
+- `mixing`: Lagged threshold-exceedance dependence estimates
 }
 
 \examples{
