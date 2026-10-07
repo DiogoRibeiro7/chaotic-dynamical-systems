@@ -318,34 +318,46 @@ double extremal_index_intervals_cpp(NumericVector x, double threshold) {
     return NA_REAL;
   }
 
-  // Compute inter-exceedance times
-  std::vector<int> S(N - 1);
+  // Compute inter-exceedance times T_i.
+  std::vector<double> gaps(N - 1);
+  double max_gap = 0.0;
   for (int i = 1; i < N; i++) {
-    S[i-1] = exc_indices[i] - exc_indices[i-1];
+    gaps[i - 1] = static_cast<double>(exc_indices[i] - exc_indices[i - 1]);
+    max_gap = std::max(max_gap, gaps[i - 1]);
   }
 
-  // Ferro-Segers estimator
-  double sum_S = 0.0;
-  double sum_S_minus_1 = 0.0;
+  const double n_intervals = static_cast<double>(N - 1);
+  double numerator = 0.0;
+  double denominator = 0.0;
 
-  for (int i = 0; i < N - 1; i++) {
-    sum_S += S[i];
-    if (S[i] > 1) {
-      sum_S_minus_1 += S[i] - 1;
+  // Ferro-Segers (2003) intervals estimator.
+  if (max_gap > 2.0) {
+    double sum_shifted = 0.0;
+    double sum_products = 0.0;
+    for (double gap : gaps) {
+      const double shifted = gap - 1.0;
+      sum_shifted += shifted;
+      sum_products += shifted * (shifted - 1.0);
     }
+    numerator = 2.0 * sum_shifted * sum_shifted;
+    denominator = n_intervals * sum_products;
+  } else {
+    double sum_gaps = 0.0;
+    double sum_squares = 0.0;
+    for (double gap : gaps) {
+      sum_gaps += gap;
+      sum_squares += gap * gap;
+    }
+    numerator = 2.0 * sum_gaps * sum_gaps;
+    denominator = n_intervals * sum_squares;
   }
 
-  if (sum_S_minus_1 == 0.0) {
-    return 1.0;  // No clustering
+  if (!(denominator > 0.0)) {
+    return NA_REAL;
   }
 
-  double theta = 2.0 * sum_S * sum_S / ((N - 1) * sum_S_minus_1 + sum_S * sum_S);
-
-  // Bound between 0 and 1
-  if (theta > 1.0) theta = 1.0;
-  if (theta < 0.0) theta = 0.0;
-
-  return theta;
+  const double estimate = numerator / denominator;
+  return std::min(1.0, std::max(0.0, estimate));
 }
 
 //' Fast Lozi map simulation (C++ implementation)
