@@ -360,17 +360,25 @@ test_that("acf_decay: validates documented behavior", {
   expect_true(all(abs(acf_vals) <= 1))  # ACF should be in [-1, 1]
 })
 
-test_that("mixing_coefficients: validates documented behavior", {
-  set.seed(42)
-  x <- simulate_logistic_map(500, 3.8, 0.2)
-  threshold <- quantile(x, 0.9)
-  lags <- 1:5
+test_that("exceedance dependence diagnostic matches its empirical definition", {
+  x <- c(0, 1, 0, 1, 1, 0)
+  threshold <- 0.5
+  lags <- c(1L, 2L)
 
-  mix <- mixing_coefficients(x, threshold, lags)
+  dep <- exceedance_dependence_coefficients(x, threshold, lags)
 
-  expect_type(mix, "double")
-  expect_length(mix, length(lags))
-  expect_true(all(mix >= 0 & mix <= 1))  # Mixing coefficients in [0,1]
+  indicator <- as.integer(x > threshold)
+  manual <- vapply(lags, function(k) {
+    n <- length(indicator)
+    joint <- mean(indicator[seq_len(n - k)] * indicator[(k + 1):n])
+    product <- mean(indicator[seq_len(n - k)]) *
+      mean(indicator[(k + 1):n])
+    abs(joint - product)
+  }, numeric(1))
+
+  expect_equal(dep, manual)
+  expect_equal(mixing_coefficients(x, threshold, lags), dep)
+  expect_true(all(dep >= 0 & dep <= 1))
 })
 
 # =============================================================================
