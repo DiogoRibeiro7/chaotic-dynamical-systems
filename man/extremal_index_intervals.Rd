@@ -12,11 +12,32 @@ extremal_index_intervals(x, threshold)
 \item{threshold}{Numeric threshold value.}
 }
 \value{
-Estimated extremal index. Returns `NA` if fewer than two exceedances
-  occur above `threshold`.
+Estimated extremal index in \eqn{[0,1]}. Returns \code{NA} if fewer
+than two exceedances occur above \code{threshold}.
 }
 \description{
 Intervals estimator of extremal index (Ferro & Segers)
+}
+\details{
+Let \eqn{T_i} be the inter-exceedance times between consecutive threshold
+exceedances and let \eqn{N} be the number of exceedances. The estimator
+follows Ferro and Segers (2003). When \eqn{\max(T_i) > 2}, it uses
+\deqn{
+\hat{\theta} =
+\min\left\{1,
+\frac{2\left[\sum_i(T_i-1)\right]^2}
+{(N-1)\sum_i(T_i-1)(T_i-2)}
+\right\}.
+}
+Otherwise it uses
+\deqn{
+\hat{\theta} =
+\min\left\{1,
+\frac{2\left(\sum_i T_i\right)^2}
+{(N-1)\sum_i T_i^2}
+\right\}.
+}
+The observations are assumed to be equally spaced in time.
 }
 \examples{
 x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
@@ -24,10 +45,11 @@ theta <- extremal_index_intervals(x, threshold = 0.9)
 theta
 }
 \references{
-Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme values.
-Journal of the Royal Statistical Society: Series B (Statistical Methodology), 65(2), 545-556.
+Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme
+values. \emph{Journal of the Royal Statistical Society: Series B (Statistical
+Methodology)}, 65(2), 545-556. \doi{10.1111/1467-9868.00401}
 }
 \seealso{
-[extremal_index_runs()] for alternative runs estimator,
-  [bootstrap_extremal_index()] for confidence intervals
+\code{\link[=extremal_index_runs]{extremal_index_runs()}} for alternative runs estimator,
+\code{\link[=bootstrap_extremal_index]{bootstrap_extremal_index()}} for confidence intervals
 }
