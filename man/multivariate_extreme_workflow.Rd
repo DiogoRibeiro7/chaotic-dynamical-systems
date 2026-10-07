@@ -17,7 +17,7 @@ multivariate_extreme_workflow(
 \item{quantile_level}{[numeric] Quantile level in (0,1) used to derive
 per-variable thresholds.}
 
-\item{run_length}{[integer] Run parameter for extremal-index clustering.}
+\item{run_length}{[integer] Run parameter for exceedance clustering.}
 
 \item{include_lower_tail}{[logical] Whether to also compute lower-tail
 dependence coefficients.}
@@ -29,15 +29,17 @@ A list with components:
   \item{pairwise_dependence}{Data frame with pairwise upper/lower tail dependence.}
   \item{joint_exceedance_rate}{Proportion of rows with at least one exceedance.}
   \item{all_exceedance_rate}{Proportion of rows exceeding all thresholds.}
-  \item{multivariate_extremal_index}{Estimated extremal index from
-    [extremal_index_multivariate()].}
+  \item{extremal_clustering}{Package-defined composite score from
+    \code{multivariate_extremal_clustering()}.}
+  \item{multivariate_extremal_index}{Compatibility alias containing the same
+    score as \code{extremal_clustering}.}
   \item{settings}{List of workflow settings for reproducibility.}
 }
 }
 \description{
 Computes a practical summary for multivariate extremes combining
 thresholding, pairwise tail dependence, joint exceedance diagnostics,
-and a multivariate extremal index estimate.
+and the package-defined multivariate extremal-clustering composite.
 }
 \details{
 ## Assumptions
@@ -58,6 +60,6 @@ z <- -0.2 * x + rnorm(1000, sd = 1.0)
 df <- data.frame(x = x, y = y, z = z)
 
 wf <- multivariate_extreme_workflow(df, quantile_level = 0.95, run_length = 3)
-wf$multivariate_extremal_index
+wf$extremal_clustering
 head(wf$pairwise_dependence)
 }
