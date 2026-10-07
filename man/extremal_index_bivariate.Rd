@@ -15,10 +15,10 @@ single threshold applied to all columns.}
 \item{run_length}{[integer] Run parameter for the runs estimator.}
 }
 \value{
-[numeric] Estimated extremal index for the first two columns or `NA`.
+[numeric] Composite extremal-clustering score for the first two columns or \code{NA}.
 }
 \description{
-Calls [extremal_index_multivariate()] for the first two columns of `df`.
+Calls \code{multivariate_extremal_clustering()} for the first two columns of \code{df}. The function name is retained for backward compatibility.
 }
 \examples{
 set.seed(1)
@@ -26,5 +26,5 @@ df <- data.frame(a = rnorm(1000), b = rnorm(1000))
 extremal_index_bivariate(df, 0.9)
 }
 \seealso{
-[extremal_index_multivariate()]
+\code{\link[=multivariate_extremal_clustering]{multivariate_extremal_clustering()}}
 }
