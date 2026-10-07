@@ -12,11 +12,20 @@ extremal_index_intervals(x, threshold)
 \item{threshold}{Numeric threshold value.}
 }
 \value{
-Estimated extremal index. Returns `NA` if fewer than two exceedances
-  occur above `threshold`.
+Estimated extremal index in \eqn{[0,1]}. Returns \code{NA} if fewer
+than two exceedances occur above \code{threshold}.
 }
 \description{
 Intervals estimator of extremal index (Ferro & Segers)
+}
+\details{
+Let \code{T_i} denote the inter-exceedance times between consecutive threshold
+exceedances, and let \code{N} be the number of exceedances. Following Ferro and
+Segers (2003), when \code{max(T_i) > 2} the estimate is
+\code{min(1, 2 * sum(T_i - 1)^2 / ((N - 1) * sum((T_i - 1) * (T_i - 2))))}.
+Otherwise it is
+\code{min(1, 2 * sum(T_i)^2 / ((N - 1) * sum(T_i^2)))}.
+The observations are assumed to be equally spaced in time.
 }
 \examples{
 x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
@@ -24,10 +33,11 @@ theta <- extremal_index_intervals(x, threshold = 0.9)
 theta
 }
 \references{
-Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme values.
-Journal of the Royal Statistical Society: Series B (Statistical Methodology), 65(2), 545-556.
+Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme
+values. \emph{Journal of the Royal Statistical Society: Series B (Statistical
+Methodology)}, 65(2), 545-556. \doi{10.1111/1467-9868.00401}
 }
 \seealso{
-[extremal_index_runs()] for alternative runs estimator,
-  [bootstrap_extremal_index()] for confidence intervals
+\code{\link[=extremal_index_runs]{extremal_index_runs()}} for alternative runs estimator,
+\code{\link[=bootstrap_extremal_index]{bootstrap_extremal_index()}} for confidence intervals
 }
