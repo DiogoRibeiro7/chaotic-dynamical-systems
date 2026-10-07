@@ -26,7 +26,18 @@ Hill diagnostics are available through `hill_estimates()` and `hill_plot()`.
 
 ## Dependence and mixing
 
-Use `acf_decay()`, `compute_autocorrelation()`, `mixing_coefficients()`, and `d_check()`.
+Use `acf_decay()`, `compute_autocorrelation()`,
+`exceedance_dependence_coefficients()`, and `d_check()`.
+
+`exceedance_dependence_coefficients()` is an event-specific threshold
+diagnostic. It measures the absolute difference between a lagged joint
+exceedance probability and the corresponding product of marginal
+probabilities. It is **not** an estimator of the strong/alpha-mixing
+coefficient. The historical `mixing_coefficients()` name remains as a
+compatibility wrapper.
+
+`d_check()` is also intentionally heuristic; it is not a formal hypothesis
+test for Leadbetter's D condition.
 
 !!! note
     A weak autocorrelation function does not imply weak extremal dependence. Linear correlation and clustering of rare events answer different questions.
