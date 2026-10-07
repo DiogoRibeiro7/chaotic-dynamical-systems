@@ -19,24 +19,12 @@ than two exceedances occur above \code{threshold}.
 Intervals estimator of extremal index (Ferro & Segers)
 }
 \details{
-Let \eqn{T_i} be the inter-exceedance times between consecutive threshold
-exceedances and let \eqn{N} be the number of exceedances. The estimator
-follows Ferro and Segers (2003). When \eqn{\max(T_i) > 2}, it uses
-\deqn{
-\hat{\theta} =
-\min\left\{1,
-\frac{2\left[\sum_i(T_i-1)\right]^2}
-{(N-1)\sum_i(T_i-1)(T_i-2)}
-\right\}.
-}
-Otherwise it uses
-\deqn{
-\hat{\theta} =
-\min\left\{1,
-\frac{2\left(\sum_i T_i\right)^2}
-{(N-1)\sum_i T_i^2}
-\right\}.
-}
+Let \code{T_i} denote the inter-exceedance times between consecutive threshold
+exceedances, and let \code{N} be the number of exceedances. Following Ferro and
+Segers (2003), when \code{max(T_i) > 2} the estimate is
+\code{min(1, 2 * sum(T_i - 1)^2 / ((N - 1) * sum((T_i - 1) * (T_i - 2))))}.
+Otherwise it is
+\code{min(1, 2 * sum(T_i)^2 / ((N - 1) * sum(T_i^2)))}.
 The observations are assumed to be equally spaced in time.
 }
 \examples{
