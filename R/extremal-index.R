@@ -249,11 +249,33 @@ extremal_index_runs <- function(x, threshold, run_length) {
 #' @param x Numeric vector of observations.
 #' @param threshold Numeric threshold value.
 #'
-#' @return Estimated extremal index. Returns `NA` if fewer than two exceedances
-#'   occur above `threshold`.
+#' @details
+#' Let eqn{T_i} be the inter-exceedance times between consecutive threshold
+#' exceedances and let eqn{N} be the number of exceedances. The estimator
+#' follows Ferro and Segers (2003). When eqn{max(T_i) > 2}, it uses
+#' deqn{
+#' hat{	heta} =
+#' minleft{1,
+#' rac{2left[sum_i(T_i-1)ight]^2}
+#' {(N-1)sum_i(T_i-1)(T_i-2)}
+#' ight}.
+#' }
+#' Otherwise it uses
+#' deqn{
+#' hat{	heta} =
+#' minleft{1,
+#' rac{2left(sum_i T_iight)^2}
+#' {(N-1)sum_i T_i^2}
+#' ight}.
+#' }
+#' The observations are assumed to be equally spaced in time.
+#'
+#' @return Estimated extremal index in eqn{[0,1]}. Returns `NA` if fewer
+#'   than two exceedances occur above `threshold`.
 #' @references
-#' Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme values.
-#' Journal of the Royal Statistical Society: Series B (Statistical Methodology), 65(2), 545-556.
+#' Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme
+#' values. *Journal of the Royal Statistical Society: Series B (Statistical
+#' Methodology)*, 65(2), 545-556. doi{10.1111/1467-9868.00401}
 #' @seealso [extremal_index_runs()] for alternative runs estimator,
 #'   [bootstrap_extremal_index()] for confidence intervals
 #' @examples
@@ -265,9 +287,19 @@ extremal_index_intervals <- function(x, threshold) {
   assertthat::assert_that(is.numeric(x), length(x) > 1)
   ix <- threshold_exceedances(x, threshold)
   if (length(ix) < 2) return(NA_real_)
-  gaps <- diff(ix)
-  gaps <- gaps[gaps > 0]
-  2 * mean(pmin(gaps, 2)) - 1
+  gaps <- as.numeric(diff(ix))
+  n_intervals <- length(gaps)
+
+  if (max(gaps) > 2) {
+    shifted <- gaps - 1
+    denominator <- n_intervals * sum(shifted * (shifted - 1))
+    estimate <- 2 * sum(shifted)^2 / denominator
+  } else {
+    denominator <- n_intervals * sum(gaps^2)
+    estimate <- 2 * sum(gaps)^2 / denominator
+  }
+
+  min(1, estimate)
 }
 
 #' Compute hitting/return times
