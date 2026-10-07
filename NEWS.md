@@ -1,5 +1,12 @@
 # chaoticds 0.2.0
 
+* Add `exceedance_dependence_coefficients()` as the preferred name for the
+  lagged threshold-exceedance diagnostic; retain `mixing_coefficients()` as a
+  compatibility wrapper and explicitly state that it is not an alpha-mixing
+  estimator.
+* Add `multivariate_extremal_clustering()` as the preferred name for the
+  package-defined multivariate clustering composite; retain the historical
+  extremal-index names and workflow field as compatibility aliases.
 * Correct `extremal_index_intervals()` and its C++ counterpart to implement
   the Ferro-Segers (2003) intervals estimator, with fixed numerical reference
   tests and R/C++ parity checks.
