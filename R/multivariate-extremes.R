@@ -6,26 +6,29 @@
 #' @name multivariate_extremes
 NULL
 
-#' Multivariate extremal index
+#' Composite multivariate extremal-clustering diagnostic
 #'
-#' Estimates a multivariate extremal index for a dataset with two or
-#' more variables. The estimator uses a runs approach applied to joint
-#' exceedances across any component and averages it with the component
-#' wise runs estimators.
+#' Computes a package-defined summary of extremal clustering across multiple
+#' components. It averages one runs-based cluster-to-exceedance ratio for rows
+#' where any component exceeds its threshold with the corresponding
+#' componentwise runs estimates.
+#'
+#' The result is a descriptive composite diagnostic. It is not claimed to be a
+#' literature-defined multivariate extremal-index estimator.
 #'
 #' @param df [data.frame] or [matrix] with numeric columns.
 #' @param thresholds [numeric] Vector of length equal to `ncol(df)` or a
 #'   single threshold applied to all columns.
-#' @param run_length [integer] Run parameter for the runs estimator.
+#' @param run_length [integer] Run parameter used for all cluster summaries.
 #'
-#' @return [numeric] Estimated extremal index between 0 and 1, or `NA`
-#'   if no valid estimates are available.
+#' @return [numeric] Composite extremal-clustering score between 0 and 1, or
+#'   `NA` if no valid component or joint estimate is available.
 #' @examples
 #' set.seed(1)
 #' df <- data.frame(a = rnorm(1000), b = rnorm(1000), c = rnorm(1000))
-#' extremal_index_multivariate(df, 0.9)
+#' multivariate_extremal_clustering(df, 0.9)
 #' @export
-extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
+multivariate_extremal_clustering <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
   checkmate::assert_data_frame(
     df,
@@ -59,35 +62,54 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
   } else {
     as.numeric(length(ce))
   }
-  theta_joint <- if (n_exc == 0) NA_real_ else n_clusters / n_exc
-  sanitize_theta <- function(v) {
+  joint_score <- if (n_exc == 0) NA_real_ else n_clusters / n_exc
+  sanitize_score <- function(v) {
     if (!is.numeric(v) || length(v) != 1L || !is.finite(v)) {
       return(NA_real_)
     }
     min(1, max(0, as.numeric(v)))
   }
-  thetas <- vapply(seq_len(p), function(j) {
-    sanitize_theta(tryCatch(
+  component_scores <- vapply(seq_len(p), function(j) {
+    sanitize_score(tryCatch(
       extremal_index_runs(df[[j]], thresholds[j], run_length),
       error = function(e) NA_real_
     ))
   }, numeric(1))
-  vals <- c(theta_joint, thetas)
+  vals <- c(joint_score, component_scores)
   if (all(is.na(vals))) NA_real_ else mean(vals, na.rm = TRUE)
+}
+
+#' Historical name for the composite multivariate clustering diagnostic
+#'
+#' Compatibility wrapper for [multivariate_extremal_clustering()]. The
+#' historical name is retained for existing code. The returned value is a
+#' package-defined composite and is not presented as a literature-defined
+#' multivariate extremal index.
+#'
+#' @inheritParams multivariate_extremal_clustering
+#' @return The same numeric score as [multivariate_extremal_clustering()].
+#' @examples
+#' set.seed(1)
+#' df <- data.frame(a = rnorm(1000), b = rnorm(1000))
+#' extremal_index_multivariate(df, 0.9)
+#' @seealso [multivariate_extremal_clustering()]
+#' @export
+extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
+  multivariate_extremal_clustering(df, thresholds, run_length)
 }
 
 #' Bivariate wrapper for backward compatibility
 #'
-#' Calls [extremal_index_multivariate()] for the first two columns of `df`.
+#' Calls [multivariate_extremal_clustering()] for the first two columns of `df`. The function name is retained for backward compatibility.
 #'
-#' @inheritParams extremal_index_multivariate
+#' @inheritParams multivariate_extremal_clustering
 #'
-#' @return [numeric] Estimated extremal index for the first two columns or `NA`.
+#' @return [numeric] Composite extremal-clustering score for the first two columns or `NA`.
 #' @examples
 #' set.seed(1)
 #' df <- data.frame(a = rnorm(1000), b = rnorm(1000))
 #' extremal_index_bivariate(df, 0.9)
-#' @seealso [extremal_index_multivariate()]
+#' @seealso [multivariate_extremal_clustering()]
 #' @export
 extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
   df <- as.data.frame(df)
@@ -110,7 +132,7 @@ extremal_index_bivariate <- function(df, thresholds, run_length = 3L) {
     positive = TRUE,
     .var.name = "run_length"
   )
-  extremal_index_multivariate(df[, 1:2], thresholds, run_length)
+  multivariate_extremal_clustering(df[, 1:2], thresholds, run_length)
 }
 
 #' Asymmetric tail dependence coefficient
@@ -288,7 +310,7 @@ tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
 #'
 #' Computes a practical summary for multivariate extremes combining
 #' thresholding, pairwise tail dependence, joint exceedance diagnostics,
-#' and a multivariate extremal index estimate.
+#' and the package-defined multivariate extremal-clustering composite.
 #'
 #' @details
 #' ## Assumptions
@@ -304,7 +326,7 @@ tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
 #' @param df [data.frame] or [matrix] with numeric columns.
 #' @param quantile_level [numeric] Quantile level in (0,1) used to derive
 #'   per-variable thresholds.
-#' @param run_length [integer] Run parameter for extremal-index clustering.
+#' @param run_length [integer] Run parameter for exceedance clustering.
 #' @param include_lower_tail [logical] Whether to also compute lower-tail
 #'   dependence coefficients.
 #'
@@ -314,8 +336,10 @@ tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
 #'   \item{pairwise_dependence}{Data frame with pairwise upper/lower tail dependence.}
 #'   \item{joint_exceedance_rate}{Proportion of rows with at least one exceedance.}
 #'   \item{all_exceedance_rate}{Proportion of rows exceeding all thresholds.}
-#'   \item{multivariate_extremal_index}{Estimated extremal index from
-#'     [extremal_index_multivariate()].}
+#'   \item{extremal_clustering}{Package-defined composite score from
+#'     [multivariate_extremal_clustering()].}
+#'   \item{multivariate_extremal_index}{Compatibility alias containing the
+#'     same score as `extremal_clustering`.}
 #'   \item{settings}{List of workflow settings for reproducibility.}
 #' }
 #' @examples
@@ -326,7 +350,7 @@ tail_dependence_heatmap <- function(df, quantile_level = 0.9) {
 #' df <- data.frame(x = x, y = y, z = z)
 #'
 #' wf <- multivariate_extreme_workflow(df, quantile_level = 0.95, run_length = 3)
-#' wf$multivariate_extremal_index
+#' wf$extremal_clustering
 #' head(wf$pairwise_dependence)
 #' @export
 multivariate_extreme_workflow <- function(
@@ -398,7 +422,7 @@ multivariate_extreme_workflow <- function(
   joint_exceedance_rate <- mean(apply(exceed_mat, 1, any))
   all_exceedance_rate <- mean(apply(exceed_mat, 1, all))
 
-  mult_theta <- extremal_index_multivariate(
+  mult_theta <- multivariate_extremal_clustering(
     df = df,
     thresholds = thresholds,
     run_length = run_length
@@ -409,6 +433,7 @@ multivariate_extreme_workflow <- function(
     pairwise_dependence = pairwise_dependence,
     joint_exceedance_rate = joint_exceedance_rate,
     all_exceedance_rate = all_exceedance_rate,
+    extremal_clustering = mult_theta,
     multivariate_extremal_index = mult_theta,
     settings = list(
       quantile_level = quantile_level,
