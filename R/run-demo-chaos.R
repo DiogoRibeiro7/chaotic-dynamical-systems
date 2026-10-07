@@ -30,7 +30,7 @@
 #' 5. **Fit GPD** distribution to exceedances
 #' 6. **Estimate θ** using runs and intervals methods
 #' 7. **Analyze clusters** of extreme events
-#' 8. **Compute diagnostics** (ACF, mixing coefficients)
+#' 8. **Compute diagnostics** (ACF, exceedance-event dependence)
 #' 9. **Generate report** (optional PDF output)
 #'
 #' ## When to Use
@@ -90,7 +90,7 @@
 #'
 #' **Diagnostics**:
 #' - `acf`: Autocorrelation function values
-#' - `mixing`: Mixing coefficient estimates
+#' - `mixing`: Lagged threshold-exceedance dependence estimates
 #'
 #' @param n Integer. Number of iterations to simulate. Must be positive.
 #'   Recommended: at least 2000 for reliable statistics. Larger values
@@ -251,7 +251,7 @@ run_demo <- function(n = 2000L,
   size_summary <- cluster_summary(sizes)
 
   acf_vals <- acf_decay(series, 1:10)
-  mix_vals <- mixing_coefficients(series, thr, 1:10)
+  mix_vals <- exceedance_dependence_coefficients(series, thr, 1:10)
 
   if (output_report && requireNamespace("rmarkdown", quietly = TRUE)) {
     report_file <- tempfile("demo-chaos", fileext = ".Rmd")
