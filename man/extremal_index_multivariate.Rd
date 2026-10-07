@@ -2,30 +2,32 @@
 % Please edit documentation in R/multivariate-extremes.R
 \name{extremal_index_multivariate}
 \alias{extremal_index_multivariate}
-\title{Multivariate extremal index}
+\title{Historical name for the composite multivariate clustering diagnostic}
 \usage{
 extremal_index_multivariate(df, thresholds, run_length = 3L)
 }
 \arguments{
-\item{df}{[data.frame] or [matrix] with numeric columns.}
+\item{df}{\link{data.frame} or \link{matrix} with numeric columns.}
 
-\item{thresholds}{[numeric] Vector of length equal to `ncol(df)` or a
+\item{thresholds}{Numeric vector of length equal to \code{ncol(df)} or a
 single threshold applied to all columns.}
 
-\item{run_length}{[integer] Run parameter for the runs estimator.}
+\item{run_length}{Integer run parameter used for all cluster summaries.}
 }
 \value{
-[numeric] Estimated extremal index between 0 and 1, or `NA`
-  if no valid estimates are available.
+The same numeric score as \code{multivariate_extremal_clustering()}.
 }
 \description{
-Estimates a multivariate extremal index for a dataset with two or
-more variables. The estimator uses a runs approach applied to joint
-exceedances across any component and averages it with the component
-wise runs estimators.
+Compatibility wrapper for \code{multivariate_extremal_clustering()}. The
+historical name is retained for existing code. The returned value is a
+package-defined composite and is not presented as a literature-defined
+multivariate extremal index.
 }
 \examples{
 set.seed(1)
-df <- data.frame(a = rnorm(1000), b = rnorm(1000), c = rnorm(1000))
+df <- data.frame(a = rnorm(1000), b = rnorm(1000))
 extremal_index_multivariate(df, 0.9)
+}
+\seealso{
+\code{\link[=multivariate_extremal_clustering]{multivariate_extremal_clustering()}}
 }
