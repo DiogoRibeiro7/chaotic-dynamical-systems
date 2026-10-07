@@ -1,5 +1,9 @@
 # chaoticds 0.2.0
 
+* Correct `extremal_index_intervals()` and its C++ counterpart to implement
+  the Ferro-Segers (2003) intervals estimator, with fixed numerical reference
+  tests and R/C++ parity checks.
+
 ## Dynamics Expansion
 
 * Added globally coupled Kuramoto oscillators with matching R and C++ RK4 implementations, linear-time order-parameter coupling, transient handling, and synchronization diagnostics.
