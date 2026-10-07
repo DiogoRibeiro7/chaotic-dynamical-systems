@@ -21,7 +21,7 @@ It joins simulation, extreme-value inference, clustering, dynamical diagnostics,
 <div class="metric-strip">
   <div><strong>Dynamics</strong> maps, flows, delay systems, coupled oscillators</div>
   <div><strong>EVT</strong> GEV, GPD, point process, r-largest</div>
-  <div><strong>Dependence</strong> extremal index, clusters, mixing, tail dependence</div>
+  <div><strong>Dependence</strong> extremal index, clusters, exceedance dependence, tail dependence</div>
   <div><strong>Engineering</strong> R reference implementations with C++ fast paths</div>
 </div>
 
@@ -70,7 +70,7 @@ where \(\theta\) is the **extremal index**. The package is built around this int
 
 -   **Clustering and dependence**
 
-    Runs and intervals extremal-index estimators, cluster extraction, declustering, block-bootstrap uncertainty, multivariate extremal indices, and upper/lower tail dependence.
+    Runs and intervals extremal-index estimators, cluster extraction, declustering, block-bootstrap uncertainty, a package-defined multivariate extremal-clustering diagnostic, and upper/lower tail dependence.
 
     [:octicons-arrow-right-24: Extremal clustering](extremal-index.md)
 
@@ -153,7 +153,7 @@ That example is intentionally small. A defensible analysis should also examine t
 | Is my threshold defensible? | <code>mean_residual_life()</code>, <code>hill_estimates()</code>, <code>threshold_diagnostics()</code> |
 | How uncertain are the tail quantities? | <code>bootstrap_extremal_index()</code>, <code>profile_likelihood()</code>, <code>profile_ci()</code> |
 | Is the orbit actually chaotic? | <code>estimate_lyapunov_exponent()</code>, <code>lyapunov_spectrum_*()</code>, <code>rqa()</code> |
-| Is there joint tail dependence? | <code>upper_tail_dependence()</code>, <code>lower_tail_dependence()</code>, <code>extremal_index_multivariate()</code> |
+| Is there joint tail dependence? | <code>upper_tail_dependence()</code>, <code>lower_tail_dependence()</code>, <code>multivariate_extremal_clustering()</code> |
 
 ## Where to go next
 
