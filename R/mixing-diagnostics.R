@@ -1,8 +1,8 @@
 #' Mixing diagnostics utilities
 #'
-#' Provides functions to compute auto-correlation decay, estimate simple mixing
-#' coefficients, and check Leadbetter's D(un) condition for extreme value
-#' theory applications.
+#' Provides functions to compute auto-correlation decay, lagged
+#' threshold-exceedance dependence diagnostics, and a heuristic check of
+#' Leadbetter's D(un) condition for extreme value theory applications.
 #'
 #' @param x Numeric vector containing the time series.
 #' @param lags Integer vector of lags for correlation or mixing calculations.
