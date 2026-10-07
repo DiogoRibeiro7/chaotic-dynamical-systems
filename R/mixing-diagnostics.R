@@ -24,34 +24,61 @@ acf_decay <- function(x, lags) {
   stats::acf(x, lag.max = max(lags), plot = FALSE)$acf[lags + 1]
 }
 
-#' Estimate simple mixing coefficients
+#' Lagged threshold-exceedance dependence coefficients
 #'
-#' Computes empirical alpha-mixing coefficients using indicator functions of
-#' threshold exceedances separated by specified lags.
+#' Measures dependence between the threshold-exceedance events at times
+#' `t` and `t + k`. For each requested lag `k`, the returned value is
+#' the absolute difference between the empirical joint exceedance probability
+#' and the product of the corresponding marginal exceedance probabilities.
+#'
+#' This is an event-specific dependence diagnostic. It is not an estimator of
+#' the strong (alpha) mixing coefficient, which is defined using a supremum over
+#' suitable event classes or sigma-algebras.
 #'
 #' @param x Numeric vector containing the time series.
 #' @param threshold Numeric exceedance threshold.
-#' @param lags Integer vector of lags at which to estimate coefficients.
+#' @param lags Integer vector of lags at which to compute the diagnostic.
 #'
-#' @return Numeric vector of estimated coefficients corresponding to each lag.
-#'   For lags greater than the series length the function returns `NA`.
+#' @return Numeric vector of dependence coefficients corresponding to each lag.
+#'   For lags greater than or equal to the series length the function returns
+#'   `NA`.
 #' @examples
 #' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
-#' mix_coef <- mixing_coefficients(x, threshold = 0.9, lags = 1:10)
-#' plot(1:10, mix_coef, type = "b", xlab = "Lag", ylab = "Mixing Coefficient")
+#' dep <- exceedance_dependence_coefficients(
+#'   x, threshold = 0.9, lags = 1:10
+#' )
+#' plot(1:10, dep, type = "b", xlab = "Lag",
+#'      ylab = "Exceedance-event dependence")
 #' @export
-mixing_coefficients <- function(x, threshold, lags) {
+exceedance_dependence_coefficients <- function(x, threshold, lags) {
   checkmate::assert_numeric(x, any.missing = FALSE)
   checkmate::assert_number(threshold)
   checkmate::assert_integerish(lags, any.missing = FALSE)
   exc <- as.integer(x > threshold)
   n <- length(exc)
-  sapply(lags, function(k) {
+  vapply(lags, function(k) {
     if (k >= n) return(NA_real_)
-    prob_joint <- mean(exc[1:(n - k)] * exc[(k + 1):n])
-    prob_prod <- mean(exc[1:(n - k)]) * mean(exc[(k + 1):n])
+    prob_joint <- mean(exc[seq_len(n - k)] * exc[(k + 1):n])
+    prob_prod <- mean(exc[seq_len(n - k)]) * mean(exc[(k + 1):n])
     abs(prob_joint - prob_prod)
-  })
+  }, numeric(1))
+}
+
+#' Historical name for exceedance-event dependence
+#'
+#' Compatibility wrapper for [exceedance_dependence_coefficients()]. The
+#' historical name is retained for existing code, but the returned quantity is
+#' not a strong or alpha-mixing coefficient.
+#'
+#' @inheritParams exceedance_dependence_coefficients
+#' @return The same numeric vector as [exceedance_dependence_coefficients()].
+#' @examples
+#' x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
+#' mixing_coefficients(x, threshold = 0.9, lags = 1:5)
+#' @seealso [exceedance_dependence_coefficients()]
+#' @export
+mixing_coefficients <- function(x, threshold, lags) {
+  exceedance_dependence_coefficients(x, threshold, lags)
 }
 
 #' Check D(un) condition
