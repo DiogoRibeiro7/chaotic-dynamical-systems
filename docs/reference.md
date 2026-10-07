@@ -32,7 +32,7 @@ Continuous and delayed systems include Lorenz, Rössler, Duffing, and Mackey–G
 - \`extremal_index_runs()\`
 - \`extremal_index_intervals()\`
 - \`extremal_index_bivariate()\`
-- \`extremal_index_multivariate()\`
+- \`multivariate_extremal_clustering()\`\n- \`extremal_index_multivariate()\` (compatibility wrapper)
 - \`bootstrap_extremal_index()\`
 - \`cluster_exceedances()\`
 - \`cluster_sizes()\`
@@ -46,7 +46,7 @@ Continuous and delayed systems include Lorenz, Rössler, Duffing, and Mackey–G
 - \`threshold_diagnostics()\`
 - \`goodness_of_fit_test()\`
 - \`validate_extreme_model()\`
-- \`mixing_coefficients()\`
+- \`exceedance_dependence_coefficients()\`\n- \`mixing_coefficients()\` (compatibility wrapper)
 - \`recurrence_plot()\`
 - \`rqa()\`
 - \`estimate_lyapunov_exponent()\`
