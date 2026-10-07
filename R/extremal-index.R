@@ -250,24 +250,13 @@ extremal_index_runs <- function(x, threshold, run_length) {
 #' @param threshold Numeric threshold value.
 #'
 #' @details
-#' Let eqn{T_i} be the inter-exceedance times between consecutive threshold
-#' exceedances and let eqn{N} be the number of exceedances. The estimator
-#' follows Ferro and Segers (2003). When eqn{max(T_i) > 2}, it uses
-#' deqn{
-#' hat{	heta} =
-#' minleft{1,
-#' rac{2left[sum_i(T_i-1)ight]^2}
-#' {(N-1)sum_i(T_i-1)(T_i-2)}
-#' ight}.
-#' }
-#' Otherwise it uses
-#' deqn{
-#' hat{	heta} =
-#' minleft{1,
-#' rac{2left(sum_i T_iight)^2}
-#' {(N-1)sum_i T_i^2}
-#' ight}.
-#' }
+#' Let `T_i` denote the inter-exceedance times between consecutive threshold
+#' exceedances, and let `N` be the number of exceedances. Following Ferro and
+#' Segers (2003), when `max(T_i) > 2` the estimate is
+#' `min(1, 2 * sum(T_i - 1)^2 /
+#' ((N - 1) * sum((T_i - 1) * (T_i - 2))))`.
+#' Otherwise it is
+#' `min(1, 2 * sum(T_i)^2 / ((N - 1) * sum(T_i^2)))`.
 #' The observations are assumed to be equally spaced in time.
 #'
 #' @return Estimated extremal index in eqn{[0,1]}. Returns `NA` if fewer
@@ -275,7 +264,7 @@ extremal_index_runs <- function(x, threshold, run_length) {
 #' @references
 #' Ferro, C. A. T., and Segers, J. (2003). Inference for clusters of extreme
 #' values. *Journal of the Royal Statistical Society: Series B (Statistical
-#' Methodology)*, 65(2), 545-556. doi{10.1111/1467-9868.00401}
+#' Methodology)*, 65(2), 545-556. DOI: 10.1111/1467-9868.00401
 #' @seealso [extremal_index_runs()] for alternative runs estimator,
 #'   [bootstrap_extremal_index()] for confidence intervals
 #' @examples
