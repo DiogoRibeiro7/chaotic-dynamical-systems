@@ -62,26 +62,26 @@ cluster_exceedances <- function(indices, run_length) {
 #' Estimate Extremal Index Using Runs Method
 #'
 #' @description
-#' Estimates the extremal index θ from time series data using the runs
+#' Estimates the extremal index theta from time series data using the runs
 #' estimator. The extremal index quantifies the degree of clustering in
-#' extreme values, with θ = 1 indicating independence and θ < 1 indicating
+#' extreme values, with theta = 1 indicating independence and theta < 1 indicating
 #' clustering.
 #'
 #' @details
 #' ## Overview
-#' The extremal index θ ∈ (0, 1] is a fundamental parameter in extreme
+#' The extremal index theta in (0, 1] is a fundamental parameter in extreme
 #' value theory for dependent sequences. It measures the tendency of extreme
 #' values to appear in clusters rather than individually.
 #'
-#' ## Interpretation of θ
-#' - **θ = 1**: Extreme values occur independently (like IID data)
-#' - **θ < 1**: Extreme values cluster together
-#' - **θ = 0.5**: On average, extremes appear in pairs
-#' - **θ = 0.33**: On average, extremes appear in triplets
+#' ## Interpretation of theta
+#' - **theta = 1**: Extreme values occur independently (like IID data)
+#' - **theta < 1**: Extreme values cluster together
+#' - **theta = 0.5**: On average, extremes appear in pairs
+#' - **theta = 0.33**: On average, extremes appear in triplets
 #'
-#' In chaotic dynamical systems, θ is typically less than 1 because the
+#' In chaotic dynamical systems, theta is typically less than 1 because the
 #' system's deterministic nature causes extreme events to cluster. The
-#' value of θ depends on the system's mixing properties and the choice
+#' value of theta depends on the system's mixing properties and the choice
 #' of threshold.
 #'
 #' ## The Runs Method
@@ -94,8 +94,8 @@ cluster_exceedances <- function(indices, run_length) {
 #'
 #' ## Choosing run_length
 #' The choice of `run_length` affects the estimate:
-#' - **Too small**: May split natural clusters, overestimating θ
-#' - **Too large**: May merge distinct clusters, underestimating θ
+#' - **Too small**: May split natural clusters, overestimating theta
+#' - **Too large**: May merge distinct clusters, underestimating theta
 #'
 #' Common choices:
 #' - run_length = 1 or 2 for most applications
@@ -105,13 +105,13 @@ cluster_exceedances <- function(indices, run_length) {
 #' ## Relationship to Return Times
 #' The extremal index affects return times for extreme events. For a
 #' threshold u with exceedance probability p, the mean cluster size is
-#' 1/θ and the mean inter-cluster time is 1/(θp).
+#' 1/theta and the mean inter-cluster time is 1/(thetap).
 #'
 #' @section Mathematical Background:
 #' For a stationary sequence X_n, the extremal index is defined as:
 #' \deqn{\theta = \lim_{n \to \infty} \frac{P(M_n \le u_n)^n}{P(X_1 \le u_n)}}
 #' where \eqn{M_n = \max(X_1, \ldots, X_n)} and \eqn{u_n} is a high threshold
-#' satisfying nP(X_1 > u_n) → τ for some τ > 0.
+#' satisfying nP(X_1 > u_n) -> tau for some tau > 0.
 #'
 #' The runs estimator was introduced by Smith & Weissman (1994) and
 #' provides a consistent estimator under appropriate mixing conditions.
