@@ -80,7 +80,7 @@ Common choices:
 ## Relationship to Return Times
 The extremal index affects return times for extreme events. For a
 threshold u with exceedance probability p, the mean cluster size is
-1/theta and the mean inter-cluster time is 1/(thetap).
+1/theta and the mean inter-cluster time is 1/(theta * p).
 }
 \section{Mathematical Background}{
 
