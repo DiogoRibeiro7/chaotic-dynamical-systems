@@ -2,7 +2,7 @@
 % Please edit documentation in R/mixing-diagnostics.R
 \name{mixing_coefficients}
 \alias{mixing_coefficients}
-\title{Estimate simple mixing coefficients}
+\title{Historical name for exceedance-event dependence}
 \usage{
 mixing_coefficients(x, threshold, lags)
 }
@@ -11,18 +11,20 @@ mixing_coefficients(x, threshold, lags)
 
 \item{threshold}{Numeric exceedance threshold.}
 
-\item{lags}{Integer vector of lags at which to estimate coefficients.}
+\item{lags}{Integer vector of lags at which to compute the diagnostic.}
 }
 \value{
-Numeric vector of estimated coefficients corresponding to each lag.
-  For lags greater than the series length the function returns `NA`.
+The same numeric vector as \code{exceedance_dependence_coefficients()}.
 }
 \description{
-Computes empirical alpha-mixing coefficients using indicator functions of
-threshold exceedances separated by specified lags.
+Compatibility wrapper for \code{exceedance_dependence_coefficients()}. The
+historical name is retained for existing code, but the returned quantity is
+not a strong or alpha-mixing coefficient.
 }
 \examples{
 x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
-mix_coef <- mixing_coefficients(x, threshold = 0.9, lags = 1:10)
-plot(1:10, mix_coef, type = "b", xlab = "Lag", ylab = "Mixing Coefficient")
+mixing_coefficients(x, threshold = 0.9, lags = 1:5)
+}
+\seealso{
+\code{\link[=exceedance_dependence_coefficients]{exceedance_dependence_coefficients()}}
 }

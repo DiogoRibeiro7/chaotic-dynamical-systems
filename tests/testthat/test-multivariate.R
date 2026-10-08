@@ -1,20 +1,36 @@
-test_that("extremal_index_multivariate computes mean index", {
-  set.seed(123)
-  df <- data.frame(a = rnorm(500), b = rnorm(500), c = rnorm(500))
-  theta <- extremal_index_multivariate(df, 0.9)
-  expect_true(is.numeric(theta))
-  expect_true(theta > 0 && theta <= 1)
+test_that("multivariate extremal clustering has a fixed composite definition", {
+  df <- data.frame(
+    a = c(1, 1, 0, 0, 1, 0),
+    b = c(0, 1, 0, 1, 0, 0)
+  )
+
+  score <- multivariate_extremal_clustering(
+    df,
+    thresholds = c(0.5, 0.5),
+    run_length = 1
+  )
+
+  # Joint exceedances occur at 1,2,4,5: two clusters / four exceedances = 1/2.
+  # Component a has two clusters / three exceedances = 2/3.
+  # Component b has two clusters / two exceedances = 1.
+  expected <- mean(c(1 / 2, 2 / 3, 1))
+  expect_equal(score, expected)
+  expect_equal(extremal_index_multivariate(df, c(0.5, 0.5), 1), score)
 })
 
 test_that("extremal_index_multivariate handles missing estimates", {
   df <- data.frame(a = rnorm(100, -5), b = rnorm(100, -5))
+  expect_true(is.na(multivariate_extremal_clustering(df, 10)))
   expect_true(is.na(extremal_index_multivariate(df, 10)))
 })
 
 test_that("extremal_index_multivariate validates arguments", {
   df <- data.frame(a = rnorm(10), b = rnorm(10))
-  expect_silent(extremal_index_multivariate(df, c(0.5)))
-  expect_error(extremal_index_multivariate(df, c(0.5, 0.6, 0.7)), "length")
+  expect_silent(multivariate_extremal_clustering(df, 0.5))
+  expect_error(
+    multivariate_extremal_clustering(df, c(0.5, 0.6, 0.7)),
+    "length"
+  )
 })
 
 test_that("tail_dependence_asymmetric removes NAs and uses thresholds", {
@@ -74,7 +90,8 @@ test_that("multivariate_extreme_workflow returns structured output", {
   expect_true(is.list(wf))
   expect_true(all(c(
     "thresholds", "pairwise_dependence", "joint_exceedance_rate",
-    "all_exceedance_rate", "multivariate_extremal_index", "settings"
+    "all_exceedance_rate", "extremal_clustering",
+    "multivariate_extremal_index", "settings"
   ) %in% names(wf)))
 
   expect_true(is.numeric(wf$thresholds))
@@ -85,4 +102,5 @@ test_that("multivariate_extreme_workflow returns structured output", {
   expect_true(is.numeric(wf$all_exceedance_rate))
   expect_true(wf$joint_exceedance_rate >= 0 && wf$joint_exceedance_rate <= 1)
   expect_true(wf$all_exceedance_rate >= 0 && wf$all_exceedance_rate <= 1)
+  expect_equal(wf$extremal_clustering, wf$multivariate_extremal_index)
 })

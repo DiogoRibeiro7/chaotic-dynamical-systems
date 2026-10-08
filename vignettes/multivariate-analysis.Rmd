@@ -38,7 +38,7 @@ series <- data.frame(logistic = logistic,
                      henon_x = henon$x,
                      henon_y = henon$y)
 thresholds <- apply(series, 2, quantile, probs = 0.95)
-extremal_index_multivariate(series, thresholds, run_length = 3)
+multivariate_extremal_clustering(series, thresholds, run_length = 3)
 ```
 
 ```{r fig.height=4}
