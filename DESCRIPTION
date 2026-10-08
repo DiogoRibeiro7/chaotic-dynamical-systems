@@ -11,7 +11,6 @@ Description: Toolkit for simulation and extreme-value analysis of chaotic
     profile-likelihood inference,
     recurrence analysis, Lyapunov diagnostics, symbolic dynamics, and
     high-performance C++ implementations for computationally intensive paths.
-    threshold diagnostics, statistical computing
 License: MIT + file LICENSE
 URL: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems, https://diogoribeiro7.github.io/chaotic-dynamical-systems/
 BugReports: https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/issues
