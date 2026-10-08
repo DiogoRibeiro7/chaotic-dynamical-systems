@@ -313,7 +313,7 @@ citation("chaoticds")
 To cite chaoticds in publications use:
 
   Ribeiro, D. (2026). chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems.
-  R package version 0.2.1.9000.
+  R package version 0.2.1.
   https://github.com/DiogoRibeiro7/chaotic-dynamical-systems
 
 A BibTeX entry for LaTeX users is:
@@ -322,7 +322,7 @@ A BibTeX entry for LaTeX users is:
     title = {chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems},
     author = {Diogo Ribeiro},
     year = {2026},
-    note = {R package version 0.2.1.9000},
+    note = {R package version 0.2.1},
     url = {https://github.com/DiogoRibeiro7/chaotic-dynamical-systems},
   }
 ```
