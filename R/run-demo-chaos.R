@@ -19,7 +19,7 @@
 #' - Peaks-over-threshold analysis and GPD fitting
 #' - Extremal index estimation (runs and intervals methods)
 #' - Cluster analysis
-#' - Autocorrelation and mixing diagnostics
+#' - Autocorrelation and exceedance-event dependence diagnostics
 #' - Threshold selection diagnostics
 #'
 #' ## Workflow Steps
@@ -207,13 +207,15 @@
 #'      xlab = "Lag", ylab = "ACF", ylim = c(-0.2, 1))
 #' abline(h = 0, col = "gray", lty = 2)
 #'
-#' \donttest{
-#' # Generate PDF report (requires rmarkdown)
+#' \dontrun{
+#' # PDF report generation requires a working LaTeX installation and writes
+#' # demo-chaos.pdf in the current directory.
 #' if (requireNamespace("rmarkdown", quietly = TRUE)) {
 #'   demo_with_report <- run_demo(n = 3000, output_report = TRUE)
-#'   # Report saved as "demo-chaos.pdf" in current directory
+#' }
 #' }
 #'
+#' \donttest{
 #' # Long-running analysis with more data
 #' detailed_results <- run_demo(
 #'   n = 10000,
