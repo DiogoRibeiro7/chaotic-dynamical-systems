@@ -39,16 +39,16 @@ test_that("Theiler window excludes temporally adjacent pairs", {
   res0 <- estimate_correlation_dimension(
     x,
     m = 1L,
-    r_vals = c(2.5, 3.5, 4.5, 5.5, 6.5),
-    scaling_range = c(2.5, 6.5),
+    r_vals = c(3.5, 4.5, 5.5, 6.5, 7.5),
+    scaling_range = c(3.5, 7.5),
     min_scaling_points = 5L,
     theiler = 0L
   )
   res2 <- estimate_correlation_dimension(
     x,
     m = 1L,
-    r_vals = c(2.5, 3.5, 4.5, 5.5, 6.5),
-    scaling_range = c(2.5, 6.5),
+    r_vals = c(3.5, 4.5, 5.5, 6.5, 7.5),
+    scaling_range = c(3.5, 7.5),
     min_scaling_points = 5L,
     theiler = 2L
   )
