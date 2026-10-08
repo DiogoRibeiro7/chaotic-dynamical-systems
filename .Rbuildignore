@@ -34,3 +34,4 @@
 ^src/.*\.o$
 ^src/.*\.so$
 ^src/.*\.dll$
+^cran-comments\.md$
