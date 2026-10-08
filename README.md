@@ -4,7 +4,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml)
-[![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
+[![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://app.codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub release](https://img.shields.io/github/v/release/DiogoRibeiro7/chaotic-dynamical-systems?display_name=tag)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/releases)
