@@ -1,8 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems"
-version: 0.2.0
-date-released: 2026-09-19
+version: 0.2.1.9000
 authors:
   - family-names: Ribeiro
     given-names: Diogo

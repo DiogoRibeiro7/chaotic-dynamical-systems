@@ -5,7 +5,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml)
 [![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub release](https://img.shields.io/github/v/release/DiogoRibeiro7/chaotic-dynamical-systems?display_name=tag)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/releases)
 <!-- badges: end -->
@@ -14,7 +14,7 @@
 
 ## Why chaoticds?
 
-Analyzing extreme events in chaotic systems is challenging. Traditional statistical methods often fail to capture the complex dependence structures in chaotic dynamics. **chaoticds** provides a comprehensive, statistically rigorous toolkit specifically designed for this purpose.
+Analyzing extreme events in chaotic systems is challenging. Traditional statistical methods often fail to capture the complex dependence structures in chaotic dynamics. **chaoticds** provides a comprehensive, methodologically explicit toolkit specifically designed for this purpose.
 
 ## Repository Metadata
 
@@ -27,7 +27,7 @@ Analyzing extreme events in chaotic systems is challenging. Traditional statisti
 📊 **Extreme Value Analysis** - Block maxima and peaks-over-threshold methods
 🔬 **Extremal Index Estimation** - Multiple methods (runs, intervals) with bootstrap confidence intervals
 ⚡ **High Performance** - C++ implementations for computationally intensive operations
-📈 **Diagnostic Tools** - Threshold selection, mixing conditions, and model validation
+📈 **Diagnostic Tools** - Threshold selection, exceedance-dependence diagnostics, and model validation
 🎨 **Visualization** - Publication-ready plots with ggplot2
 📚 **Well Documented** - Comprehensive vignettes and examples
 
@@ -56,7 +56,7 @@ install.packages("chaoticds")
 
 - **R** ≥ 4.0.0
 - **C++ compiler** (for building from source)
-- **Suggested packages**: `ggplot2`, `evd`, `ismev` for full functionality
+- **Optional packages**: `evd`, `evir`, `ismev`, `shiny`, and `plotly` for additional workflows
 
 ---
 
@@ -313,7 +313,7 @@ citation("chaoticds")
 To cite chaoticds in publications use:
 
   Ribeiro, D. (2026). chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems.
-  R package version 0.2.0.
+  R package version 0.2.1.9000.
   https://github.com/DiogoRibeiro7/chaotic-dynamical-systems
 
 A BibTeX entry for LaTeX users is:
@@ -322,7 +322,7 @@ A BibTeX entry for LaTeX users is:
     title = {chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems},
     author = {Diogo Ribeiro},
     year = {2026},
-    note = {R package version 0.2.0},
+    note = {R package version 0.2.1.9000},
     url = {https://github.com/DiogoRibeiro7/chaotic-dynamical-systems},
   }
 ```
@@ -351,9 +351,9 @@ This package implements methods from:
 **Why choose chaoticds?**
 - Specialized for chaotic systems
 - Integrated workflow from simulation to analysis
-- Modern R practices (tidyverse-compatible, S3 classes)
+- Modern R practices with S3 classes and standard R generics
 - High-performance C++ implementations
-- Comprehensive testing (90%+ coverage)
+- Extensive automated tests across statistical and numerical paths
 
 ---
 

@@ -1,4 +1,4 @@
-# chaoticds 0.2.0
+# chaoticds 0.2.1.9000
 
 * Strengthen `estimate_correlation_dimension()` with Theiler-window pair
   exclusion, explicit or automatic scaling-region selection, and fit diagnostics
@@ -14,6 +14,8 @@
 * Correct `extremal_index_intervals()` and its C++ counterpart to implement
   the Ferro-Segers (2003) intervals estimator, with fixed numerical reference
   tests and R/C++ parity checks.
+
+# chaoticds 0.2.0
 
 ## Dynamics Expansion
 
