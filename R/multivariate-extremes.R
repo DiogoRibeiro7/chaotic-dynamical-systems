@@ -100,7 +100,8 @@ extremal_index_multivariate <- function(df, thresholds, run_length = 3L) {
 
 #' Bivariate wrapper for backward compatibility
 #'
-#' Calls [multivariate_extremal_clustering()] for the first two columns of `df`. The function name is retained for backward compatibility.
+#' Calls [multivariate_extremal_clustering()] for the first two columns of
+#' `df`. The function name is retained for backward compatibility.
 #'
 #' @inheritParams multivariate_extremal_clustering
 #'
