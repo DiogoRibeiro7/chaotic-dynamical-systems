@@ -4,28 +4,70 @@
 \alias{estimate_correlation_dimension}
 \title{Estimate correlation dimension}
 \usage{
-estimate_correlation_dimension(x, m = 2L, tau = 1L, r_vals = NULL)
+estimate_correlation_dimension(
+  x,
+  m = 2L,
+  tau = 1L,
+  r_vals = NULL,
+  theiler = 0L,
+  scaling_range = NULL,
+  min_scaling_points = 5L
+)
 }
 \arguments{
-\item{x}{Numeric vector of observations.}
+\item{x}{Numeric vector of finite observations.}
 
 \item{m}{Embedding dimension. Defaults to 2.}
 
 \item{tau}{Time delay for embedding. Defaults to 1.}
 
-\item{r_vals}{Optional numeric vector of radii at which to compute the
-correlation sum. If `NULL`, a range is chosen automatically.}
+\item{r_vals}{Optional positive numeric vector of radii at which to compute
+the correlation sum. If \code{NULL}, 30 log-spaced radii are chosen between
+the 1st and 90th percentiles of the positive admissible pair distances.}
+
+\item{theiler}{Non-negative integer Theiler window. Pairs of embedded states
+separated by at most this many time indices are excluded.}
+
+\item{scaling_range}{Optional positive numeric vector of length two giving
+the radius interval used for the log-log fit. If \code{NULL}, the function
+uses points with correlation sums between 0.02 and 0.5, falling back to all
+nonsaturated points when necessary.}
+
+\item{min_scaling_points}{Minimum number of radii required for the scaling
+fit. Must be at least 3.}
 }
 \value{
-A list with elements `r`, `C`, and `dimension` containing the
-  radii, correlation sums, and estimated correlation dimension.
+A list with the original \code{r}, \code{C}, and \code{dimension}
+components, plus \code{scaling_indices}, \code{scaling_range},
+\code{r_squared}, \code{slope_se}, \code{local_slope_sd},
+\code{n_pairs}, and \code{theiler}.
 }
 \description{
-Implements a simple Grassberger-Procaccia algorithm to estimate the
-correlation dimension of a univariate time series.
+Estimates the Grassberger-Procaccia correlation dimension of a univariate
+time series after delay embedding. Temporal neighbours can be excluded with
+a Theiler window, and the log-log slope is fitted only on an explicit or
+automatically selected scaling region.
+}
+\details{
+The automatic scaling rule is a practical diagnostic heuristic, not proof
+that a true asymptotic scaling region exists. Inspect \code{r}, \code{C},
+\code{scaling_indices}, \code{r_squared}, and \code{local_slope_sd}
+before interpreting the returned dimension. A positive Theiler window helps
+reduce spurious low-dimensional structure caused by serially adjacent
+observations.
 }
 \examples{
 x <- simulate_logistic_map(1000, 3.8, 0.2)
-cd <- estimate_correlation_dimension(x)
+cd <- estimate_correlation_dimension(x, theiler = 2L)
 cd$dimension
+cd$scaling_range
+}
+\references{
+Grassberger, P. and Procaccia, I. (1983). Measuring the strangeness of
+strange attractors. \emph{Physica D}, 9, 189-208.
+DOI: 10.1016/0167-2789(83)90298-1.
+
+Theiler, J. (1986). Spurious dimension from correlation algorithms applied
+to limited time-series data. \emph{Physical Review A}, 34, 2427-2432.
+DOI: 10.1103/PhysRevA.34.2427.
 }
