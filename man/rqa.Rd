@@ -67,8 +67,8 @@ Measures returned:
 - **V_max** -- longest vertical segment.
 }
 \examples{
-x <- simulate_logistic_map(1000, r = 3.8, x0 = 0.2)
-rqa(x, embed = 3, delay = 1)
+x <- simulate_logistic_map(100, r = 3.8, x0 = 0.2)
+rqa(x, embed = 2, delay = 1)
 
 }
 \references{
