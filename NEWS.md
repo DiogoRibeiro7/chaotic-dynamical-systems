@@ -1,4 +1,4 @@
-# chaoticds 0.2.1.9000
+# chaoticds 0.2.1
 
 * Strengthen `estimate_correlation_dimension()` with Theiler-window pair
   exclusion, explicit or automatic scaling-region selection, and fit diagnostics
