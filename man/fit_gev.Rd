@@ -19,7 +19,7 @@ class. The fit backend is:
 - `ismev::gev.fit()` otherwise
 
 Both objects contain:
-- **Estimated parameters**: location (μ), scale (σ), shape (ξ)
+- **Estimated parameters**: location (mu), scale (sigma), shape (xi)
 - **Standard errors**: asymptotic standard errors for parameters
 - **Log-likelihood**: maximized log-likelihood value
 - **Convergence information**: optimization convergence status
@@ -36,7 +36,7 @@ distribution for block maxima under appropriate conditions.
 ## Overview
 The GEV distribution combines three classical extreme value distributions
 (Gumbel, Fréchet, and Weibull) into a single family. It is parameterized
-by location (μ), scale (σ > 0), and shape (ξ) parameters.
+by location (mu), scale (sigma > 0), and shape (xi) parameters.
 
 This function provides a convenient wrapper that uses `evd::fgev()` if
 the evd package is available, otherwise falls back to `ismev::gev.fit()`.
@@ -45,15 +45,15 @@ Both implementations use maximum likelihood estimation.
 ## GEV Distribution
 The cumulative distribution function is:
 \deqn{G(z) = \exp\{-(1 + \xi z)^{-1/\xi}\}}
-where z = (x - μ)/σ and the support depends on ξ.
+where z = (x - mu)/sigma and the support depends on xi.
 
 ## Shape Parameter Interpretation
-The shape parameter ξ controls tail behavior:
-- **ξ > 0**: Fréchet type (heavy tail, power-law decay)
-- **ξ = 0**: Gumbel type (light tail, exponential decay)
-- **ξ < 0**: Weibull type (bounded tail, finite upper endpoint)
+The shape parameter xi controls tail behavior:
+- **xi > 0**: Fréchet type (heavy tail, power-law decay)
+- **xi = 0**: Gumbel type (light tail, exponential decay)
+- **xi < 0**: Weibull type (bounded tail, finite upper endpoint)
 
-For chaotic systems, ξ is often close to zero or slightly negative,
+For chaotic systems, xi is often close to zero or slightly negative,
 depending on the system's dynamics and the observable being studied.
 
 ## Model Diagnostics
@@ -70,7 +70,7 @@ to a non-degenerate distribution, it must be the GEV. For a sequence
 \eqn{M_n = \max(X_1, \ldots, X_n)}, there exist sequences \eqn{a_n > 0}
 and \eqn{b_n} such that:
 \deqn{P((M_n - b_n)/a_n \le z) \to G(z)}
-as n → ∞, where G is the GEV distribution.
+as n -> infinity, where G is the GEV distribution.
 }
 
 \examples{
