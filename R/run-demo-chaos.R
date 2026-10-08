@@ -28,7 +28,7 @@
 #' 3. **Fit GEV** distribution to block maxima
 #' 4. **Identify exceedances** above high threshold
 #' 5. **Fit GPD** distribution to exceedances
-#' 6. **Estimate θ** using runs and intervals methods
+#' 6. **Estimate theta** using runs and intervals methods
 #' 7. **Analyze clusters** of extreme events
 #' 8. **Compute diagnostics** (ACF, exceedance-event dependence)
 #' 9. **Generate report** (optional PDF output)
@@ -97,14 +97,14 @@
 #'   (5000-10000) provide better estimates but take longer. Default: 2000.
 #'
 #' @param r Numeric. The logistic map parameter. Valid range [0, 4].
-#'   For chaotic behavior, use r ≥ 3.57. Default: 3.8 (robust chaotic regime).
+#'   For chaotic behavior, use r >= 3.57. Default: 3.8 (robust chaotic regime).
 #'
 #' @param x0 Numeric. Initial condition in (0, 1). The specific value is
 #'   typically not critical for chaotic parameters after transient behavior
 #'   dies out. Default: 0.2.
 #'
 #' @param block_size Integer. Size of blocks for block maxima method. Should
-#'   be chosen to ensure at least 20-50 blocks (so block_size ≤ n/20).
+#'   be chosen to ensure at least 20-50 blocks (so block_size <= n/20).
 #'   Default: 50 (gives 40 blocks when n=2000).
 #'
 #' @param threshold_q Numeric. Quantile to use as threshold for POT analysis.
