@@ -1,5 +1,9 @@
 # chaoticds 0.2.0
 
+* Strengthen `estimate_correlation_dimension()` with Theiler-window pair
+  exclusion, explicit or automatic scaling-region selection, and fit diagnostics
+  including R², slope uncertainty, local-slope variability, and admissible pair
+  counts.
 * Add `exceedance_dependence_coefficients()` as the preferred name for the
   lagged threshold-exceedance diagnostic; retain `mixing_coefficients()` as a
   compatibility wrapper and explicitly state that it is not an alpha-mixing

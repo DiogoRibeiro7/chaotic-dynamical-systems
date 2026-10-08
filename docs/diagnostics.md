@@ -66,7 +66,7 @@ Use `estimate_lyapunov_exponent()`, `lyapunov_spectrum()`, `lyapunov_spectrum_co
 
 ## Correlation dimension
 
-`estimate_correlation_dimension()` estimates an effective attractor dimension from scaling behaviour. Finite-sample dimension estimates are sensitive, so inspect the scaling region rather than reporting one number without context.
+`estimate_correlation_dimension()` estimates an effective attractor dimension from scaling behaviour. It supports a Theiler window for excluding temporally adjacent state pairs and reports the selected scaling region, fit R², slope uncertainty, local-slope variability, and pair count. The automatic scaling rule is only a diagnostic heuristic; inspect the returned scaling diagnostics rather than reporting one number without context.
 
 ## Symbolic dynamics
 
