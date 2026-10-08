@@ -1,0 +1,225 @@
+name: CRAN candidate gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "DESCRIPTION"
+      - "NAMESPACE"
+      - "R/**"
+      - "src/**"
+      - "man/**"
+      - "tests/**"
+      - "vignettes/**"
+      - "data/**"
+      - "inst/**"
+      - "NEWS.md"
+      - ".Rbuildignore"
+      - "cran-comments.md"
+      - ".github/workflows/cran-candidate.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  R_KEEP_PKG_SOURCE: yes
+
+jobs:
+  build-candidate:
+    name: Build exact source candidate
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      package_file: ${{ steps.meta.outputs.package_file }}
+      sha256: ${{ steps.meta.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: DiogoRibeiro7/git-actions-collection/.github/actions/setup-r@v1
+        with:
+          r-version: release
+          use-public-rspm: "true"
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Build exact source tarball
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(awk -F': ' '$1 == "Version" {print $2}' DESCRIPTION)"
+          package_file="chaoticds_${version}.tar.gz"
+
+          R CMD build .
+          test -f "$package_file"
+
+          sha256="$(sha256sum "$package_file" | awk '{print $1}')"
+          size_bytes="$(wc -c < "$package_file" | tr -d ' ')"
+
+          printf '%s  %s\n' "$sha256" "$package_file" > SHA256SUMS
+          printf 'commit=%s\nversion=%s\nfile=%s\nsha256=%s\nsize_bytes=%s\n'             "$GITHUB_SHA" "$version" "$package_file" "$sha256" "$size_bytes"             > candidate-metadata.txt
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "package_file=$package_file" >> "$GITHUB_OUTPUT"
+          echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Inspect candidate contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -tzf "${{ steps.meta.outputs.package_file }}" > candidate-contents.txt
+          test -s candidate-contents.txt
+          ! grep -E '/(\.github|docs|benchmarks|data-raw|archive|examples|tools)/' candidate-contents.txt
+          ! grep -E '/\.dockerignore$' candidate-contents.txt
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cran-candidate-source
+          path: |
+            ${{ steps.meta.outputs.package_file }}
+            SHA256SUMS
+            candidate-metadata.txt
+            candidate-contents.txt
+          if-no-files-found: error
+
+  check-candidate:
+    name: ${{ matrix.label }}
+    needs: build-candidate
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: ubuntu / R release / as-cran
+            os: ubuntu-latest
+            r: release
+          - label: ubuntu / R devel / as-cran
+            os: ubuntu-latest
+            r: devel
+          - label: ubuntu / R oldrel-1 / as-cran
+            os: ubuntu-latest
+            r: oldrel-1
+          - label: windows / R release / as-cran
+            os: windows-latest
+            r: release
+          - label: macOS / R release / as-cran
+            os: macos-latest
+            r: release
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: DiogoRibeiro7/git-actions-collection/.github/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.r }}
+          use-public-rspm: "true"
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: cran-candidate-source
+          path: candidate
+
+      - name: Verify exact artifact hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd candidate
+          sha256sum --check SHA256SUMS
+
+      - name: Check exact source tarball as CRAN
+        shell: bash
+        env:
+          _R_CHECK_CRAN_INCOMING_REMOTE_: "true"
+        run: |
+          set -euo pipefail
+          package="candidate/${{ needs.build-candidate.outputs.package_file }}"
+          R CMD check --as-cran --no-manual "$package"
+
+      - name: Upload check log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: cran-check-${{ matrix.os }}-${{ matrix.r }}
+          path: |
+            chaoticds.Rcheck/00check.log
+            chaoticds.Rcheck/00install.out
+          if-no-files-found: ignore
+
+  manual-and-vignettes:
+    name: ubuntu / R release / manuals and vignettes
+    needs: build-candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: DiogoRibeiro7/git-actions-collection/.github/actions/setup-r@v1
+        with:
+          r-version: release
+          use-public-rspm: "true"
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::rcmdcheck
+            any::tinytex
+            any::V8
+          needs: check
+
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install HTML Tidy
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tidy
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: cran-candidate-source
+          path: candidate
+
+      - name: Verify exact artifact hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd candidate
+          sha256sum --check SHA256SUMS
+
+      - name: Check exact source tarball with manual
+        shell: bash
+        env:
+          _R_CHECK_CRAN_INCOMING_REMOTE_: "true"
+        run: |
+          set -euo pipefail
+          package="candidate/${{ needs.build-candidate.outputs.package_file }}"
+          R CMD check --as-cran "$package"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cran-check-manual
+          path: |
+            chaoticds.Rcheck/00check.log
+            chaoticds.Rcheck/chaoticds-manual.pdf
+          if-no-files-found: ignore

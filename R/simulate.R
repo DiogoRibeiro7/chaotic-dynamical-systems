@@ -17,9 +17,9 @@
 #'
 #' ## Parameter Regions
 #' The parameter r controls the system's behavior:
-#' - **r < 1**: Extinction (x → 0)
+#' - **r < 1**: Extinction (x -> 0)
 #' - **1 < r < 3**: Convergence to fixed point
-#' - **3 < r < 1 + √6 ≈ 3.45**: Oscillation between two values
+#' - **3 < r < 1 + sqrt6 approximately 3.45**: Oscillation between two values
 #' - **3.45 < r < 3.57**: Period-doubling cascade
 #' - **r > 3.57**: Chaotic regime (with periodic windows)
 #' - **r = 4**: Fully chaotic (every orbit is dense)

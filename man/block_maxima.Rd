@@ -9,12 +9,12 @@ block_maxima(x, block_size)
 \arguments{
 \item{x}{Numeric vector. The time series from which to extract block maxima.
 Should not contain NA or infinite values. Typical length: at least
-20 × block_size for reliable statistical analysis.}
+20 x block_size for reliable statistical analysis.}
 
 \item{block_size}{Integer. Size of each block. Must be positive and should
 be much smaller than length(x). Recommended:
 - Start with length(x) / 50 and adjust based on diagnostics
-- Ensure at least 20 blocks: block_size ≤ length(x) / 20
+- Ensure at least 20 blocks: block_size <= length(x) / 20
 - For chaotic systems with known mixing time, use multiples of mixing time}
 }
 \value{
@@ -73,10 +73,10 @@ Rules of thumb:
 \section{Mathematical Background}{
 
 Let \eqn{X_1, X_2, \ldots, X_n} be a stationary sequence and divide it into
-k blocks of size m (so n ≈ km). The block maxima are:
+k blocks of size m (so n approximately km). The block maxima are:
 \deqn{M_i = \max\{X_{(i-1)m+1}, \ldots, X_{im}\}, \quad i = 1,\ldots,k}
 
-Under appropriate mixing and regularity conditions, as m → ∞, the
+Under appropriate mixing and regularity conditions, as m -> infinity, the
 distribution of (normalized) \eqn{M_i} converges to the GEV distribution:
 \deqn{G(z) = \exp\{-(1 + \xi z)^{-1/\xi}\}}
 where \eqn{\xi} is the shape parameter.

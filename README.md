@@ -4,7 +4,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/actions/workflows/R-CMD-check.yaml)
-[![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
+[![Codecov](https://codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems/branch/main/graph/badge.svg)](https://app.codecov.io/gh/DiogoRibeiro7/chaotic-dynamical-systems)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub release](https://img.shields.io/github/v/release/DiogoRibeiro7/chaotic-dynamical-systems?display_name=tag)](https://github.com/DiogoRibeiro7/chaotic-dynamical-systems/releases)
@@ -313,7 +313,7 @@ citation("chaoticds")
 To cite chaoticds in publications use:
 
   Ribeiro, D. (2026). chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems.
-  R package version 0.2.1.9000.
+  R package version 0.2.1.
   https://github.com/DiogoRibeiro7/chaotic-dynamical-systems
 
 A BibTeX entry for LaTeX users is:
@@ -322,7 +322,7 @@ A BibTeX entry for LaTeX users is:
     title = {chaoticds: Extreme Value Analysis for Chaotic Dynamical Systems},
     author = {Diogo Ribeiro},
     year = {2026},
-    note = {R package version 0.2.1.9000},
+    note = {R package version 0.2.1},
     url = {https://github.com/DiogoRibeiro7/chaotic-dynamical-systems},
   }
 ```
