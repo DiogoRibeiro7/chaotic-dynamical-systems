@@ -46,10 +46,10 @@
 #'
 #' @section Mathematical Background:
 #' Let \eqn{X_1, X_2, \ldots, X_n} be a stationary sequence and divide it into
-#' k blocks of size m (so n ≈ km). The block maxima are:
+#' k blocks of size m (so n approximately km). The block maxima are:
 #' \deqn{M_i = \max\{X_{(i-1)m+1}, \ldots, X_{im}\}, \quad i = 1,\ldots,k}
 #'
-#' Under appropriate mixing and regularity conditions, as m → ∞, the
+#' Under appropriate mixing and regularity conditions, as m -> infinity, the
 #' distribution of (normalized) \eqn{M_i} converges to the GEV distribution:
 #' \deqn{G(z) = \exp\{-(1 + \xi z)^{-1/\xi}\}}
 #' where \eqn{\xi} is the shape parameter.
@@ -59,12 +59,12 @@
 #'
 #' @param x Numeric vector. The time series from which to extract block maxima.
 #'   Should not contain NA or infinite values. Typical length: at least
-#'   20 × block_size for reliable statistical analysis.
+#'   20 x block_size for reliable statistical analysis.
 #'
 #' @param block_size Integer. Size of each block. Must be positive and should
 #'   be much smaller than length(x). Recommended:
 #'   - Start with length(x) / 50 and adjust based on diagnostics
-#'   - Ensure at least 20 blocks: block_size ≤ length(x) / 20
+#'   - Ensure at least 20 blocks: block_size <= length(x) / 20
 #'   - For chaotic systems with known mixing time, use multiples of mixing time
 #'
 #' @return
@@ -158,7 +158,7 @@ block_maxima <- function(x, block_size) {
 #' ## Overview
 #' The GEV distribution combines three classical extreme value distributions
 #' (Gumbel, Fréchet, and Weibull) into a single family. It is parameterized
-#' by location (μ), scale (σ > 0), and shape (ξ) parameters.
+#' by location (mu), scale (sigma > 0), and shape (xi) parameters.
 #'
 #' This function provides a convenient wrapper that uses `evd::fgev()` if
 #' the evd package is available, otherwise falls back to `ismev::gev.fit()`.
@@ -167,15 +167,15 @@ block_maxima <- function(x, block_size) {
 #' ## GEV Distribution
 #' The cumulative distribution function is:
 #' \deqn{G(z) = \exp\{-(1 + \xi z)^{-1/\xi}\}}
-#' where z = (x - μ)/σ and the support depends on ξ.
+#' where z = (x - mu)/sigma and the support depends on xi.
 #'
 #' ## Shape Parameter Interpretation
-#' The shape parameter ξ controls tail behavior:
-#' - **ξ > 0**: Fréchet type (heavy tail, power-law decay)
-#' - **ξ = 0**: Gumbel type (light tail, exponential decay)
-#' - **ξ < 0**: Weibull type (bounded tail, finite upper endpoint)
+#' The shape parameter xi controls tail behavior:
+#' - **xi > 0**: Fréchet type (heavy tail, power-law decay)
+#' - **xi = 0**: Gumbel type (light tail, exponential decay)
+#' - **xi < 0**: Weibull type (bounded tail, finite upper endpoint)
 #'
-#' For chaotic systems, ξ is often close to zero or slightly negative,
+#' For chaotic systems, xi is often close to zero or slightly negative,
 #' depending on the system's dynamics and the observable being studied.
 #'
 #' ## Model Diagnostics
@@ -191,7 +191,7 @@ block_maxima <- function(x, block_size) {
 #' \eqn{M_n = \max(X_1, \ldots, X_n)}, there exist sequences \eqn{a_n > 0}
 #' and \eqn{b_n} such that:
 #' \deqn{P((M_n - b_n)/a_n \le z) \to G(z)}
-#' as n → ∞, where G is the GEV distribution.
+#' as n -> infinity, where G is the GEV distribution.
 #'
 #' @param block_maxima Numeric vector of block maxima, typically obtained
 #'   from \code{\link{block_maxima}}. Should contain at least 20-30 values
@@ -205,7 +205,7 @@ block_maxima <- function(x, block_size) {
 #' - `ismev::gev.fit()` otherwise
 #'
 #' Both objects contain:
-#' - **Estimated parameters**: location (μ), scale (σ), shape (ξ)
+#' - **Estimated parameters**: location (mu), scale (sigma), shape (xi)
 #' - **Standard errors**: asymptotic standard errors for parameters
 #' - **Log-likelihood**: maximized log-likelihood value
 #' - **Convergence information**: optimization convergence status
