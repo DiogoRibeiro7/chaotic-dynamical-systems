@@ -183,14 +183,16 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             any::tinytex
+            any::V8
           needs: check
 
-      - name: Install TinyTeX if LaTeX is unavailable
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install HTML Tidy
         shell: bash
         run: |
-          if ! command -v pdflatex >/dev/null 2>&1; then
-            Rscript -e 'tinytex::install_tinytex(force = TRUE)'
-          fi
+          sudo apt-get update
+          sudo apt-get install -y tidy
 
       - uses: actions/download-artifact@v8
         with:
