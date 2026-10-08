@@ -26,7 +26,7 @@ test_that("extremal_index_multivariate handles missing estimates", {
 
 test_that("extremal_index_multivariate validates arguments", {
   df <- data.frame(a = rnorm(10), b = rnorm(10))
-  expect_silent(multivariate_extremal_clustering(df, c(0.5)))
+  expect_silent(multivariate_extremal_clustering(df, 0.5))
   expect_error(
     multivariate_extremal_clustering(df, c(0.5, 0.6, 0.7)),
     "length"
