@@ -16,7 +16,7 @@
 #' @param scaling_range Optional positive numeric vector of length two giving
 #'   the radius interval used for the log-log fit. If `NULL`, the function
 #'   uses points with correlation sums between 0.02 and 0.5, falling back to
-#'   all nonsaturated points when necessary.
+#'   all non-saturated points when necessary.
 #' @param min_scaling_points Minimum number of radii required for the scaling
 #'   fit. Must be at least 3.
 #'
